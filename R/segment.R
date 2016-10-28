@@ -12,7 +12,7 @@
 #'@importFrom graphics image axis par plot points lines legend arrows matplot
 #'@importFrom  grDevices png dev.off rainbow
 #'@useDynLib segmenTier
-
+NULL
 
 ### DYNAMIC PROGRAMMING BASED SEGMENTATION OF A CLUSTERING
 ### implemented by Rainer Machne, hopefully
@@ -60,17 +60,16 @@ warn <- function(w, warnings,verb=FALSE) {
 
 ### HIGH-LEVEL WRAPPERS
 
-## high-level wrapper that takes a time-series as input
+## TODO: high-level wrapper that takes a time-series as input
 ## and clusters the time-series  calling segmentClusters
 ## additionally reports data medians/centers for all segments
 ## and cluster centers; can be used as input for clusterSegments
 ## to finally cluster all segments genome-wide
 segmentData <- function() {}
 
-## high-level wrapper that segments genome data into primary domains,
+## TODO: high-level wrapper that segments genome data into primary domains,
 ## and sub-divides these into coherent segments based on clustering
-## of the data and a dynamic programming algo; then collects
-## 
+## of the data and a dynamic programming algo; ....
 clusterSegments <- function() {}
 
 #' segmenTier - main wrapper interface, to be used in commandline script
@@ -81,23 +80,29 @@ clusterSegments <- function() {}
 #' @param M penalty for short sequences
 #' @param Mn penalty for nuissance cluster, Mn<M will allow shorter distances
 #' between segments
+#' @param a todo
+#' @param nui TODO
 #' @param multi handling of multiple k with max. score in forward phase, see
 #' Details. Either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace phase, see
 #' Details. Either "min" (default), "max" or "skip"
 #' @param nextmax go backwards while score is increasing before openening a
 #' new segment, default is TRUE
+#' @param ncpu number of available cores (CPUs), passed to
+#' \code{parallel::mclapply} by \code{\link{calculateScoringMatrix}}
+#' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.mat store matrices S(c,i) and K(c,i) for plotting and inspection,
 #' mostly useful for debugging or illustration of the algorithm
 #' @details This is the main R wrapper function for the segmentation algorithm.
-#' It takes a sequence of clusterings and returns segments of consistent
-#' clusters. Some more details of the algorithm can be tuned, but these usually
-#' have no effect on real-life data sets. If multiple k produce the maximal
-#' score, take either the shortest k ("max") or the longest k ("min");
-#' TODO: what's the effect of "skip"?
+#' It takes a sequence of clusterings and returns segments of
+#' consistent clusters. It runs the dynamic programing algorithm for
+#' a selected scoring function and an according cluster similarity matrix,
+#' followed by the  back-tracing step to find segments.
+#' Some more details of the algorithm can be tuned, but these usually
+#' have little effect on real-life data sets. 
 #' @export
 segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
-                            SM, multi="min",multib="min", nextmax=TRUE,
+                            multi="min",multib="min", nextmax=TRUE,
                             ncpu=1, verb=1, save.mat="") {
     
     ## 1: set up sequence and data
@@ -197,29 +202,50 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
 ## PLOTTING RESULTS
 
 #' plot the scoring function matrices
+#' @param SM a list with scoring function matrices for each cluster,
+#' see \code{\link{calculateScoringMatrix}}
+#' @param out.file if supplied the scoring matrices will be plotted to
+#' individual png files named <out.file>_<number>.png
 #' @export
-plotScoring <- function(SM, out) {
+plotScoring <- function(SM, out.file) {
     for ( c in 1:length(SM) ) {
-        if ( !missing(out) ) 
-            png(out, width=5,height=5,res=200,units="in")
+        if ( !missing(out.file) ) 
+          png(paste(out.file,"_",c,".png",sep=""),
+              width=5,height=5,res=200,units="in")
         image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,main=c)
         axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
         axis(3,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
-        if ( !missing(out) )
-            dev.off()
+        if ( !missing(out.file) )
+          dev.off()
         else scan()
     }
 }
 
 #' plot segmentation data based on data returned by
 #' high-level wrappers, incl. S(c,i), K(c,i) and segments
+#' @details This is mostly used for testing, where a small data set
+#' is segmented by a high-level wrapper for multiple scoring functions
+#' and parameters.
+#' @param scrR a list containing multiple segmentations for (1) different
+#' scoring functions, (2) different parameters of the forward-step (dyn.prog.)
+#' and (3) different parameters of the back-tracing step.
+#' @param seq the sequence of clusters to be segments
+#' @param ts an optional time-series from for which the clustering was
+#' calculated
+#' @param tot an optional total signal from the timeseries in \code{ts}
+#' @param out.file optional out.file name (w/o file extension) to which a
+#' png will be plotted
+#' @param use.log plot the total data (\code{tot}) with logged y-axis
+#' @param add.plots in the plot layout, leave these rows for additional
+#' @param verb level of verbosity; 0: no output, 1: progress messages
+#' external plots
 #' @export
-plotSegments <- function(scrR, seq, ts, tot, out,use.log=FALSE,
+plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
                          add.plots=0, verb=2) {
   
     if ( verb>0 )
         cat(paste("plotting",
-                  ifelse(missing(out),"results",out),"\t",date(),"\n"))
+                  ifelse(missing(out.file),"results",out.file),"\t",date(),"\n"))
 
     ## if nuissance cluster is present, increase
     ## coloring by 1
@@ -242,8 +268,8 @@ plotSegments <- function(scrR, seq, ts, tot, out,use.log=FALSE,
     x <- 1:length(seq)
  
     ## plot results
-    if ( !missing(out) ) {
-        file.name <- paste(out, ".png",sep="")
+    if ( !missing(out.file) ) {
+        file.name <- paste(out.file, ".png",sep="")
         png(file.name, width=6,height=rws*.8,res=200,units="in")
     }
     par(mfcol=c(rws,1),mai=c(.01,.5,.01,.01),mgp=c(1.7,.5,0),xaxs="i")
@@ -313,7 +339,7 @@ plotSegments <- function(scrR, seq, ts, tot, out,use.log=FALSE,
             axis(2,at=1:length(multib),labels=multib,las=2)
         }
     }
-    if ( !missing(out) ) 
+    if ( !missing(out.file) ) 
         dev.off()
     if ( verb>0 ) cat(paste("done\t", date(), "\n"))
 }
@@ -377,8 +403,11 @@ calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim,
 #' back-tracing : collect clustered segments from the scoring function matrix
 #' @param S matrix S, containing the local scores
 #' @param K matrix K, containing the position k used for score maximization
-#' @param multib if multiple k produce the maximal score, take either the shortest k ("max") or the longest k ("min"); TODO: what's the effect of "skip"?
-#' @param nextmax go backwards while score is increasing before openening a new segment
+#' @param multib if multiple k produce the maximal score, take either the
+#' shortest k ("max") or the longest k ("min"); if multib is set to "skip"
+#' the next unique k will be searched
+#' @param nextmax proceed backwards while score is increasing before
+#' openening a new segment
 #' @param verb print messages
 #' @export
 backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {

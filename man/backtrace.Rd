@@ -11,9 +11,12 @@ backtrace(S, K, multib, nextmax = FALSE, verb = TRUE)
 
 \item{K}{matrix K, containing the position k used for score maximization}
 
-\item{multib}{if multiple k produce the maximal score, take either the shortest k ("max") or the longest k ("min"); TODO: what's the effect of "skip"?}
+\item{multib}{if multiple k produce the maximal score, take either the
+shortest k ("max") or the longest k ("min"); if multib is set to "skip"
+the next unique k will be searched}
 
-\item{nextmax}{go backwards while score is increasing before openening a new segment}
+\item{nextmax}{proceed backwards while score is increasing before
+openening a new segment}
 
 \item{verb}{print messages}
 }

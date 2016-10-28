@@ -4,12 +4,8 @@
 \name{segmenTier}
 \alias{segmenTier}
 \alias{segmenTier-package}
-\alias{warn}
 \title{segmenTier: a dynamic programming routine to define segments
 from a sequential clustering}
-\usage{
-warn(w, warnings, verb = FALSE)
-}
 \description{
 segmenTier: a dynamic programming routine to define segments
 from a sequential clustering

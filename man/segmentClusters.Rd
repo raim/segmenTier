@@ -5,8 +5,8 @@
 \title{segmenTier - main wrapper interface, to be used in commandline script}
 \usage{
 segmentClusters(seq, csim, score = "ccor", M = 175, Mn = 20, a = 2,
-  nui = 1, SM, multi = "min", multib = "min", nextmax = TRUE,
-  ncpu = 1, verb = 1, save.mat = "")
+  nui = 1, multi = "min", multib = "min", nextmax = TRUE, ncpu = 1,
+  verb = 1, save.mat = "")
 }
 \arguments{
 \item{seq}{a clustering sequence}
@@ -21,6 +21,10 @@ matrix, for scoring functions ccor and icor, respectively}
 \item{Mn}{penalty for nuissance cluster, Mn<M will allow shorter distances
 between segments}
 
+\item{a}{todo}
+
+\item{nui}{TODO}
+
 \item{multi}{handling of multiple k with max. score in forward phase, see
 Details. Either "min" (default) or "max"}
 
@@ -30,6 +34,11 @@ Details. Either "min" (default), "max" or "skip"}
 \item{nextmax}{go backwards while score is increasing before openening a
 new segment, default is TRUE}
 
+\item{ncpu}{number of available cores (CPUs), passed to
+\code{parallel::mclapply} by \code{\link{calculateScoringMatrix}}}
+
+\item{verb}{level of verbosity, 0: no output, 1: progress messages}
+
 \item{save.mat}{store matrices S(c,i) and K(c,i) for plotting and inspection,
 mostly useful for debugging or illustration of the algorithm}
 }
@@ -38,10 +47,11 @@ segmenTier - main wrapper interface, to be used in commandline script
 }
 \details{
 This is the main R wrapper function for the segmentation algorithm.
-It takes a sequence of clusterings and returns segments of consistent
-clusters. Some more details of the algorithm can be tuned, but these usually
-have no effect on real-life data sets. If multiple k produce the maximal
-score, take either the shortest k ("max") or the longest k ("min");
-TODO: what's the effect of "skip"?
+It takes a sequence of clusterings and returns segments of
+consistent clusters. It runs the dynamic programing algorithm for
+a selected scoring function and an according cluster similarity matrix,
+followed by the  back-tracing step to find segments.
+Some more details of the algorithm can be tuned, but these usually
+have little effect on real-life data sets.
 }
 

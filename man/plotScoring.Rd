@@ -4,7 +4,14 @@
 \alias{plotScoring}
 \title{plot the scoring function matrices}
 \usage{
-plotScoring(SM, out)
+plotScoring(SM, out.file)
+}
+\arguments{
+\item{SM}{a list with scoring function matrices for each cluster,
+see \code{\link{calculateScoringMatrix}}}
+
+\item{out.file}{if supplied the scoring matrices will be plotted to
+individual png files named <out.file>_<number>.png}
 }
 \description{
 plot the scoring function matrices
