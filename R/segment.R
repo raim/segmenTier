@@ -206,22 +206,25 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
 
 ## PLOTTING RESULTS
 
-#' plot the scoring function matrices
+#' plot the scoring function matrices as a heatmap
 #' @param SM a list with scoring function matrices for each cluster,
 #' see \code{\link{calculateScoringMatrix}}
+#' @param seq the original cluster sequence, optional for axis labeling
 #' @param out.file if supplied the scoring matrices will be plotted to
 #' individual png files named <out.file>_<number>.png
 #' @export
-plotScoring <- function(SM, out.file) {
+plotScoring <- function(SM, seq, out.file) {
     for ( c in 1:length(SM) ) {
         if ( !missing(out.file) ) 
-          png(paste(out.file,"_",c,".png",sep=""),
-              width=5,height=5,res=200,units="in")
+            png(paste(out.file,"_",c,".png",sep=""),
+                width=5,height=5,res=200,units="in")
         image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,main=c)
-        axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
-        axis(3,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
+        if ( !missing(seq) ) {
+            axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
+            axis(3,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
+        }
         if ( !missing(out.file) )
-          dev.off()
+            dev.off()
         else scan()
     }
 }
