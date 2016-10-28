@@ -1,9 +1,9 @@
-#' segmenTier: a dynamic programming routine to define segments
+#' segmenTier : cluster-based segmentation
 #' from a sequential clustering
-#'@author Rainer Machne
+#'@author Rainer Machne, Peter F. Stadler
 #'@docType package
 #'@name segmenTier
-#'@section Dependencies: the package strictly depends on \code{pacakge::Rcpp},
+#'@section Dependencies: The package strictly depends on \code{package::Rcpp},
 #' and \code{package:parallel} allows to signficantly speed up scoring
 #' function matrix calculations. All other dependencies are
 #' usually present in a basuc installation (\code{graphics}, \code{grDevices})).
@@ -12,7 +12,9 @@
 #'@importFrom graphics image axis par plot points lines legend arrows matplot
 #'@importFrom  grDevices png dev.off rainbow
 #'@useDynLib segmenTier
-NULL
+NULL # this just ends the global package documentation
+
+
 
 ### DYNAMIC PROGRAMMING BASED SEGMENTATION OF A CLUSTERING
 ### implemented by Rainer Machne, hopefully
@@ -43,7 +45,7 @@ NULL
 ##   for all k<i und color c'!= c:
 ##      if S(i,c) == S(k-1,c') + score[k,c,i] )
 ##      break;
-##   output:  interval k bis i mit Frabe c
+##   output:  interval k bis i mit Farbe c
 ##   i <- k - 1 // nextmax: search next non-decreasing S(i,c)
 ##   c <- c'
 
@@ -72,7 +74,7 @@ segmentData <- function() {}
 ## of the data and a dynamic programming algo; ....
 clusterSegments <- function() {}
 
-#' segmenTier - main wrapper interface, to be used in commandline script
+#' segmenTier's main wrapper interface
 #' @param seq a clustering sequence
 #' @param csim cluster-cluster or position-cluster similarity
 #' matrix, for scoring functions ccor and icor, respectively
@@ -80,19 +82,22 @@ clusterSegments <- function() {}
 #' @param M penalty for short sequences
 #' @param Mn penalty for nuissance cluster, Mn<M will allow shorter distances
 #' between segments
-#' @param a todo
-#' @param nui TODO
-#' @param multi handling of multiple k with max. score in forward phase, see
-#' Details. Either "min" (default) or "max"
-#' @param multib handling of multiple k with max. score in back-trace phase, see
-#' Details. Either "min" (default), "max" or "skip"
+#' @param a an additional penalty only used for pure cluster-based
+#' scoring w/o cluster similarity measures
+#' @param nui the similarity score to be used for nuissance clusters in the
+#' cluster similarity matrices
 #' @param nextmax go backwards while score is increasing before openening a
 #' new segment, default is TRUE
+#' @param multi handling of multiple k with max. score in forward phase,
+#' either "min" (default) or "max"
+#' @param multib handling of multiple k with max. score in back-trace phase,
+#' either "min" (default), "max" or "skip"
 #' @param ncpu number of available cores (CPUs), passed to
 #' \code{parallel::mclapply} by \code{\link{calculateScoringMatrix}}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @param save.mat store matrices S(c,i) and K(c,i) for plotting and inspection,
-#' mostly useful for debugging or illustration of the algorithm
+#' @param save.mat store the scoring function matrix SM or the back-tracing
+#' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
+#' in testing stage or for debugging or illustration of the algorithm
 #' @details This is the main R wrapper function for the segmentation algorithm.
 #' It takes a sequence of clusterings and returns segments of
 #' consistent clusters. It runs the dynamic programing algorithm for
@@ -102,7 +107,7 @@ clusterSegments <- function() {}
 #' have little effect on real-life data sets. 
 #' @export
 segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
-                            multi="min",multib="min", nextmax=TRUE,
+                            nextmax=TRUE, multi="min",multib="min", 
                             ncpu=1, verb=1, save.mat="") {
     
     ## 1: set up sequence and data

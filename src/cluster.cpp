@@ -1,8 +1,12 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Pearson product-moment correlation coefficient
-// 
+/// TODO: how to use R's cor function here?
+//' Pearson product-moment correlation coefficient
+//' @param x numeric vector
+//' @param y numeric vector
+//' @details Simply calculates Pearson's product-moment correlation
+//' between vectors \code{x} and \code{y}. 
 // [[Rcpp::export]]
 double myPearson(NumericVector x, NumericVector y) {
   
@@ -31,8 +35,14 @@ double myPearson(NumericVector x, NumericVector y) {
   return coeff;
 
 }
-// calculate Pearson correlation of each data to clusters
-// and return dataXcluster correlation matrix
+
+//' Calculates data-cluster similarity.
+//' @details calculates Pearson's product-moment correlation coefficients
+//' of original data to cluster centers as used in the scoring function "icor".
+//' @param data original data matrix
+//' @param clusters cluster centers
+//' @return Returns a data-cluster correlation matrix as used in
+//' scoring function "icor".
 //'@export
 // [[Rcpp::export]]
 NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters) {
@@ -56,8 +66,15 @@ NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters) {
   }
   return clCor;
 }
-// calculate Pearson correlation of each data to clusters
-// and report the (first!) cluster which had max correlation
+//' Reports the maximally correlating cluster for each data point.
+//' @details Calculates Pearson's product-moment correlation of each data
+//' to clusters and report the (first!) cluster which had max correlation.
+//' Note that this can lead to amibiguities since several clusters may
+//' reach the same maximum.
+//' @param mincor minimal correlation to be considered
+//' @param warn if set to 1/TRUE then the occurence of multiple maxima
+//' is tested and a warning issued
+//' @inheritParams clusterCor_c
 //'@export
 // [[Rcpp::export]]
 NumericVector clusterMaxCor_c(NumericMatrix data, NumericMatrix clusters, float mincor=0.0, int warn=0) {

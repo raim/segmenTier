@@ -121,21 +121,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ccSMxcor
-NumericMatrix ccSMxcor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
-RcppExport SEXP segmenTier_ccSMxcor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< int >::type Mn(MnSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(ccSMxcor(seq, c, M, Mn, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
 // ccSMncor
 NumericMatrix ccSMncor(NumericVector seq, int c, int M, NumericMatrix csim);
 RcppExport SEXP segmenTier_ccSMncor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP csimSEXP) {

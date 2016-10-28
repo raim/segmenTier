@@ -4,19 +4,19 @@
 \name{segmenTier}
 \alias{segmenTier}
 \alias{segmenTier-package}
-\title{segmenTier: a dynamic programming routine to define segments
+\title{segmenTier : cluster-based segmentation
 from a sequential clustering}
 \description{
-segmenTier: a dynamic programming routine to define segments
+segmenTier : cluster-based segmentation
 from a sequential clustering
 }
 \section{Dependencies}{
- the package strictly depends on \code{pacakge::Rcpp},
+ The package strictly depends on \code{package::Rcpp},
 and \code{package:parallel} allows to signficantly speed up scoring
 function matrix calculations. All other dependencies are
 usually present in a basuc installation (\code{graphics}, \code{grDevices})).
 }
 \author{
-Rainer Machne
+Rainer Machne, Peter F. Stadler
 }
 

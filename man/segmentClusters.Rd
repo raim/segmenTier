@@ -2,10 +2,10 @@
 % Please edit documentation in R/segment.R
 \name{segmentClusters}
 \alias{segmentClusters}
-\title{segmenTier - main wrapper interface, to be used in commandline script}
+\title{segmenTier's main wrapper interface}
 \usage{
 segmentClusters(seq, csim, score = "ccor", M = 175, Mn = 20, a = 2,
-  nui = 1, multi = "min", multib = "min", nextmax = TRUE, ncpu = 1,
+  nui = 1, nextmax = TRUE, multi = "min", multib = "min", ncpu = 1,
   verb = 1, save.mat = "")
 }
 \arguments{
@@ -21,29 +21,32 @@ matrix, for scoring functions ccor and icor, respectively}
 \item{Mn}{penalty for nuissance cluster, Mn<M will allow shorter distances
 between segments}
 
-\item{a}{todo}
+\item{a}{an additional penalty only used for pure cluster-based
+scoring w/o cluster similarity measures}
 
-\item{nui}{TODO}
-
-\item{multi}{handling of multiple k with max. score in forward phase, see
-Details. Either "min" (default) or "max"}
-
-\item{multib}{handling of multiple k with max. score in back-trace phase, see
-Details. Either "min" (default), "max" or "skip"}
+\item{nui}{the similarity score to be used for nuissance clusters in the
+cluster similarity matrices}
 
 \item{nextmax}{go backwards while score is increasing before openening a
 new segment, default is TRUE}
+
+\item{multi}{handling of multiple k with max. score in forward phase,
+either "min" (default) or "max"}
+
+\item{multib}{handling of multiple k with max. score in back-trace phase,
+either "min" (default), "max" or "skip"}
 
 \item{ncpu}{number of available cores (CPUs), passed to
 \code{parallel::mclapply} by \code{\link{calculateScoringMatrix}}}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 
-\item{save.mat}{store matrices S(c,i) and K(c,i) for plotting and inspection,
-mostly useful for debugging or illustration of the algorithm}
+\item{save.mat}{store the scoring function matrix SM or the back-tracing
+matrix K by adding "SM" and "SK" to the string vector save.mat; useful
+in testing stage or for debugging or illustration of the algorithm}
 }
 \description{
-segmenTier - main wrapper interface, to be used in commandline script
+segmenTier's main wrapper interface
 }
 \details{
 This is the main R wrapper function for the segmentation algorithm.
