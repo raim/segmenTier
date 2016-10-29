@@ -103,9 +103,9 @@ double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 
 //' Scoring Function Matrix "icor"
 //' @details  Scoring function "icor" calculates the sum of similarities of
-//' positions k:i to cluster c over all k and i.
+//' data at positions k:i to cluster centers c over all k and i.
 //' The similarities are calculated e.g., as a (Pearson) correlation between
-//' the individual positions and the tested cluster c center.
+//' the data at individual positions and the tested cluster c center.
 //' Note the difference to "ccor" where the cluster centers are compared
 //' instead of original data at positions k and i with a cluster.
 //' @param seq the cluster sequence (where positions k:i are considered);
@@ -140,7 +140,7 @@ NumericMatrix ccSMicor(NumericVector seq, int c, int M, int Mn,
 //' @details  Scoring function "ccor" calculates the sum of similarities
 //' between the clusters at positions k:i to cluster c over all k and i.
 //' Note the difference to "icor" where real data from positions are
-//' compared to clusters, while here two clusters are compared.
+//' compared to cluster centers, while here two cluster centers are compared.
 //' @param seq the cluster sequence (where clusters at positions k:i are
 //' considered)
 //' @param c the cluster to which similarities are to be calculated
