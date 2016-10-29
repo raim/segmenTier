@@ -95,8 +95,9 @@ for ( score in scores ) {
     scrR[[score]] <- multS
 }
 
+## plotting segments and score traces (from total scoring matrix)
+plotSegments(scrR, seq=seq) #,out="segment_test")
+
 ## plot scoring function matrices
 for ( score in scores ) 
     plotScoring(scrR[[score]]$SM, seq=seq) 
-## plotting segments and total scoring matrices
-plotSegments(scrR, seq=seq) #,out="segment_test")
