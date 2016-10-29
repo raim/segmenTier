@@ -25,10 +25,13 @@ png will be plotted}
 
 \item{use.log}{plot the total data (\code{tot}) with logged y-axis}
 
-\item{add.plots}{in the plot layout, leave these rows for additional}
-
-\item{verb}{level of verbosity; 0: no output, 1: progress messages
+\item{add.plots}{in the plot layout, leave these rows for additional
 external plots}
+
+\item{verb}{level of verbosity; 0: no output, 1: progress messages}
+}
+\value{
+Returns the file.name if out.file was specified.
 }
 \description{
 plot segmentation data based on data returned by

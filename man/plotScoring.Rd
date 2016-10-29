@@ -2,18 +2,22 @@
 % Please edit documentation in R/segment.R
 \name{plotScoring}
 \alias{plotScoring}
-\title{plot the scoring function matrices}
+\title{plot the scoring function matrices as a heatmap}
 \usage{
-plotScoring(SM, out.file)
+plotScoring(SM, seq, out.file, verb = 2)
 }
 \arguments{
 \item{SM}{a list with scoring function matrices for each cluster,
 see \code{\link{calculateScoringMatrix}}}
 
+\item{seq}{the original cluster sequence, optional for axis labeling}
+
 \item{out.file}{if supplied the scoring matrices will be plotted to
 individual png files named <out.file>_<number>.png}
+
+\item{verb}{level of verbosity; 0: no output, 1: progress messages}
 }
 \description{
-plot the scoring function matrices
+plot the scoring function matrices as a heatmap
 }
 

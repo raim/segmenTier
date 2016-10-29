@@ -14,10 +14,12 @@ calculateScoringMatrix(seq, C, score = "ccor", M, Mn, csim, ncpu = 1,
 
 \item{score}{the scoring function to be used: ccor, icor or cls}
 
-\item{M}{penalty for short sequences}
+\item{M}{minimal sequence length; Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by good score.}
 
-\item{Mn}{penalty for nuissance cluster, Mn<M will allow shorter distances
-between segments}
+\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
+shorter distances between segments; only used in scoring functions
+"ccor" and "icor"}
 
 \item{csim}{cluster-cluster or position-cluster similarity
 matrix, for scoring functions ccor and icor, respectively}
@@ -28,6 +30,10 @@ matrix, for scoring functions ccor and icor, respectively}
 \item{preschedule}{\code{parallel::mclapply} option that currently
 requires to be set to FALSE to avoid an error in data collection from
 parallel processes}
+}
+\value{
+Returns the scoring function matrices \code{SM} for all clusters
+in the sequence \code{seq}.
 }
 \description{
 generate scoring function matrices for each cluster

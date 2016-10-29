@@ -16,9 +16,16 @@ scorecor_c(k, i, c, seq, M, csim)
 \item{seq}{the cluster sequence (where clusters at positions k:i are
 considered)}
 
-\item{M}{initial penalty parameter, used to set minimal segment sizes}
+\item{M}{minimal sequence length; Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by good score;
+set to \code{Mn} if you want to calculate the nuissance cluster score.}
 
 \item{csim}{cluster-cluster similarity matrix}
+}
+\value{
+Returns the score \code{s(k,i,c)} for cluster \code{c} between
+the positions \code{k} to \code{i} in the cluster sequence \code{seq},
+as used in the for scoring function "ccor".
 }
 \description{
 Scoring Function "cor" - Test

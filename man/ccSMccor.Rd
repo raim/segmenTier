@@ -8,15 +8,23 @@ ccSMccor(seq, c, M, Mn, csim)
 }
 \arguments{
 \item{seq}{the cluster sequence (where clusters at positions k:i are
-considered)}
+considered). Note that \code{seq} is defined differently here than
+the wrapper interfaces and MUST be a sequence of positive integers >0.}
 
 \item{c}{the cluster to which similarities are to be calculated}
 
-\item{M}{initial penalty parameter, used to set minimal segment sizes}
+\item{M}{minimal sequence length; Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by good score.}
 
-\item{Mn}{penalty parameter for nuissance clusters, should be Mn<M}
+\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
+shorter distances between segments; only used in scoring functions
+"ccor" and "icor"}
 
 \item{csim}{cluster-cluster similarity matrix}
+}
+\value{
+Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
+\code{seq} and cluster \code{c} for scoring function "ccor".
 }
 \description{
 Scoring Function Matrix "ccor"
@@ -25,6 +33,6 @@ Scoring Function Matrix "ccor"
 Scoring function "ccor" calculates the sum of similarities
 between the clusters at positions k:i to cluster c over all k and i.
 Note the difference to "icor" where real data from positions are
-compared to clusters, while here two clusters are compared.
+compared to cluster centers, while here two cluster centers are compared.
 }
 

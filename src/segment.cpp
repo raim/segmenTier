@@ -19,14 +19,21 @@ using namespace Rcpp;
 //' @param seq the cluster sequence (where positions k:i are considered);
 //' notably this is not required here, but used as an argument for
 //' consistency with other scoring functions.
-//' @param M initial penalty parameter, used to set minimal segment sizes
+//' @param M minimal sequence length; Note, that this is not a strict
+//' cut-off but defined as a penalty that must be "overcome" by good score;
+//' set to \code{Mn} if you want to calculate the nuissance cluster score.
 //' @param csim position-cluster similarity matrix, where the rows
 //' are the positions in the sequence \code{seq} and columns are the
 //' the clusters
+//' @return Returns the score \code{s(k,i,c)} for cluster \code{c} between
+//' the positions \code{k} to \code{i} in the cluster sequence \code{seq},
+//' as used in the for scoring function "icor". 
 //' @export
 // [[Rcpp::export]]
 double scoreicor_c(int k, int i, int c, NumericVector seq,
 		   int M, NumericMatrix csim) {
+  
+  // NOTE: this function is not actually used in ccSMicor
 
   if ( c == 0 ) return 0; // nuissance cluster 
 
@@ -49,14 +56,23 @@ double scoreicor_c(int k, int i, int c, NumericVector seq,
 //' @param c the cluster to which similarities are to be calculated
 //' @param seq the cluster sequence (where clusters at positions k:i are
 //' considered)
-//' @param M initial penalty parameter, used to set minimal segment sizes
+//' @param M minimal sequence length; Note, that this is not a strict
+//' cut-off but defined as a penalty that must be "overcome" by good score;
+//' set to \code{Mn} if you want to calculate the nuissance cluster score.
 //' @param csim cluster-cluster similarity matrix
+//' @return Returns the score \code{s(k,i,c)} for cluster \code{c} between
+//' the positions \code{k} to \code{i} in the cluster sequence \code{seq},
+//' as used in the for scoring function "ccor". 
 //' @export
 // [[Rcpp::export]]
 double scorecor_c(int k, int i, int c, NumericVector seq,
 		  int M, NumericMatrix csim) {
 
-  if ( c == 0 ) return 0; // nuissance cluster 
+  // NOTE: this function is not actually used in ccSMccor
+
+  // TODO: add +1 to c to allow direct use from R, where cluster index is 
+  // +1 compared to c++ code.?
+  if ( c == 0 ) return 0; // nuissance cluster in R 
 
   // sum of similarities of clusters at positions k:i to cluster c
   double scr = -M;
@@ -76,15 +92,19 @@ double scorecor_c(int k, int i, int c, NumericVector seq,
 //' @param i end position for score calculation
 //' @param c the cluster to which similarities are to be calculated
 //' @param seq the cluster sequence (where clusters at positions k:i are
-//' considered)
-//' @param M initial penalty parameter, used to set minimal segment sizes
+//' considered). Note that \code{seq} is defined differently here than
+//' in the wrapper interfaces and MUST be a sequence of positive integers >0.
+//' @param M minimal sequence length; Note, that this is not a strict
+//' cut-off but defined as a penalty that must be "overcome" by good score.
 //' @param a the penalty for non-matching clusters
+//' @return Returns the score \code{s(k,i,c)} for cluster \code{c} between
+//' the positions \code{k} to \code{i} in the cluster sequence \code{seq}.
+//' This is used in the for scoring function "cls".
 //' @export
 // [[Rcpp::export]]
 double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 
   // NOTE: this function is used in ccSMcls!!
-
   if ( c == 0 ) return 0; // nuissance cluster 
   
   int k0=k;
@@ -109,22 +129,28 @@ double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 //' Note the difference to "ccor" where the cluster centers are compared
 //' instead of original data at positions k and i with a cluster.
 //' @param seq the cluster sequence (where positions k:i are considered);
-//' notably this argument not required here, but only used for
+//' notably this argument is not required here, but only used for
 //' consistency with other scoring functions
 //' @param c the cluster to which similarities are to be calculated; note, 
 //' that c=1 is the nuissance cluster
-//' @param M initial penalty parameter, used to set minimal segment sizes
-//' @param Mn penalty parameter for nuissance clusters, should be Mn<M
+//' @param M minimal sequence length; Note, that this is not a strict
+//' cut-off but defined as a penalty that must be "overcome" by good score.
+//' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+//' shorter distances between segments; only used in scoring functions
+//' "ccor" and "icor" 
 //' @param csim position-cluster similarity matrix, where the rows
 //' are the positions in the sequence \code{seq} and columns are the
 //' the clusters
+//' @return Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
+//' \code{seq} and cluster \code{c} for scoring function "icor".
 //' @export
 // [[Rcpp::export]]
 NumericMatrix ccSMicor(NumericVector seq, int c, int M, int Mn,
 		       NumericMatrix csim) {
 
   if ( c==1 ) M = Mn; // nuissance cluster - lower M!
-  int nrow = seq.length();
+  int nrow = seq.length(); // note: nrow could be obtained from csim, seq
+                           // used only for consistency of function signature
   NumericMatrix SM(nrow,nrow);
   std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
   for (int i = 0; i < nrow; i++) {
@@ -142,18 +168,24 @@ NumericMatrix ccSMicor(NumericVector seq, int c, int M, int Mn,
 //' Note the difference to "icor" where real data from positions are
 //' compared to cluster centers, while here two cluster centers are compared.
 //' @param seq the cluster sequence (where clusters at positions k:i are
-//' considered)
+//' considered). Note that \code{seq} is defined differently here than
+//' the wrapper interfaces and MUST be a sequence of positive integers >0.
 //' @param c the cluster to which similarities are to be calculated
-//' @param M initial penalty parameter, used to set minimal segment sizes
-//' @param Mn penalty parameter for nuissance clusters, should be Mn<M
+//' @param M minimal sequence length; Note, that this is not a strict
+//' cut-off but defined as a penalty that must be "overcome" by good score.
+//' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+//' shorter distances between segments; only used in scoring functions
+//' "ccor" and "icor" 
 //' @param csim cluster-cluster similarity matrix
+//' @return Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
+//' \code{seq} and cluster \code{c} for scoring function "ccor".
 //' @export
 // [[Rcpp::export]]
 NumericMatrix ccSMccor(NumericVector seq, int c, int M, int Mn, 
 		       NumericMatrix csim) {
   
   if ( c==1 ) M = Mn; // nuissance cluster - lower M!
-  int nrow = seq.length();
+  int nrow = seq.length(); 
   NumericMatrix SM(nrow,nrow);
   std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
   for (int i = 0; i < nrow; i++) {
@@ -170,9 +202,10 @@ NumericMatrix ccSMccor(NumericVector seq, int c, int M, int Mn,
 //' @inheritParams ccSMccor
 //' @export
 // [[Rcpp::export]]
-NumericMatrix ccSMncor(NumericVector seq, int c, int M, NumericMatrix csim) {
-
-  int nrow = seq.length();
+NumericMatrix ccSMncor(NumericVector seq, int c, int M, int Mn,
+		       NumericMatrix csim) {
+  // NOTE: Mn not used here, just for function signature consistency
+  int nrow = seq.length(); 
   NumericMatrix SM(nrow,nrow);
   std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
   for (int i = 0; i < nrow; i++) {
@@ -194,12 +227,17 @@ NumericMatrix ccSMncor(NumericVector seq, int c, int M, NumericMatrix csim) {
 //' Note: this function used in the scoring unction scorecls_c for individual
 //' calculations.
 //' @param seq the cluster sequence (where clusters at positions k:i are
-//' considered)
+//' considered). Note that \code{seq} is defined differently here than
+//' in the wrapper interfaces and MUST be a sequence of positive integers >0.
 //' @param c the cluster to which similarities are to be calculated
-//' @param M initial penalty parameter, used to set minimal segment sizes
-//' @param Mn not use here, present just for consistency between
-//' scoring matrix function calls
-//' @param csim integer, the penalty for non-matching clusters
+//' @param M minimal sequence length; Note, that this is not a strict
+//' cut-off but defined as a penalty that must be "overcome" by good score.
+//' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+//' shorter distances between segments; only used in scoring functions
+//' "ccor" and "icor" 
+//' @param csim integer, the penalty \code{a} for non-matching clusters
+//' @return Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
+//' \code{seq} and cluster \code{c} for simplest scoring function "cls".
 //' @export
 // [[Rcpp::export]]
 NumericMatrix ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
@@ -218,12 +256,17 @@ NumericMatrix ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
   return SM;
 }
 
+// TODO: rm dependency on seq, since on seq.length is required here!
+// Note that \code{seq} is defined differently here then
+// then in the wrapper interfaces and MUST be a sequence of positive
+// integers
+
 //' dynamic programming routine 
 //' @details: This is \code{\link{segmenTier}}'s core dynamic programing
 //' routine. It takes the scoring function matrices for all clusters,
 //'  and dynamically constructs the total score matrix S(i,c).
 //' @param seq the cluster sequence (where clusters at positions k:i are
-//' considered)
+//' considered). 
 //' @param C the list of clusters
 //' @param SM list of scoring function matrices
 //' @param multi if multiple \code{k} are found which return the same maximal
@@ -231,6 +274,10 @@ NumericMatrix ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
 //' This has little effect on real-life large data sets, since the situation
 //' will rarely occur. Default is "max".
 //' @param verb level of verbosity, currently not used (TODO: rm?)
+//' @return Returns the total score matrix \code{S(i,c)} and the matrix 
+//' \code{K(i,c)} which stores the position \code{k} which delivered
+//' the maximal score at position \code{i}. This is used in the back-tracing
+//' phase.
 //' @export
 // [[Rcpp::export]]
 List calculateTotalScore(NumericVector seq, NumericVector C, 
@@ -239,7 +286,7 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
   List SML(SM);
   
   // result matrices S(i,c) and K(i,c)
-  int N = seq.length();
+  int N = seq.length();  // TODO: get N and M from SM
   int M = C.length();
   NumericMatrix S(N,M); // total score matrix
   NumericMatrix K(N,M); // for backtracing

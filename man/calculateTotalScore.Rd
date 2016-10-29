@@ -8,7 +8,7 @@ calculateTotalScore(seq, C, SM, multi = "max", verb = 1L)
 }
 \arguments{
 \item{seq}{the cluster sequence (where clusters at positions k:i are
-considered)}
+considered).}
 
 \item{C}{the list of clusters}
 
@@ -20,6 +20,12 @@ This has little effect on real-life large data sets, since the situation
 will rarely occur. Default is "max".}
 
 \item{verb}{level of verbosity, currently not used (TODO: rm?)}
+}
+\value{
+Returns the total score matrix \code{S(i,c)} and the matrix 
+\code{K(i,c)} which stores the position \code{k} which delivered
+the maximal score at position \code{i}. This is used in the back-tracing
+phase.
 }
 \description{
 dynamic programming routine

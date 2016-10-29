@@ -8,28 +8,35 @@ ccSMicor(seq, c, M, Mn, csim)
 }
 \arguments{
 \item{seq}{the cluster sequence (where positions k:i are considered);
-notably this argument not required here, but only used for
+notably this argument is not required here, but only used for
 consistency with other scoring functions}
 
 \item{c}{the cluster to which similarities are to be calculated; note, 
 that c=1 is the nuissance cluster}
 
-\item{M}{initial penalty parameter, used to set minimal segment sizes}
+\item{M}{minimal sequence length; Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by good score.}
 
-\item{Mn}{penalty parameter for nuissance clusters, should be Mn<M}
+\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
+shorter distances between segments; only used in scoring functions
+"ccor" and "icor"}
 
 \item{csim}{position-cluster similarity matrix, where the rows
 are the positions in the sequence \code{seq} and columns are the
 the clusters}
+}
+\value{
+Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
+\code{seq} and cluster \code{c} for scoring function "icor".
 }
 \description{
 Scoring Function Matrix "icor"
 }
 \details{
 Scoring function "icor" calculates the sum of similarities of
-positions k:i to cluster c over all k and i.
+data at positions k:i to cluster centers c over all k and i.
 The similarities are calculated e.g., as a (Pearson) correlation between
-the individual positions and the tested cluster c center.
+the data at individual positions and the tested cluster c center.
 Note the difference to "ccor" where the cluster centers are compared
 instead of original data at positions k and i with a cluster.
 }

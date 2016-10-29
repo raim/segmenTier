@@ -74,16 +74,21 @@ segmentData <- function() {}
 ## of the data and a dynamic programming algo; ....
 clusterSegments <- function() {}
 
-#' segmenTier's main wrapper interface
-#' @param seq a clustering sequence
+#' segmenTier's main wrapper interface, calculates segments from a
+#' clustering sequence.
+#' @param seq a clustering sequence. The only strict requirement is that
+#' nuissance clusters (which will not be segmented) have to be numeric or
+#' character "0" (zero).
 #' @param csim cluster-cluster or position-cluster similarity
 #' matrix, for scoring functions ccor and icor, respectively
 #' @param score the scoring function to be used: "ccor", "icor" or "cls"
-#' @param M penalty for short sequences
-#' @param Mn penalty for nuissance cluster, Mn<M will allow shorter distances
-#' between segments
+#' @param M minimal sequence length; Note, that this is not a strict
+#' cut-off but defined as a penalty that must be "overcome" by good score.
+#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+#' shorter distances between segments; only used in scoring functions
+#' "ccor" and "icor" 
 #' @param a an additional penalty only used for pure cluster-based
-#' scoring w/o cluster similarity measures
+#' scoring w/o cluster similarity measures in scoring function "cls"
 #' @param nui the similarity score to be used for nuissance clusters in the
 #' cluster similarity matrices
 #' @param nextmax go backwards while score is increasing before openening a
@@ -97,14 +102,22 @@ clusterSegments <- function() {}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.mat store the scoring function matrix SM or the back-tracing
 #' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
-#' in testing stage or for debugging or illustration of the algorithm
+#' in testing stage or for debugging or illustration of the algorithm;
+#' see \code{\link{plotScoring}}
 #' @details This is the main R wrapper function for the segmentation algorithm.
 #' It takes a sequence of clusterings and returns segments of
 #' consistent clusters. It runs the dynamic programing algorithm for
 #' a selected scoring function and an according cluster similarity matrix,
 #' followed by the  back-tracing step to find segments.
 #' Some more details of the algorithm can be tuned, but these usually
-#' have little effect on real-life data sets. 
+#' have little effect on real-life data sets.
+#' @return Returns a list containing the main result ("segments"), "warnings"
+#' from the dynamic programing and back-tracing phases, and optionally (see
+#' option \code{save.mat} the score function matrices \code{SM}, the
+#' total score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+#' The main result structure "segments" is a 3-column matrix, where column 1
+#' is the cluster assignment and colums 2 and 3 are start and end position
+#' of the segments.
 #' @export
 segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
                             nextmax=TRUE, multi="min",multib="min", 
@@ -212,12 +225,18 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
 #' @param seq the original cluster sequence, optional for axis labeling
 #' @param out.file if supplied the scoring matrices will be plotted to
 #' individual png files named <out.file>_<number>.png
+#' @param verb level of verbosity; 0: no output, 1: progress messages
+
 #' @export
-plotScoring <- function(SM, seq, out.file) {
+plotScoring <- function(SM, seq, out.file, verb=2) {
+    files <- NULL
     for ( c in 1:length(SM) ) {
-        if ( !missing(out.file) ) 
-            png(paste(out.file,"_",c,".png",sep=""),
+        if ( !missing(out.file) ) {
+            file.name <- paste(out.file,"_",c,".png",sep="")
+            files <- c(files, file.name)
+            png(file.name,
                 width=5,height=5,res=200,units="in")
+        }
         image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,main=c)
         if ( !missing(seq) ) {
             axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
@@ -225,7 +244,16 @@ plotScoring <- function(SM, seq, out.file) {
         }
         if ( !missing(out.file) )
             dev.off()
-        else scan()
+        else {
+            cat(paste("plotted cluster ", c,
+                      ". please enter to proceed to the next plot"))
+            scan()
+        }
+    }
+    if ( !missing(out.file) ) {
+        if ( verb>0 )
+            cat(paste("plotted", paste(files,collapse=" ; "), date(), "\n"))
+        res <- return(files)
     }
 }
 
@@ -245,8 +273,9 @@ plotScoring <- function(SM, seq, out.file) {
 #' png will be plotted
 #' @param use.log plot the total data (\code{tot}) with logged y-axis
 #' @param add.plots in the plot layout, leave these rows for additional
-#' @param verb level of verbosity; 0: no output, 1: progress messages
 #' external plots
+#' @param verb level of verbosity; 0: no output, 1: progress messages
+#' @return Returns the file.name if out.file was specified.
 #' @export
 plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
                          add.plots=0, verb=2) {
@@ -347,8 +376,12 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
             axis(2,at=1:length(multib),labels=multib,las=2)
         }
     }
-    if ( !missing(out.file) ) 
+    if ( !missing(out.file) )  {
         dev.off()
+        if ( verb>0 )
+            cat(paste("plotted\t", file.name, date(), "\n"))
+        return(file.name)
+    }
     if ( verb>0 ) cat(paste("done\t", date(), "\n"))
 }
 
@@ -370,9 +403,11 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
 #' @param seq a sequence of cluster assignments
 #' @param C optional cluster sorting
 #' @param score the scoring function to be used: ccor, icor or cls
-#' @param M penalty for short sequences
-#' @param Mn penalty for nuissance cluster, Mn<M will allow shorter distances
-#' between segments
+#' @param M minimal sequence length; Note, that this is not a strict
+#' cut-off but defined as a penalty that must be "overcome" by good score.
+#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+#' shorter distances between segments; only used in scoring functions
+#' "ccor" and "icor" 
 #' @param csim cluster-cluster or position-cluster similarity
 #' matrix, for scoring functions ccor and icor, respectively
 #' @param ncpu number of available cores (CPUs), passed to
@@ -380,30 +415,30 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
 #' @param preschedule \code{parallel::mclapply} option that currently
 #' requires to be set to FALSE to avoid an error in data collection from
 #' parallel processes
+#' @return Returns the scoring function matrices \code{SM} for all clusters
+#' in the sequence \code{seq}.
 #' @export
 calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim, 
                                    ncpu=1, preschedule=FALSE) {
   if ( missing(C) ) 
     C <- sort(unique(seq)) # get clusters
 
-  ## get requested scoring function
+  ## get requested scoring functions - from segment.cpp !
   ## NOTE: csim is an integer for scoring function "cls"; and
   ## a matrix NxC for "icor"; and CxC for "cor"
   score <- paste("ccSM",score,sep="")
-  getMat <- get(score,mode="function")
+  getMat <- get(score,mode="function") 
 
-  ## parallel 
-  if ( ncpu<2 ) {
-    return(lapply(C, function(c) getMat(seq, c, M, Mn, csim)))
-  } else {
-    ##require("parallel")
-
-    ## TODO: make parLapply work
-    options(warn=0)
-    x <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
-                            mc.cores=ncpu,mc.preschedule=preschedule)
-    options(warn=0)
-    return(x)
+  if ( ncpu<2 ) { # single CPU
+      return(lapply(C, function(c) getMat(seq, c, M, Mn, csim)))
+  } else { # multiple CPUs: use package parallel!
+      
+      ## TODO: make parLapply work
+      options(warn=0)
+      x <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
+                              mc.cores=ncpu,mc.preschedule=preschedule)
+      options(warn=0)
+      return(x)
   }
 }
 
@@ -485,4 +520,5 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
     segments <- segments[order(as.numeric(segments[,2])),,drop=FALSE]
     list(segments=segments,warnings=warnings)
 }
-
+    
+    

@@ -2,27 +2,32 @@
 % Please edit documentation in R/segment.R
 \name{segmentClusters}
 \alias{segmentClusters}
-\title{segmenTier's main wrapper interface}
+\title{segmenTier's main wrapper interface, calculates segments from a
+clustering sequence.}
 \usage{
 segmentClusters(seq, csim, score = "ccor", M = 175, Mn = 20, a = 2,
   nui = 1, nextmax = TRUE, multi = "min", multib = "min", ncpu = 1,
   verb = 1, save.mat = "")
 }
 \arguments{
-\item{seq}{a clustering sequence}
+\item{seq}{a clustering sequence. The only strict requirement is that
+nuissance clusters (which will not be segmented) have to be numeric or
+character "0" (zero).}
 
 \item{csim}{cluster-cluster or position-cluster similarity
 matrix, for scoring functions ccor and icor, respectively}
 
 \item{score}{the scoring function to be used: "ccor", "icor" or "cls"}
 
-\item{M}{penalty for short sequences}
+\item{M}{minimal sequence length; Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by good score.}
 
-\item{Mn}{penalty for nuissance cluster, Mn<M will allow shorter distances
-between segments}
+\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
+shorter distances between segments; only used in scoring functions
+"ccor" and "icor"}
 
 \item{a}{an additional penalty only used for pure cluster-based
-scoring w/o cluster similarity measures}
+scoring w/o cluster similarity measures in scoring function "cls"}
 
 \item{nui}{the similarity score to be used for nuissance clusters in the
 cluster similarity matrices}
@@ -43,10 +48,21 @@ either "min" (default), "max" or "skip"}
 
 \item{save.mat}{store the scoring function matrix SM or the back-tracing
 matrix K by adding "SM" and "SK" to the string vector save.mat; useful
-in testing stage or for debugging or illustration of the algorithm}
+in testing stage or for debugging or illustration of the algorithm;
+see \code{\link{plotScoring}}}
+}
+\value{
+Returns a list containing the main result ("segments"), "warnings"
+from the dynamic programing and back-tracing phases, and optionally (see
+option \code{save.mat} the score function matrices \code{SM}, the
+total score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+The main result structure "segments" is a 3-column matrix, where column 1
+is the cluster assignment and colums 2 and 3 are start and end position
+of the segments.
 }
 \description{
-segmenTier's main wrapper interface
+segmenTier's main wrapper interface, calculates segments from a
+clustering sequence.
 }
 \details{
 This is the main R wrapper function for the segmentation algorithm.

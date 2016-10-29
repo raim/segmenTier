@@ -17,11 +17,18 @@ scoreicor_c(k, i, c, seq, M, csim)
 notably this is not required here, but used as an argument for
 consistency with other scoring functions.}
 
-\item{M}{initial penalty parameter, used to set minimal segment sizes}
+\item{M}{minimal sequence length; Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by good score;
+set to \code{Mn} if you want to calculate the nuissance cluster score.}
 
 \item{csim}{position-cluster similarity matrix, where the rows
 are the positions in the sequence \code{seq} and columns are the
 the clusters}
+}
+\value{
+Returns the score \code{s(k,i,c)} for cluster \code{c} between
+the positions \code{k} to \code{i} in the cluster sequence \code{seq},
+as used in the for scoring function "icor".
 }
 \description{
 Scoring Function "icor" - Test
