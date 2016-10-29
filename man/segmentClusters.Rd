@@ -15,7 +15,7 @@ nuissance clusters (which will not be segmented) have to be numeric or
 character "0" (zero).}
 
 \item{csim}{cluster-cluster or position-cluster similarity
-matrix, for scoring functions ccor and icor, respectively}
+matrix, for scoring functions "ccor" and "icor", respectively}
 
 \item{score}{the scoring function to be used: "ccor", "icor" or "cls"}
 

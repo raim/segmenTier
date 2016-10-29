@@ -4,13 +4,15 @@
 \alias{plotScoring}
 \title{plot the scoring function matrices as a heatmap}
 \usage{
-plotScoring(SM, seq, out.file, verb = 2)
+plotScoring(SM, seq, score, out.file, verb = 2)
 }
 \arguments{
 \item{SM}{a list with scoring function matrices for each cluster,
 see \code{\link{calculateScoringMatrix}}}
 
 \item{seq}{the original cluster sequence, optional for axis labeling}
+
+\item{score}{name of the used scoring function}
 
 \item{out.file}{if supplied the scoring matrices will be plotted to
 individual png files named <out.file>_<number>.png}

@@ -10,7 +10,7 @@
 #'@importFrom Rcpp evalCpp
 #'@importFrom parallel mclapply
 #'@importFrom graphics image axis par plot points lines legend arrows matplot
-#'@importFrom  grDevices png dev.off rainbow
+#'@importFrom grDevices png dev.off rainbow
 #'@useDynLib segmenTier
 NULL # this just ends the global package documentation
 

@@ -12,7 +12,7 @@ calculateScoringMatrix(seq, C, score = "ccor", M, Mn, csim, ncpu = 1,
 
 \item{C}{optional cluster sorting}
 
-\item{score}{the scoring function to be used: ccor, icor or cls}
+\item{score}{the scoring function to be used: "ccor", "icor" or "cls"}
 
 \item{M}{minimal sequence length; Note, that this is not a strict
 cut-off but defined as a penalty that must be "overcome" by good score.}
@@ -22,7 +22,7 @@ shorter distances between segments; only used in scoring functions
 "ccor" and "icor"}
 
 \item{csim}{cluster-cluster or position-cluster similarity
-matrix, for scoring functions ccor and icor, respectively}
+matrix, for scoring functions "ccor" and "icor", respectively}
 
 \item{ncpu}{number of available cores (CPUs), passed to
 \code{parallel::mclapply}}
