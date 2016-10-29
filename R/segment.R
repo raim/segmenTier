@@ -177,6 +177,7 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
         }
         map <- c('0'=1, map  + 1)
     }
+    
 
     ## for the pure cluster segmentation pass par. a to ccSMcls
     if ( score=="cls" ) csim <- a 
@@ -190,7 +191,7 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
       cat(paste("scoring function", score, "\t", date(), "\n"))
     SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
                                  csim=csim, ncpu=ncpu)
-
+    
     ## 3: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 )
         cat(paste("\ttotal score with", multi, "\t", date(), "\n"))
@@ -201,8 +202,12 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
         cat(paste("\tbacktracing with", multib, "\t", date(), "\n"))
     seg <- backtrace(S=SK$S, K=SK$K, multib=multib, nextmax=nextmax, verb=verb)
 
-    ## map back segments to original
+    ## remap: map back to original cluster names
     remap <- as.numeric(names(map))
+    ## re-name to original clusters if stored
+    if ( "SM" %in% save.mat )
+        names(SM) <- remap[as.numeric(names(SM))]
+    ## map back segments to original
     seg$segments[,1] <- remap[seg$segments[,1]]
 
     ## rm nuissance segments
@@ -237,11 +242,15 @@ plotScoring <- function(SM, seq, out.file, verb=2) {
             png(file.name,
                 width=5,height=5,res=200,units="in")
         }
-        image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,main=c)
+        
+        image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,
+              main="scoring function matrix", ylab=NA,xlab=NA)
         if ( !missing(seq) ) {
             axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
             axis(3,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
         }
+        legend("bottomright",paste("cluster", c),cex=2,bty="n")
+        
         if ( !missing(out.file) )
             dev.off()
         else {
@@ -430,16 +439,17 @@ calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim,
   getMat <- get(score,mode="function") 
 
   if ( ncpu<2 ) { # single CPU
-      return(lapply(C, function(c) getMat(seq, c, M, Mn, csim)))
+      SM <- lapply(C, function(c) getMat(seq, c, M, Mn, csim))
   } else { # multiple CPUs: use package parallel!
       
       ## TODO: make parLapply work
       options(warn=0)
-      x <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
+      SM <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
                               mc.cores=ncpu,mc.preschedule=preschedule)
       options(warn=0)
-      return(x)
   }
+  names(SM) <- C
+  SM
 }
 
 
