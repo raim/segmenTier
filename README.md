@@ -1,1 +1,2 @@
-# segmenTier
+# ![segmenTier](doc/logo.png)
+
