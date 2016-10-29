@@ -228,12 +228,13 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
 #' @param SM a list with scoring function matrices for each cluster,
 #' see \code{\link{calculateScoringMatrix}}
 #' @param seq the original cluster sequence, optional for axis labeling
+#' @param score name of the used scoring function
 #' @param out.file if supplied the scoring matrices will be plotted to
 #' individual png files named <out.file>_<number>.png
 #' @param verb level of verbosity; 0: no output, 1: progress messages
 
 #' @export
-plotScoring <- function(SM, seq, out.file, verb=2) {
+plotScoring <- function(SM, seq, score, out.file, verb=2) {
     files <- NULL
     for ( c in 1:length(SM) ) {
         if ( !missing(out.file) ) {
@@ -244,7 +245,9 @@ plotScoring <- function(SM, seq, out.file, verb=2) {
         }
         
         image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,
-              main="scoring function matrix", ylab=NA,xlab=NA)
+              main=paste("scoring function:",
+                         ifelse(missing(score),"",score)),
+              ylab=NA,xlab=NA)
         if ( !missing(seq) ) {
             axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
             axis(3,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)

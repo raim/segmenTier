@@ -100,4 +100,4 @@ plotSegments(scrR, seq=seq) #,out="segment_test")
 
 ## plot scoring function matrices
 for ( score in scores ) 
-    plotScoring(scrR[[score]]$SM, seq=seq) 
+    plotScoring(scrR[[score]]$SM, seq=seq, score=score) 
