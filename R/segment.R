@@ -240,8 +240,7 @@ plotScoring <- function(SM, seq, score, out.file, verb=2) {
         if ( !missing(out.file) ) {
             file.name <- paste(out.file,"_",c,".png",sep="")
             files <- c(files, file.name)
-            png(file.name,
-                width=5,height=5,res=200,units="in")
+            png(file.name,width=5,height=5,res=200,units="in")
         }
         
         image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,
@@ -321,6 +320,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
         file.name <- paste(out.file, ".png",sep="")
         png(file.name, width=6,height=rws*.8,res=200,units="in")
     }
+    orig.par <- par(c("mfcol","mai","mgp"))
     par(mfcol=c(rws,1),mai=c(.01,.5,.01,.01),mgp=c(1.7,.5,0),xaxs="i")
     
     ## plot original data
@@ -388,6 +388,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
             axis(2,at=1:length(multib),labels=multib,las=2)
         }
     }
+    par(orig.par)
     if ( !missing(out.file) )  {
         dev.off()
         if ( verb>0 )
