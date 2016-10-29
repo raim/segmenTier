@@ -10,8 +10,9 @@ seq <- c(4,4,1,2,4,4,4,2,4,4,3,4,4,2,4,1,4,4,0,0,0,0,0,0,1,2,2,2,4,1,1,1,1,
 ## list of non-nuissance clusters
 C <- 1:4
 
+## CLUSTER SIMILARITIES
 ## scoring function "ccor":
-## cluster X cluster correlation matrix, for "ccor"
+## cluster X cluster correlation matrix csim for "ccor"
 cr <- matrix(0,ncol=length(C),nrow=length(C))
 diag(cr)<- 1 # set diagonal to 1
 cr[1,2] <- cr[2,1] <- -.4 # just enough to avoid merging of 2 with 1
@@ -19,7 +20,7 @@ cr[1,3] <- cr[3,1] <- -.5
 cr[2,4] <- cr[4,2] <- -.4 # just enought to avoid merging of 2 with 4
 
 ## scoring function "icor":
-## position X cluster correlation matrix, for "icor"
+## position X cluster correlation matrix csim for "icor"
 ic <- matrix(0,ncol=length(C),nrow=length(seq))
 for ( i in 1:length(seq) ) {
     for ( j in 1:ncol(ic) )
