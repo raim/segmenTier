@@ -80,7 +80,7 @@ clusterSegments <- function() {}
 #' nuissance clusters (which will not be segmented) have to be numeric or
 #' character "0" (zero).
 #' @param csim cluster-cluster or position-cluster similarity
-#' matrix, for scoring functions ccor and icor, respectively
+#' matrix, for scoring functions "ccor" and "icor", respectively
 #' @param score the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.
@@ -414,14 +414,14 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
 #' generate scoring function matrices for each cluster
 #' @param seq a sequence of cluster assignments
 #' @param C optional cluster sorting
-#' @param score the scoring function to be used: ccor, icor or cls
+#' @param score the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.
 #' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
 #' shorter distances between segments; only used in scoring functions
 #' "ccor" and "icor" 
 #' @param csim cluster-cluster or position-cluster similarity
-#' matrix, for scoring functions ccor and icor, respectively
+#' matrix, for scoring functions "ccor" and "icor", respectively
 #' @param ncpu number of available cores (CPUs), passed to
 #' \code{parallel::mclapply}
 #' @param preschedule \code{parallel::mclapply} option that currently
