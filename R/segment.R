@@ -128,6 +128,7 @@ segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
     seqr <- seq
 
     ## 1a: map to internal 1:K clustering:
+    ## TODO: allow character clusters!?
     map <- sort(unique(seqr)) # clusters
     map <- map[map!=0] ##  nuissance cluster
     names(map) <- map

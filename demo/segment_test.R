@@ -7,8 +7,15 @@ library("segmenTier")
 seq <- c(4,4,1,2,4,4,4,2,4,4,3,4,4,2,4,1,4,4,0,0,0,0,0,0,1,2,2,2,4,1,1,1,1,
          0,0,1,1,1,1,1,3,3,3,0,3,3,3,3,0,1,3,4,3,2,4,4,1,3)
 
+### clustering can also be letters
+## TODO: use this to test allowing character clusters
+#seq <- letters[seq]
+## BUT: nuissance cluster must be 0 or "0"!
+#seq[seq=="a"]  <- "0"
+
 ## list of non-nuissance clusters
-C <- 1:4
+C <- unique(seq)
+C <- C[as.character(C)!="0"]
 
 ## CLUSTER SIMILARITIES
 ## scoring function "ccor":
