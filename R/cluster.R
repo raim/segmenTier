@@ -1,5 +1,14 @@
 ### TIME-SERIES CLUSTERING PARAMETERS
 
+## get Discrete Fourier Transformation
+get.fft <- function(x) {
+    n <- floor(ncol(x)/2) +1 ## Nyquist-freq
+    fft <- t(mvfft(t(x)))[,1:n]
+    colnames(fft) <- c("DC",as.character(1:(n-1)))
+    fft
+}
+
+
 processTimeseries <- function(ts,
                               smooth=FALSE, trafo="",
                               use.fft=TRUE, dft.range=2:7,
@@ -107,7 +116,6 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
         cat(paste("clustering, N=",N,", K=",K, "\n"))
         
         ## cluster
-        ## TODO: cluster SNR instead!
         km <- kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart)
         ## use alternative algo if this error occured
         if (km$ifault==4) {
@@ -229,7 +237,6 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         colnames(segments) <- c("cluster","start","end","fuse")
         segids <- paste(sgtype, "_", rownames(segments),sep="")
         segtypes <- paste(sgtype, "_",sub("_.*", "",rownames(segments)),sep="")
-        ##centers[[k]] <- centers[[k]][sort(unique(segments[,1])),]
         segs <- data.frame(ID=segids,
                            type=segtypes,
                            CL=segments[,1],
