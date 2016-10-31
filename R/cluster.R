@@ -175,7 +175,7 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
             ## NOTE: should be odd number to maintain neg. values!
                                         #csim <- csim^scale
             
-            seg <- segmentClusters(seq=seq,csim=csim,csim.scale=scale,
+            seg <- segmentClusters(seq=seq,csim=csim,csim.scale=csim.scale,
                                    score=score,M=M,Mn=Mn,nui=nui.cr,
                                    multi=multi, multib=multib,nextmax=nextmax,
                                    save.mat=c("SK"),verb=2)
