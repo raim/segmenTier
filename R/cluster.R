@@ -195,7 +195,7 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
             if ( nrow(segs)>1 ) {
                 fuse <- rep(NA,nrow(segs))
                 for ( j in 2:nrow(segs) ) 
-                    fuse[j] <- cr[segs[j,1],segs[j-1,1]]
+                    fuse[j] <- cset$Ccc[[k]][segs[j,1],segs[j-1,1]]
                 ## FUSE directly adjacent if clusters correlate?
                 adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
                 close <- c(FALSE,adj) & fuse > fuse.thresh
