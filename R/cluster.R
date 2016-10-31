@@ -98,7 +98,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
     ## CLUSTERING
     ## stored data
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(selected))
-    centers <- Pci <- Cca <- rep(list(NA), length(selected))
+    centers <- Pci <- Ccc <- rep(list(NA), length(selected))
     
     allsegs <- NULL
 
