@@ -1,6 +1,6 @@
 ### TIME-SERIES CLUSTERING PARAMETERS
 
-prepareTimeseries <- function(ts,
+processTimeseries <- function(ts,
                               smooth=FALSE, trafo="",
                               use.fft=TRUE, dft.range=2:7,
                               use.snr=TRUE, low.thresh=1) {
@@ -239,7 +239,8 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         segs <- data.frame(ID=segids,
                            type=segtypes,
                            CL=segments[,1],
-                           segments[,2:3,drop=FALSE])
+                           segments[,2:3,drop=FALSE],
+                           fuse=segments[,4,drop=FALSE])
                            #segcoors)
         allsegs <- rbind(allsegs, segs)
     }

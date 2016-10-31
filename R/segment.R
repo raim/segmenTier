@@ -139,10 +139,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     }
 
     ## scale similarity matrix!
-    ## TODO: check if number is odd
-    if ( csim.scale %% 2 != 0 )
-        warning("csim.scale should be odd", csim.scale)
-
+    ## TODO: check if number is odd, do this with tolerance
+    if ( csim.scale %% 2 < .Machine$double.eps^0.5 )
+        warning("csim.scale should be odd: ", csim.scale)
+    
     csim <- csim^csim.scale
 
     
