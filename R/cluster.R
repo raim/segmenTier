@@ -141,7 +141,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
     colnames(clusters) <- names(centers) <- paste("K",usedk,sep="")
 
     list(clusters=clusters, Pci=Pci, Ccc=Ccc,
-         requestedk, usedk=usedk, centers=centers)
+         selected=selected, usedk=usedk, centers=centers)
 }
 
 segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
