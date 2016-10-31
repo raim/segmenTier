@@ -11,12 +11,14 @@ segmenTier : cluster-based segmentation
 from a sequential clustering
 }
 \section{Dependencies}{
- The package strictly depends on \code{package::Rcpp},
-and \code{package:parallel} allows to signficantly speed up scoring
-function matrix calculations. All other dependencies are
-usually present in a basuc installation (\code{graphics}, \code{grDevices})).
+ The package strictly depends on
+\code{\link[Rcpp]{Rcpp}},
+and \code{\link[parallel]{parallel}} allows to
+signficantly speed up scoring function matrix calculations. All other
+dependencies are usually present in a basic installation
+(\code{graphics}, \code{grDevices})).
 }
 \author{
-Rainer Machne, Peter F. Stadler
+Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
 }
 

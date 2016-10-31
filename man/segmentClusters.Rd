@@ -42,7 +42,8 @@ either "min" (default) or "max"}
 either "min" (default), "max" or "skip"}
 
 \item{ncpu}{number of available cores (CPUs), passed to
-\code{parallel::mclapply} by \code{\link{calculateScoringMatrix}}}
+\code{\link[parallel:mclapply]{parallel::mclapply}} by
+\code{\link{calculateScoringMatrix}}}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 

@@ -1,12 +1,14 @@
 #' segmenTier : cluster-based segmentation
 #' from a sequential clustering
-#'@author Rainer Machne, Peter F. Stadler
+#'@author Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
 #'@docType package
 #'@name segmenTier
-#'@section Dependencies: The package strictly depends on \code{package::Rcpp},
-#' and \code{package:parallel} allows to signficantly speed up scoring
-#' function matrix calculations. All other dependencies are
-#' usually present in a basuc installation (\code{graphics}, \code{grDevices})).
+#'@section Dependencies: The package strictly depends on
+#' \code{\link[Rcpp]{Rcpp}},
+#' and \code{\link[parallel]{parallel}} allows to
+#' signficantly speed up scoring function matrix calculations. All other
+#' dependencies are usually present in a basic installation
+#' (\code{graphics}, \code{grDevices})).
 #'@importFrom Rcpp evalCpp
 #'@importFrom parallel mclapply
 #'@importFrom graphics image axis par plot points lines legend arrows matplot
@@ -98,7 +100,8 @@ clusterSegments <- function() {}
 #' @param multib handling of multiple k with max. score in back-trace phase,
 #' either "min" (default), "max" or "skip"
 #' @param ncpu number of available cores (CPUs), passed to
-#' \code{parallel::mclapply} by \code{\link{calculateScoringMatrix}}
+#' \code{\link[parallel:mclapply]{parallel::mclapply}} by
+#' \code{\link{calculateScoringMatrix}}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.mat store the scoring function matrix SM or the back-tracing
 #' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
@@ -425,10 +428,10 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
 #' @param csim cluster-cluster or position-cluster similarity
 #' matrix, for scoring functions "ccor" and "icor", respectively
 #' @param ncpu number of available cores (CPUs), passed to
-#' \code{parallel::mclapply}
-#' @param preschedule \code{parallel::mclapply} option that currently
-#' requires to be set to FALSE to avoid an error in data collection from
-#' parallel processes
+#' \code{\link[parallel:mclapply]{parallel::mclapply}}
+#' @param preschedule \code{\link[parallel:mclapply]{parallel::mclapply}}
+#' option that currently requires to be set to FALSE to avoid an error in
+#' data collection from parallel processes
 #' @return Returns the scoring function matrices \code{SM} for all clusters
 #' in the sequence \code{seq}.
 #' @export

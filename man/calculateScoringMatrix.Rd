@@ -25,11 +25,11 @@ shorter distances between segments; only used in scoring functions
 matrix, for scoring functions "ccor" and "icor", respectively}
 
 \item{ncpu}{number of available cores (CPUs), passed to
-\code{parallel::mclapply}}
+\code{\link[parallel:mclapply]{parallel::mclapply}}}
 
-\item{preschedule}{\code{parallel::mclapply} option that currently
-requires to be set to FALSE to avoid an error in data collection from
-parallel processes}
+\item{preschedule}{\code{\link[parallel:mclapply]{parallel::mclapply}}
+option that currently requires to be set to FALSE to avoid an error in
+data collection from parallel processes}
 }
 \value{
 Returns the scoring function matrices \code{SM} for all clusters
