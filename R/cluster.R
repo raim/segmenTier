@@ -92,7 +92,6 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 
     dat <- tset$ts
     rm.vals <- tset$rm.vals
-
     N <- nrow(dat)
 
     ## CLUSTERING
@@ -100,8 +99,6 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(selected))
     centers <- Pci <- Ccc <- rep(list(NA), length(selected))
     
-    allsegs <- NULL
-
     usedk <- selected
     for ( k in 1:length(selected) ) {
 
@@ -144,12 +141,109 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
     colnames(clusters) <- names(centers) <- paste("K",usedk,sep="")
 
     list(clusters=clusters, Pci=Pci, Ccc=Ccc,
-         usedk=usedk, centers=centers)
+         requestedk, usedk=usedk, centers=centers)
 }
 
-segmentTimeseries <- function(nui.cr=1, scores=c("ccor","icor"), M=175, Mn=15,
-                              multi="max",multib= "max", nextmax=TRUE) {}
+segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
+                              M=175, Mn=20, a=2, nui=1,
+                              nextmax=TRUE, multi="min",multib="min", 
+                              ncpu=1, verb=1, save.mat="") {
 
+        
+    allsegs <- NULL
 
+    for ( k in 1:ncol(cset$clusters) ) {
+
+        seq <- cset$clusters[,k]
+        selected <- cset$selected[k]
+
+        scrR <- rep(list(NA),length(scores))
+        names(scrR) <- scores
+        segments <- NULL
+
+        for ( score in scores  ) {
+            multS <- rep(list(NA),length(multi) +1)
+            names(multS) <- c("SM",multi)
+            multS[[multi]] <- rep(list(NA),length(multib)+1)
+            names(multS[[multi]]) <- c("SK",multib)
+            
+            if ( score=="ccor" ) csim <- cset$Ccc[[k]]
+            if ( score=="icor" ) csim <- cset$Pci[[k]]
+            if ( score=="xcor" ) csim <- cset$Ccc[[k]]
+            
+            ## scale csim!
+            ## NOTE: should be odd number to maintain neg. values!
+                                        #csim <- csim^scale
+            
+            seg <- segmentClusters(seq=seq,csim=csim,csim.scale=scale,
+                                   score=score,M=M,Mn=Mn,nui=nui.cr,
+                                   multi=multi, multib=multib,nextmax=nextmax,
+                                   save.mat=c("SK"),verb=2)
+            ##multS$SM <- seg$SM
+            multS[[multi]]$SK <- seg$SK
+            ## store
+            multS[[multi]][[multib]] <- seg$segments
+            scrR[[score]] <- multS
+            
+            ## store segments
+            segs <- seg$segments
+            
+            ## fuse by data
+            #segs <- fuseSegments(segs, seq, dat)
+            
+            ## FUSE correlating?
+            if ( nrow(segs)>1 ) {
+                fuse <- rep(NA,nrow(segs))
+                for ( j in 2:nrow(segs) ) 
+                    fuse[j] <- cr[segs[j,1],segs[j-1,1]]
+                ## FUSE directly adjacent if clusters correlate?
+                adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
+                close <- c(FALSE,adj) & fuse > fuse.thresh
+                if ( sum(close)>0 )
+                    cat(paste("\t",sum(close), "segments could be fused\n"))
+            }
+            if ( nrow(segs) > 0 ) {
+                if ( nrow(segs)==1 ) close <- FALSE 
+                segs <- cbind(segs,close)
+                rownames(segs) <- paste(paste(score,scale,sep=""),
+                                        1:nrow(segs),sep="_")
+                segments <- rbind(segments,segs)
+            }
+        }
+        if ( is.null(segments) ) {
+            cat(paste("no segments\n"))
+            next
+        }
+        
+        ## SEGMENT TYPE:
+        ## K (cluster number), k (repeated  runs of same clustering),
+        ## NOTE: naming by original K selected[k], the used[k] can be lower
+        ## if not enough data was present
+        ## TODO: add M, nui, (dyn.prog. settings)
+        ## TODO: add usedk
+        sgtype <- paste(#trafo,ifelse(trafo!="","_",""),
+                        #ifelse(use.snr,"snr_",""),
+                        "K",str_pad(selected,2,pad="0"),"_", "k", k, sep="")
+        
+        ## storing results
+        colnames(segments) <- c("cluster","start","end","fuse")
+        segids <- paste(segid, "_", sgtype, "_", rownames(segments),sep="")
+        segtypes <- paste(sgtype, "_",sub("_.*", "",rownames(segments)),sep="")
+        #segcoors <- cbind(chr = rep(NA, nrow(segments)),
+        #                  segments[, 2:3,drop=FALSE] + primseg[i,"start"] - 1,
+        #                  strand=rep(NA,nrow(segments)),
+        #                  fuse=segments[,4,drop=FALSE])
+        #segcoors <- index2coor(segcoors,chrS)
+        ## store only the final 
+        ##centers[[k]] <- centers[[k]][sort(unique(segments[,1])),]
+        segs <- data.frame(ID=segids,
+                           type=segtypes,
+                           CL=segments[,1],
+                           segments[,2:3,drop=FALSE])
+                           #segcoors)
+        allsegs <- rbind(allsegs, segs)
+    }
+    allsegs
+}
     
 
