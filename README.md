@@ -5,6 +5,7 @@
 ```R
 install.packages(devtools) # if not already installed
 install_github("raim/segmenTier")
+```
 
 ## Usage
 
