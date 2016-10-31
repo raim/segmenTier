@@ -123,7 +123,7 @@ clusterSegments <- function() {}
 #' is the cluster assignment and colums 2 and 3 are start and end position
 #' of the segments.
 #' @export
-segmentClusters <- function(seq, csim, csim.scale=1
+segmentClusters <- function(seq, csim, csim.scale=1,
                             cset, k=1,
                             score="ccor",
                             M=175, Mn=20, a=2, nui=1,
