@@ -76,6 +76,7 @@ segmentData <- function() {}
 ## of the data and a dynamic programming algo; ....
 clusterSegments <- function() {}
 
+
 #' segmenTier's main wrapper interface, calculates segments from a
 #' clustering sequence.
 #' @param seq a clustering sequence. The only strict requirement is that
@@ -122,9 +123,28 @@ clusterSegments <- function() {}
 #' is the cluster assignment and colums 2 and 3 are start and end position
 #' of the segments.
 #' @export
-segmentClusters <- function(seq, csim, score="ccor", M=175, Mn=20, a=2, nui=1,
+segmentClusters <- function(seq, csim, csim.scale=1
+                            cset, k=1,
+                            score="ccor",
+                            M=175, Mn=20, a=2, nui=1,
                             nextmax=TRUE, multi="min",multib="min", 
                             ncpu=1, verb=1, save.mat="") {
+
+    ## cluster set from clusterTimeseries
+    if ( !missing(cset) ) {
+        seq <- cset$clusters[,k]
+        if ( score=="ccor" ) csim <- cset$Ccc[[k]]
+        if ( score=="icor" ) csim <- cset$Pci[[k]]
+        if ( score=="xcor" ) csim <- cset$Ccc[[k]]
+    }
+
+    ## scale similarity matrix!
+    ## TODO: check if number is odd
+    if ( csim.scale %% 2 != 0 )
+        warning("csim.scale should be odd", csim.scale)
+
+    csim <- csim^csim.scale
+
     
     ## 1: set up sequence and data
     N <- length(seq)
