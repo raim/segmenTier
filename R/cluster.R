@@ -104,7 +104,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 
         ## get cluster number K
         K <- min(c(selected[k],sum(!duplicated(dat[!rm.vals,]))))
-        cat(paste("clustering:", segid, ", N=",N,", K=",K, "\n"))
+        cat(paste("clustering, N=",N,", K=",K, "\n"))
         
         ## cluster
         ## TODO: cluster SNR instead!
@@ -113,7 +113,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
         if (km$ifault==4) {
             km <- kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart,
                          algorithm="MacQueen")
-            cat(paste(segid,"\tWARNING: quick-transfer error\n"))
+            cat(paste("quick-transfer error in kmeans, taking MacQueen\n"))
         }
         
         ## prepare cluster sequence
@@ -227,21 +227,14 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         
         ## storing results
         colnames(segments) <- c("cluster","start","end","fuse")
-        segids <- paste(segid, "_", sgtype, "_", rownames(segments),sep="")
+        segids <- paste(sgtype, "_", rownames(segments),sep="")
         segtypes <- paste(sgtype, "_",sub("_.*", "",rownames(segments)),sep="")
-        #segcoors <- cbind(chr = rep(NA, nrow(segments)),
-        #                  segments[, 2:3,drop=FALSE] + primseg[i,"start"] - 1,
-        #                  strand=rep(NA,nrow(segments)),
-        #                  fuse=segments[,4,drop=FALSE])
-        #segcoors <- index2coor(segcoors,chrS)
-        ## store only the final 
         ##centers[[k]] <- centers[[k]][sort(unique(segments[,1])),]
         segs <- data.frame(ID=segids,
                            type=segtypes,
                            CL=segments[,1],
                            segments[,2:3,drop=FALSE],
                            fuse=segments[,4,drop=FALSE])
-                           #segcoors)
         allsegs <- rbind(allsegs, segs)
     }
     allsegs
