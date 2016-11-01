@@ -129,7 +129,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
                             cset, k=1,
                             score="ccor",
                             M=175, Mn=20, a=2, nui=1,
-                            nextmax=TRUE, multi="min",multib="min", 
+                            nextmax=TRUE, multi="max",multib="max", 
                             ncpu=1, verb=1, save.mat="") {
 
     ## cluster set from clusterTimeseries
@@ -558,6 +558,7 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
         i <- k -1
     }
     segments <- segments[order(as.numeric(segments[,2])),,drop=FALSE]
+    colnames(segments) <- c("CL","start","end")
     list(segments=segments,warnings=warnings)
 }
     
