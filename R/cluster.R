@@ -11,6 +11,36 @@ get.fft <- function(x) {
 ## moving average
 ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 
+#' process a time-series apt for the \code{\link{segmenTier}}
+#' clustering wrapper \code{\link{clusterTimeseries}}
+#' @param ts the timeseries as a matrix, where columns are the timepoints
+#' and rows individual measurements (e.g., genomic positions for transcriptome
+#' data)
+#' @param smooth use stats' package \code{link[stats:smooth]{smooth} to
+#' smooth timeseries before processing
+#' @param trafo prior data transformation, either empty ("") or "log"
+#' for (\code{ln(ts+1)}) or "ash" for "asinh x = log(x + sqrt(x^2+1))"
+#' transformation which has less effects on extreme values
+#' @param use.fft use the Discrete Fourier Transform of the data
+#' @param dft.range a vector of integers, giving the components of the
+#' Discrete Fourier Transform to be used where 1 is the first component (DC)
+#' corresponding to the mean value, and 2:n are the higher components
+#' correspondong to 2:n full cycles in the data
+#' @param use.snr use a scaled amplitude, where each component of the
+#' Discrete Fourier Transform is divided by the mean of all other components,
+#' which is similar to a signal-to-noise ratio (SNR)
+#' @param low.thresh use this threshold to cut-off data, which will be
+#' added to the absent/nuissance cluster later
+#' @details This function exemplifies the processing of an oscillatory
+#' transcriptome time-series data as used in the establishment of this
+#' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
+#' (PLoS ONE 2012) and Lehmann et al. (BMC Bioinformatics 2014) a Discrete
+#' Fourier Transform of time-series data allows to cluster time-series by
+#' their change pattern.
+#' @references 
+#’   @bibliography segmenTier.bib
+#’   @cite Machne2012
+#'   @cite Lehmann2013
 #'@export
 processTimeseries <- function(ts,
                               smooth=FALSE, trafo="",
