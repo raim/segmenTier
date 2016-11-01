@@ -162,6 +162,16 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         
     allsegs <- NULL
 
+    ## TODO: generate param combinatoric matrix/list
+    ## clusterings, ncol(cset$clusters),
+    ## csim.scales
+    ## scoring functions
+    ## M
+    ## Mn
+    ## nui
+    ## nextmax, multi, multib
+    ## and loop through that instead
+
     for ( k in 1:ncol(cset$clusters) ) {
 
         seq <- cset$clusters[,k]
@@ -219,27 +229,28 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
                           "and scoring function",sgtype, "\n"))
                 next
             }
-        }
         
-        ## SEGMENT TYPE:
-        ## K (cluster number), k (repeated  runs of same clustering),
-        ## NOTE: naming by original K selected[k], the used[k] can be lower
-        ## if not enough data was present
-        ## TODO: instead of constructing a name
-        ## just add all info as table cols here
-        ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
+        
+            ## SEGMENT TYPE:
+            ## K (cluster number), k (repeated  runs of same clustering),
+            ## NOTE: naming by original K selected[k], the used[k] can be lower
+            ## if not enough data was present
+            ## TODO: instead of constructing a name
+            ## just add all info as table cols here
+            ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
         #sgtype <- paste("K",selected,"_", "k", k, sep="")
         
-        ## storing results
-        colnames(segments) <- c("cluster","start","end","fuse")
-        segids <- paste(ktype, "_", rownames(segments),sep="")
-        segtypes <- paste(ktype, "_", sgtype, sep="")
-        segs <- data.frame(ID=segids,
-                           type=segtypes,
-                           CL=segments[,1],
-                           segments[,2:3,drop=FALSE],
-                           fuse=segments[,4,drop=FALSE])
-        allsegs <- rbind(allsegs, segs)
+            ## storing results
+            colnames(segments) <- c("cluster","start","end","fuse")
+            segids <- paste(ktype, "_", rownames(segments),sep="")
+            segtypes <- paste(ktype, "_", sgtype, sep="")
+            segs <- data.frame(ID=segids,
+                               type=segtypes,
+                               CL=segments[,1],
+                               segments[,2:3,drop=FALSE],
+                               fuse=segments[,4,drop=FALSE])
+            allsegs <- rbind(allsegs, segs)
+        }
     }
     allsegs
 }
