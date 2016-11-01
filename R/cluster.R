@@ -188,10 +188,10 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
     params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale*nm*nmn)
     
     params[,2] <- rep(1:ncol(cset$clusters), each=nscore*nscale*nm*nmn) 
-    params[,3] <- rep(rep(scores, each=nk), each=nscale*nm*nmn)
-    params[,4] <- rep(rep(csim.scale, each=nk*nscore), each=nm*nmn)
-    params[,5] <- rep(rep(M, each=nk*nscore*nscale), each=nmn)
-    params[,6] <- rep(Mn, each=nk*nscore*nscale*nm)
+    params[,3] <- rep(rep(scores, nk), each=nscale*nm*nmn)
+    params[,4] <- rep(rep(csim.scale, nk*nscore), each=nm*nmn)
+    params[,5] <- rep(rep(M, nk*nscore*nscale), each=nmn)
+    params[,6] <- rep(Mn, each= nk*nscore*nscale*nm)
 
     ## segment type name construction
     ## TODO: do this smarter!
@@ -202,6 +202,9 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
     if ( nscore==1 ) typenm <- typenm[-which(typenm=="score")]
     if ( nscale==1 ) typenm <- typenm[-which(typenm=="scale")]
    
+    if ( verb>0 )
+        cat(paste("CALCULATING",nrow(params),"SEGMENTATIONS\n"))
+
     allsegs <- NULL
     for ( i in 1:nrow(params) ) {
 
@@ -219,7 +222,8 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         if ( score=="cls" ) csim <- a
 
         if ( verb>0 )
-            cat(paste("Calculating segment type", sgtype,"\n"))
+            cat(paste("Calculating segment type",sgtype,";",
+                      i,"of",nrow(params),"\n"))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
                               score=score,M=m,Mn=mn,
