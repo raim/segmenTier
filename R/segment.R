@@ -86,6 +86,11 @@ clusterSegments <- function() {}
 #' matrix, for scoring functions "ccor" and "icor", respectively
 #' @param csim.scale exponent to scale similarity matrices, must be odd
 #' to maintain negative correlations!
+#' @param cset alternatively to arguments \code{seq} and \code{csim}, a
+#' set of clusterings as returned by \code{\link{clusterTimeseries}} can
+#' be provided; this requires the additional argument \code{k} to select
+#' the kth clustering from the set
+#' @param k the kth clustering of argument \code{cset} will be used
 #' @param score the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.
