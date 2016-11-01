@@ -9,7 +9,7 @@ use.snr <- TRUE # take SNR of DFT
 trafo <- "" # "ash" # "log" # 
 low.thresh <- 1 # -Inf/0 # filter by log(DC-component=total signal over time)
 dft.range <- 2:7 # range of DFT to cluster to use for clustering
-selected <- c(rep(16,1)) #c(8,12,16) # cluster number K
+selected <- c(8,12,16) # cluster number K
 kiter <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
@@ -21,7 +21,7 @@ nui.cr <- 1 #  -/+ correlation of nuissance cluster with others and itself
 scores <- c("ccor","icor")
 csim.scale <- c(1,3) # 3 # 1 ## scale exponent of similarity matrices csim
 ## scoring function minimal length penalty
-M <- c(150,175,200) # 30 # for empty set?
+M <- c(175) # 30 # for empty set?
 Mn <- 15 # for nuissance clusters: allow smaller segments!
 
 ## TOTAL SCORE and BACK-TRACING
@@ -32,9 +32,6 @@ multi <- "max" # c("max","min")
 multib <- "max" # c("max","skip","min")
 ## in back-tracing, search for the next non-decreasing S(i,c)
 nextmax <-TRUE
-
-## post-processing of clusters
-fuse.thresh <- .2 # correlation threshold between clusters 
 
 ## TODO: load time-series data
 ## contains tsd and coor from primseg84
@@ -47,11 +44,11 @@ tset <- processTimeseries(ts=tsd, smooth=FALSE, trafo=trafo,
 
 cset <- clusterTimeseries(tset, selected=selected,kiter=kiter, nstart=nstart)
 
-allsegs <- segmentClusterset(cset, csim.scale=csim.scale,
-                             scores=scores,
-                             M=M, Mn=Mn, a=2, nui=nui.cr,
-                             nextmax=nextmax, multi=multi,multib=multib, 
-                             ncpu=1, verb=1, save.mat="")
+allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale,
+                                scores=scores,
+                                M=M, Mn=Mn, a=2, nui=nui.cr,
+                                nextmax=nextmax, multi=multi,multib=multib, 
+                                ncpu=1, verb=1, save.mat="")
 
 
     ## plot all
