@@ -3,12 +3,12 @@
 #'@author Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
 #'@docType package
 #'@name segmenTier
-#'@section Dependencies: The package strictly depends on
-#' \code{\link[Rcpp:Rcpp]{Rcpp}},
-#' and \code{\link[parallel:parallel]{parallel}} allows to
-#' signficantly speed up scoring function matrix calculations. All other
-#' dependencies are usually present in a basic installation
-#' (\code{graphics}, \code{grDevices})).
+#'@section Dependencies: The package strictly depends only on
+#' \code{\link[Rcpp:Rcpp]{Rcpp}}.
+#' Package \code{\link[parallel:parallel]{parallel}} allows to
+#' speed up scoring function matrix calculations when more then 1 cores
+#' (CPUs) are available. All other dependencies are usually present in a
+#' basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 #' @references
 #'   @bibliography segmenTier.bib
 #'@importFrom Rcpp evalCpp
