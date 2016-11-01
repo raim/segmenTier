@@ -298,10 +298,10 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         m <- params[i,"M"]
         mn <- params[i,"Mn"]
 
-        if ( score=="ccor" ) csim <- cset$Ccc[[k]]
-        if ( score=="icor" ) csim <- cset$Pci[[k]]
-        if ( score=="xcor" ) csim <- cset$Ccc[[k]]
-        if ( score=="cls" ) csim <- a
+        if ( scr=="ccor" ) csim <- cset$Ccc[[k]]
+        if ( scr=="icor" ) csim <- cset$Pci[[k]]
+        if ( scr=="xcor" ) csim <- cset$Ccc[[k]]
+        if ( scr=="cls" ) csim <- a
 
         if ( verb>0 )
             cat(paste("Calculating segment type",sgtype,";",
