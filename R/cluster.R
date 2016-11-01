@@ -3,11 +3,13 @@
 ## get Discrete Fourier Transformation
 get.fft <- function(x) {
     n <- floor(ncol(x)/2) +1 ## Nyquist-freq
-    fft <- t(mvfft(t(x)))[,1:n]
+    fft <- t(stats::mvfft(t(x)))[,1:n]
     colnames(fft) <- c("DC",as.character(1:(n-1)))
     fft
 }
 
+## moving average
+ma <- function(x,n=5){filter(x,rep(1/n,n), sides=2)}
 
 #'@export
 processTimeseries <- function(ts,
@@ -119,11 +121,11 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
         cat(paste("clustering, N=",N,", K=",K, "\n"))
         
         ## cluster
-        km <- kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart)
+        km <- stats::kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart)
         ## use alternative algo if this error occured
         if (km$ifault==4) {
-            km <- kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart,
-                         algorithm="MacQueen")
+            km <- stats::kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart,
+                                algorithm="MacQueen")
             cat(paste("quick-transfer error in kmeans, taking MacQueen\n"))
         }
         
@@ -137,7 +139,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
         centers[[k]] <- km$centers
         
         ## C(c,c) - cluster X cluster cross-correlation matrix
-        cr <- cor(t(km$centers))
+        cr <- stats::cor(t(km$centers))
 
         Ccc[[k]] <- cr
         
@@ -230,7 +232,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
                               score=score,M=m,Mn=mn,
-                              nui=nui.cr,
+                              nui=nui,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.mat="",verb=verb)
         ## TODO: give fuse suggestions here, where we have the matrices?
