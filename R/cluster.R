@@ -9,7 +9,7 @@ get.fft <- function(x) {
 }
 
 ## moving average
-ma <- function(x,n=5){filter(x,rep(1/n,n), sides=2)}
+ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 
 #'@export
 processTimeseries <- function(ts,
