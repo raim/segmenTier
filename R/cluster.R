@@ -129,8 +129,17 @@ processTimeseries <- function(ts,
     list(dat=dat, ts=tsd, tot=tot, zero.vals=zs, rm.vals=rm.vals, low.vals=low)
 }
 
+#' simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
+#' of a time-series preprocessed by \code{\link{processTimeseries}}.
+#' @param tset a timeseries processed by \code{\link{processTimeseries}}
+#' @param selected selected cluster numbers, the argument \code{centers}
+#' of \code{\link[stats:kmeans]{kmeans}} 
+#' @param iter.max the maximum number of iterations allowed in
+#' \code{\link[stats:kmeans]{kmeans}}, see there
+#' @param nstart initialization \code{\link[stats:kmeans]{kmeans}}:
+#' "how many random sets should be chosen?", see there
 #'@export
-clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
+clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
 
     dat <- tset$dat
     rm.vals <- tset$rm.vals
@@ -149,10 +158,10 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
         cat(paste("clustering, N=",N,", K=",K, "\n"))
         
         ## cluster
-        km <- stats::kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart)
+        km <- stats::kmeans(dat[!rm.vals,],K,iter.max=iter.max,nstart=nstart)
         ## use alternative algo if this error occured
         if (km$ifault==4) {
-            km <- stats::kmeans(dat[!rm.vals,],K,iter.max=kiter,nstart=nstart,
+            km <- stats::kmeans(dat[!rm.vals,],K,iter.max=iter.max,nstart=nstart,
                                 algorithm="MacQueen")
             cat(paste("quick-transfer error in kmeans, taking MacQueen\n"))
         }
@@ -186,8 +195,47 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
          selected=selected, usedk=usedk, centers=centers)
 }
 
+#' high-level wrapper for multiple runs of segmentation by
+#' \code{\link{segmentClusters}} for multiple clusterings and
+#' multiple segmentation parameters
+#' @param cset a clustering set as returned by \code{\link{clusterTimerseries}}
+#' @param csim.scale exponent to scale similarity matrices, must be odd
+#' to maintain negative correlations!
+#' @param score the scoring function to be used: "ccor", "icor" or "cls"
+#' @param M minimal sequence length; Note, that this is not a strict
+#' cut-off but defined as a penalty that must be "overcome" by good score.
+#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+#' shorter distances between segments; only used in scoring functions
+#' "ccor" and "icor" 
+#' @param a an additional penalty only used for pure cluster-based
+#' scoring w/o cluster similarity measures in scoring function "cls"
+#' @param nui the similarity score to be used for nuissance clusters in the
+#' cluster similarity matrices
+#' @param nextmax go backwards while score is increasing before openening a
+#' new segment, default is TRUE
+#' @param multi handling of multiple k with max. score in forward phase,
+#' either "min" (default) or "max"
+#' @param multib handling of multiple k with max. score in back-trace phase,
+#' either "min" (default), "max" or "skip"
+#' @param ncpu number of available cores (CPUs), passed to
+#' \code{\link[parallel:mclapply]{parallel::mclapply}} by
+#' \code{\link{calculateScoringMatrix}}
+#' @param verb level of verbosity, 0: no output, 1: progress messages
+#' @param save.mat store the scoring function matrix SM or the back-tracing
+#' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
+#' in testing stage or for debugging or illustration of the algorithm;
+#' see \code{\link{plotScoring}}
+#' @param fuse.threshold if adjacent segments are associated with clusters
+#' the centers of which have a Pearson correlation \code{>fuse.threshold}
+#' the field "fuse" will be set to 1 for the second segments (top-to-bottom
+#' as reported)
+#' @details This is a high-level wrapper for \code{\link{segmentClusters}}
+#' which allows segmentation over multiple clusterings as provided by the
+#' function \code{\link{clusterTimeseries} and over multiple segmentation
+#' paramers. Specifially, parameters \code{csim.scale}, \code{score},
+#' \code{M} and \code{Mn} can all be vectors.
 #'@export
-segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
+segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                  M=175, Mn=20, a=2, nui=1,
                                  fuse.threshold=0.2,
                                  nextmax=TRUE, multi="max", multib="max", 
@@ -208,7 +256,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
 
     plst <- list(NA) ## TODO do this via  list and filter all with length==1
     nk <- length(cset$selected)
-    nscore <- length(scores)
+    nscore <- length(score)
     nscale <- length(csim.scale)
     ## all not used:
     nm <- length(M)
@@ -222,7 +270,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
     params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale*nm*nmn)
     
     params[,2] <- rep(1:ncol(cset$clusters), each=nscore*nscale*nm*nmn) 
-    params[,3] <- rep(rep(scores, nk), each=nscale*nm*nmn)
+    params[,3] <- rep(rep(score, nk), each=nscale*nm*nmn)
     params[,4] <- rep(rep(csim.scale, nk*nscore), each=nm*nmn)
     params[,5] <- rep(rep(M, nk*nscore*nscale), each=nmn)
     params[,6] <- rep(Mn, each= nk*nscore*nscale*nm)
@@ -245,7 +293,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
         sgtype <- paste(params[i,typenm],collapse="_")
         k <- params[i,"k"]
         seq <- cset$clusters[,k]
-        score <- params[i,"score"]
+        scr <- params[i,"score"]
         scale <- params[i,"scale"]
         m <- params[i,"M"]
         mn <- params[i,"Mn"]
@@ -260,7 +308,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
                       i,"of",nrow(params),"\n"))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                              score=score,M=m,Mn=mn,nui=nui,
+                              score=scr,M=m,Mn=mn,nui=nui,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.mat="",verb=verb)
 
@@ -285,9 +333,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
     allsegs
 }
 
-#' tags adjacent segments if they are from correlating (>\code{fuse.thresh})
-#' clusters
-#' @export
+## tags adjacent segments if they are from correlating (>\code{fuse.thresh})
+## clusters
 fuseSegments <- function(segs, Ccc, fuse.threshold=.2) {
 
     fuse <- rep(NA,nrow(segs))
