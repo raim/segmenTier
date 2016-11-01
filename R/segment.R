@@ -140,13 +140,6 @@ segmentClusters <- function(seq, csim, csim.scale=1,
         if ( score=="xcor" ) csim <- cset$Ccc[[k]]
     }
 
-    ## scale similarity matrix!
-    ## TODO: check if number is odd, do this with tolerance
-    if ( csim.scale %% 2 < .Machine$double.eps^0.5 )
-        warning("csim.scale should be odd: ", csim.scale)
-    
-    csim <- csim^csim.scale
-
     
     ## 1: set up sequence and data
     N <- length(seq)
@@ -204,7 +197,13 @@ segmentClusters <- function(seq, csim, csim.scale=1,
         map <- c('0'=1, map  + 1)
     }
     
-
+    ## scale similarity matrix!
+    ## TODO: check if number is odd, do this with tolerance
+    if ( csim.scale %% 2 < .Machine$double.eps^0.5 )
+        warning("csim.scale should be odd: ", csim.scale)
+    
+    csim <- csim^csim.scale
+    
     ## for the pure cluster segmentation pass par. a to ccSMcls
     if ( score=="cls" ) csim <- a 
     
@@ -214,7 +213,8 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     ## 2: generate scoring function matrices (TODO: lists, to save mem)
     if ( verb>0 ) 
-      cat(paste("scoring function", score, "\t", date(), "\n"))
+      cat(paste("scoring function", score, "scale", csim.scale,
+                "\t", date(), "\n"))
     SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
                                  csim=csim, ncpu=ncpu)
     
