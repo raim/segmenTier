@@ -5,9 +5,9 @@
 \title{segmenTier's main wrapper interface, calculates segments from a
 clustering sequence.}
 \usage{
-segmentClusters(seq, csim, score = "ccor", M = 175, Mn = 20, a = 2,
-  nui = 1, nextmax = TRUE, multi = "min", multib = "min", ncpu = 1,
-  verb = 1, save.mat = "")
+segmentClusters(seq, csim, csim.scale = 1, cset, k = 1, score = "ccor",
+  M = 175, Mn = 20, a = 2, nui = 1, nextmax = TRUE, multi = "max",
+  multib = "max", ncpu = 1, verb = 1, save.mat = "")
 }
 \arguments{
 \item{seq}{a clustering sequence. The only strict requirement is that
@@ -16,6 +16,16 @@ character "0" (zero).}
 
 \item{csim}{cluster-cluster or position-cluster similarity
 matrix, for scoring functions "ccor" and "icor", respectively}
+
+\item{csim.scale}{exponent to scale similarity matrices, must be odd
+to maintain negative correlations!}
+
+\item{cset}{alternatively to arguments \code{seq} and \code{csim}, a
+set of clusterings as returned by \code{\link{clusterTimeseries}} can
+be provided; this requires the additional argument \code{k} to select
+the kth clustering from the set}
+
+\item{k}{the kth clustering of argument \code{cset} will be used}
 
 \item{score}{the scoring function to be used: "ccor", "icor" or "cls"}
 
