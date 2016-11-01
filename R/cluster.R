@@ -39,8 +39,7 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #' their change pattern.
 #' @references 
 #’   @bibliography segmenTier.bib
-#’   @cite Machne2012
-#'   @cite Lehmann2013
+#’   @cite Machne2012 Lehmann2013
 #'@export
 processTimeseries <- function(ts,
                               smooth=FALSE, trafo="",
