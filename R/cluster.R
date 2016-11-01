@@ -167,19 +167,19 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         seq <- cset$clusters[,k]
         selected <- cset$selected[k]
 
-        scrR <- rep(list(NA),length(scores))
-        names(scrR) <- scores
+        ## segment type - clustering
+        ktype <- paste("K",selected,"_", "k", k, sep="")
+
         segments <- NULL
 
         for ( score in scores  ) {
-            multS <- rep(list(NA),length(multi) +1)
-            names(multS) <- c("SM",multi)
-            multS[[multi]] <- rep(list(NA),length(multib)+1)
-            names(multS[[multi]]) <- c("SK",multib)
             
             if ( score=="ccor" ) csim <- cset$Ccc[[k]]
             if ( score=="icor" ) csim <- cset$Pci[[k]]
             if ( score=="xcor" ) csim <- cset$Ccc[[k]]
+
+            ## segment type - scoring function
+            sgtype <- paste(score,csim.scale,sep="")
             
             ## scale csim!
             ## NOTE: should be odd number to maintain neg. values!
@@ -188,20 +188,14 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
             seg <- segmentClusters(seq=seq,csim=csim,csim.scale=csim.scale,
                                    score=score,M=M,Mn=Mn,nui=nui.cr,
                                    multi=multi, multib=multib,nextmax=nextmax,
-                                   save.mat=c("SK"),verb=2)
-            ##multS$SM <- seg$SM
-            multS[[multi]]$SK <- seg$SK
-            ## store
-            multS[[multi]][[multib]] <- seg$segments
-            scrR[[score]] <- multS
+                                   save.mat=save.mat,verb=2)
             
             ## store segments
             segs <- seg$segments
             
-            ## fuse by data
-            #segs <- fuseSegments(segs, seq, dat)
-            
             ## FUSE correlating?
+            ## CHECK HERE SINCE WE HAVE THE SIMILARITY MATRIX?
+            ## TODO: move to extra function?
             if ( nrow(segs)>1 ) {
                 fuse <- rep(NA,nrow(segs))
                 for ( j in 2:nrow(segs) ) 
@@ -210,18 +204,21 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
                 adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
                 close <- c(FALSE,adj) & fuse > fuse.thresh
                 if ( sum(close)>0 )
-                    cat(paste("\t",sum(close), "segments could be fused\n"))
+                    cat(paste(ktype, sgtype,
+                              "\t",sum(close), "segments could be fused\n"))
             }
+
+            ## name segments
             if ( nrow(segs) > 0 ) {
                 if ( nrow(segs)==1 ) close <- FALSE 
-                segs <- cbind(segs,close)
-                rownames(segs) <- paste(paste(score,csim.scale,sep=""),
-                                        1:nrow(segs),sep="_")
+                segs <- cbind(segs,close) # bind fuse information
+                rownames(segs) <- paste(sgtype, 1:nrow(segs),sep="_")
                 segments <- rbind(segments,segs)
             }
         }
         if ( is.null(segments) ) {
-            cat(paste("no segments\n"))
+            cat(paste("no segments for clustering", ktype,
+                      "and scoring function",sgtype, "\n"))
             next
         }
         
@@ -232,12 +229,12 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         ## TODO: instead of constructing a name
         ## just add all info as table cols here
         ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
-        sgtype <- paste("K",selected,"_", "k", k, sep="")
+        #sgtype <- paste("K",selected,"_", "k", k, sep="")
         
         ## storing results
         colnames(segments) <- c("cluster","start","end","fuse")
-        segids <- paste(sgtype, "_", rownames(segments),sep="")
-        segtypes <- paste(sgtype, "_",sub("_.*", "",rownames(segments)),sep="")
+        segids <- paste(ktype, "_", rownames(segments),sep="")
+        segtypes <- paste(ktype, "_", sgtype, sep="")
         segs <- data.frame(ID=segids,
                            type=segtypes,
                            CL=segments[,1],
