@@ -5,7 +5,7 @@ source("~/programs/segmenTier/R/segment.R")
 
 ## load time-series data
 ## contains tsd from primseg436 from unpublished yeast transcriptome timeseries
-data(primseg436.rda)
+data(primseg436)
 
 ### TIME-SERIES CLUSTERING PARAMETERS
 use.fft <- TRUE # cluster discrete Fourier transform of data?
