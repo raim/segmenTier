@@ -268,7 +268,7 @@ fuseSegments <- function(segs, Ccc, fuse.threshold=.2) {
 
     ## FUSE directly adjacent if clusters correlate?
     adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
-    close <- c(FALSE,adj) & fuse > fuse.thresh
+    close <- c(FALSE,adj) & fuse > fuse.threshold
 
     close
 }
