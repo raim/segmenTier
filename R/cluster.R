@@ -16,7 +16,7 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #' @param ts the timeseries as a matrix, where columns are the timepoints
 #' and rows individual measurements (e.g., genomic positions for transcriptome
 #' data)
-#' @param smooth use stats' package \code{link[stats:smooth]{smooth} to
+#' @param smooth use stats' package \code{link[stats:smooth]{smooth}} to
 #' smooth timeseries before processing
 #' @param trafo prior data transformation, either empty ("") or "log"
 #' for (\code{ln(ts+1)}) or "ash" for "asinh x = log(x + sqrt(x^2+1))"
