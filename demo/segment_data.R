@@ -3,6 +3,10 @@ library("segmenTier")
 source("~/programs/segmenTier/R/cluster.R")
 source("~/programs/segmenTier/R/segment.R")
 
+## load time-series data
+## contains tsd from primseg436 from unpublished yeast transcriptome timeseries
+data(primseg436.rda)
+
 ### TIME-SERIES CLUSTERING PARAMETERS
 use.fft <- TRUE # cluster discrete Fourier transform of data?
 use.snr <- TRUE # take SNR of DFT
@@ -33,9 +37,6 @@ multib <- "max" # c("max","skip","min")
 ## in back-tracing, search for the next non-decreasing S(i,c)
 nextmax <-TRUE
 
-## TODO: load time-series data
-## contains tsd and coor from primseg84
-load("~/programs/segmenTier/data/primseg436.rda")
 
 tset <- processTimeseries(ts=tsd, smooth=FALSE, trafo=trafo,
                           use.fft=use.fft, dft.range=dft.range,
