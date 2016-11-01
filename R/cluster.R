@@ -173,53 +173,52 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         segments <- NULL
 
         for ( score in scores  ) {
-            
-            if ( score=="ccor" ) csim <- cset$Ccc[[k]]
-            if ( score=="icor" ) csim <- cset$Pci[[k]]
-            if ( score=="xcor" ) csim <- cset$Ccc[[k]]
 
-            ## segment type - scoring function
-            sgtype <- paste(score,csim.scale,sep="")
-            
-            ## scale csim!
-            ## NOTE: should be odd number to maintain neg. values!
-                                        #csim <- csim^scale
-            
-            seg <- segmentClusters(seq=seq,csim=csim,csim.scale=csim.scale,
-                                   score=score,M=M,Mn=Mn,nui=nui.cr,
-                                   multi=multi, multib=multib,nextmax=nextmax,
-                                   save.mat=save.mat,verb=2)
-            
-            ## store segments
-            segs <- seg$segments
-            
-            ## FUSE correlating?
-            ## CHECK HERE SINCE WE HAVE THE SIMILARITY MATRIX?
-            ## TODO: move to extra function?
-            if ( nrow(segs)>1 ) {
-                fuse <- rep(NA,nrow(segs))
-                for ( j in 2:nrow(segs) ) 
-                    fuse[j] <- cset$Ccc[[k]][segs[j,1],segs[j-1,1]]
-                ## FUSE directly adjacent if clusters correlate?
-                adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
-                close <- c(FALSE,adj) & fuse > fuse.thresh
-                if ( sum(close)>0 )
-                    cat(paste(ktype, sgtype,
-                              "\t",sum(close), "segments could be fused\n"))
-            }
+            for ( scale in csim.scale ) {
+                
+                if ( score=="ccor" ) csim <- cset$Ccc[[k]]
+                if ( score=="icor" ) csim <- cset$Pci[[k]]
+                if ( score=="xcor" ) csim <- cset$Ccc[[k]]
 
-            ## name segments
-            if ( nrow(segs) > 0 ) {
-                if ( nrow(segs)==1 ) close <- FALSE 
-                segs <- cbind(segs,close) # bind fuse information
-                rownames(segs) <- paste(sgtype, 1:nrow(segs),sep="_")
-                segments <- rbind(segments,segs)
+                ## segment type - scoring function
+                sgtype <- paste(score, scale,sep="")
+            
+                seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
+                                      score=score,M=M,Mn=Mn,nui=nui.cr,
+                                      multi=multi,multib=multib,nextmax=nextmax,
+                                      save.mat=save.mat,verb=2)
+                
+                ## store segments
+                segs <- seg$segments
+                
+                ## FUSE correlating?
+                ## CHECK HERE SINCE WE HAVE THE SIMILARITY MATRIX?
+                ## TODO: move to extra function?
+                if ( nrow(segs)>1 ) {
+                    fuse <- rep(NA,nrow(segs))
+                    for ( j in 2:nrow(segs) ) 
+                        fuse[j] <- cset$Ccc[[k]][segs[j,1],segs[j-1,1]]
+                    ## FUSE directly adjacent if clusters correlate?
+                    adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
+                    close <- c(FALSE,adj) & fuse > fuse.thresh
+                    if ( sum(close)>0 )
+                        cat(paste(ktype, sgtype,
+                                  "\t",sum(close), "segments could be fused\n"))
+                }
+                
+                ## name segments
+                if ( nrow(segs) > 0 ) {
+                    if ( nrow(segs)==1 ) close <- FALSE 
+                    segs <- cbind(segs,close) # bind fuse information
+                    rownames(segs) <- paste(sgtype, 1:nrow(segs),sep="_")
+                    segments <- rbind(segments,segs)
+                }
             }
-        }
-        if ( is.null(segments) ) {
-            cat(paste("no segments for clustering", ktype,
-                      "and scoring function",sgtype, "\n"))
-            next
+            if ( is.null(segments) ) {
+                cat(paste("no segments for clustering", ktype,
+                          "and scoring function",sgtype, "\n"))
+                next
+            }
         }
         
         ## SEGMENT TYPE:
