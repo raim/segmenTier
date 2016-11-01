@@ -15,18 +15,19 @@ processTimeseries <- function(ts,
                               use.snr=TRUE, low.thresh=1) {
     tsd <-ts 
 
-##tsd <- as.matrix(tsd[,4:ncol(tsd)])
-    tsd[is.na(tsd)] <- 0
-    zs <- apply(tsd,1,sum)==0
+    tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
+    zs <- apply(tsd,1,sum)==0 # remember all zeros
 
-    ## smooth? TESTED, doesn't help to avoid fragmentation
-    smooth <- FALSE
+    ## smooth time-series
+    ## TESTED, doesn't help to avoid fragmentation!
     if ( smooth ) {
         tsm <- apply(tsd,2,ma,150,FALSE)
         tsd[!zs,] <- tsm[!zs,]
     }
     
     ## transform raw data?
+    ## NOTE that DFT and SNR below (use.fft) are an alternative
+    ## data normalization procedure
     if ( trafo == "log" ) # ln
         tsd <- log(tsd+1)
     if ( trafo == "ash" ) # asinh x = log(x + sqrt(x^2+1))
@@ -40,34 +41,34 @@ processTimeseries <- function(ts,
         ## sequence length
         N <- nrow(fft)
 
-        ## filter low expression
-        tot <- Re(fft[,1]) # NOTE: DC component = rowSums(tsd)
-        low <- tot < low.thresh
-        ## plot(tot,col=low+1)
-
-        ## calculate SNR-scaling!
+        ## amplitude-scaling (~SNR), see Machne&Murray 2012
         if ( use.snr ) {
           amp <- abs(fft)
           snr <- fft
-          for ( a in 2:ncol(snr) )
+          for ( a in 2:ncol(fft) )
             snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
           fft <- snr
         }
         
+        ## get low expression filter!
+        tot <- Re(fft[,1]) # NOTE: DC component = rowSums(tsd)
+        low <- tot < low.thresh
+
         ## filter selected components
         dat <- fft[,dft.range]
-
          
         ## get Real and Imaginary pars
         dat <- cbind(Re(dat),Im(dat))
 
     }else {
+
         dat <- tsd
         dat[zs,] <- NA
+        
         ## sequence length
         N <- nrow(dat)
 
-        ## filter by low expression
+        ## get low expression filter
         tot <- rowSums(dat,na.rm=TRUE)
         low <- rep(FALSE, nrow(dat))
         low <- tot < low.thresh
@@ -78,7 +79,6 @@ processTimeseries <- function(ts,
     ## store which are NA and set to 0
     na.rows <- rowSums(is.na(dat))==ncol(dat)
     ##dat[is.na(dat)] <- 0 ## shouldn't happen?
-
 
     ## remove data rows: NA or low
     rm.vals <- na.rows | low
@@ -97,6 +97,7 @@ processTimeseries <- function(ts,
 
     list(ts=tsd, tot=tot, rm.vals=rm.vals, low.vals=low)
 }
+
 clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 
     dat <- tset$ts
@@ -133,13 +134,14 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
         clusters[,k] <- seq
         centers[[k]] <- km$centers
         
-        ## cluster center cross-correlation matrix
+        ## C(c,c) - cluster X cluster cross-correlation matrix
         cr <- cor(t(km$centers))
 
         Ccc[[k]] <- cr
         
-        ## P(c,i) - position X cluster center correlation
+        ## P(c,i) - position X cluster correlation
         ## NOTE: we could also calculate P(i,c) for "low" values
+        ## (see processTimeseries)
         ##       but probably weaken the splits between adjacent ?
         P <- matrix(NA,nrow=N,ncol=K)
         P[!rm.vals,] <- clusterCor_c(dat[!rm.vals,], km$centers)
@@ -227,11 +229,10 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         ## K (cluster number), k (repeated  runs of same clustering),
         ## NOTE: naming by original K selected[k], the used[k] can be lower
         ## if not enough data was present
-        ## TODO: add M, nui, (dyn.prog. settings)
-        ## TODO: add usedk
-        sgtype <- paste(#trafo,ifelse(trafo!="","_",""),
-                        #ifelse(use.snr,"snr_",""),
-                        "K",str_pad(selected,2,pad="0"),"_", "k", k, sep="")
+        ## TODO: instead of constructing a name
+        ## just add all info as table cols here
+        ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
+        sgtype <- paste("K",selected,"_", "k", k, sep="")
         
         ## storing results
         colnames(segments) <- c("cluster","start","end","fuse")
