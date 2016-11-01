@@ -9,6 +9,7 @@ get.fft <- function(x) {
 }
 
 
+#'@export
 processTimeseries <- function(ts,
                               smooth=FALSE, trafo="",
                               use.fft=TRUE, dft.range=2:7,
@@ -98,6 +99,7 @@ processTimeseries <- function(ts,
     list(dat=dat, ts=tsd, tot=tot, zero.vals=zs, rm.vals=rm.vals, low.vals=low)
 }
 
+#'@export
 clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 
     dat <- tset$dat
@@ -154,10 +156,11 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
          selected=selected, usedk=usedk, centers=centers)
 }
 
-segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
-                              M=175, Mn=20, a=2, nui=1,
-                              nextmax=TRUE, multi="max", multib="max", 
-                              ncpu=1, verb=1, save.mat="") {
+#'@export
+segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
+                                 M=175, Mn=20, a=2, nui=1,
+                                 nextmax=TRUE, multi="max", multib="max", 
+                                 ncpu=1, verb=1, save.mat="") {
 
         
     allsegs <- NULL
@@ -230,6 +233,7 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
                               nui=nui.cr,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.mat="",verb=verb)
+        ## TODO: give fuse suggestions here, where we have the matrices?
         sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
         segs <- data.frame(ID=sgids,
                            type=rep(sgtype,length(sgids)),
