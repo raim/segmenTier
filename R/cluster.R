@@ -180,10 +180,12 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         ## segment type - clustering
         ktype <- paste("K",selected,"_", "k", k, sep="")
 
-        segments <- NULL
+        ssegments <- NULL
 
         for ( score in scores  ) {
 
+            segments <- NULL
+            
             for ( scale in csim.scale ) {
                 
                 if ( score=="ccor" ) csim <- cset$Ccc[[k]]
@@ -223,34 +225,37 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
                     rownames(segs) <- paste(sgtype, 1:nrow(segs),sep="_")
                     segments <- rbind(segments,segs)
                 }
+                
+                if ( is.null(segments) ) {
+                    cat(paste("no segments for clustering", ktype,
+                              "and scoring function",sgtype, "\n"))
+                    next
+                }
+        
+        
+                ## SEGMENT TYPE:
+                ## K (cluster number), k (repeated  runs of same clustering),
+                ## NOTE: naming by original K selected[k], the used[k] can be lower
+                ## if not enough data was present
+                ## TODO: instead of constructing a name
+                ## just add all info as table cols here
+                ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
+                                        #sgtype <- paste("K",selected,"_", "k", k, sep="")
+                
+                ## storing results
+                colnames(segments) <- c("cluster","start","end","fuse")
+                segids <- paste(ktype, "_", rownames(segments),sep="")
+                segtypes <- paste(ktype, "_", sgtype, sep="")
+                segs <- data.frame(ID=segids,
+                                   type=segtypes,
+                                   CL=segments[,1],
+                                   segments[,2:3,drop=FALSE],
+                                   fuse=segments[,4,drop=FALSE])
+                segments <- rbind(segments, segs)
             }
-            if ( is.null(segments) ) {
-                cat(paste("no segments for clustering", ktype,
-                          "and scoring function",sgtype, "\n"))
-                next
-            }
-        
-        
-            ## SEGMENT TYPE:
-            ## K (cluster number), k (repeated  runs of same clustering),
-            ## NOTE: naming by original K selected[k], the used[k] can be lower
-            ## if not enough data was present
-            ## TODO: instead of constructing a name
-            ## just add all info as table cols here
-            ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
-        #sgtype <- paste("K",selected,"_", "k", k, sep="")
-        
-            ## storing results
-            colnames(segments) <- c("cluster","start","end","fuse")
-            segids <- paste(ktype, "_", rownames(segments),sep="")
-            segtypes <- paste(ktype, "_", sgtype, sep="")
-            segs <- data.frame(ID=segids,
-                               type=segtypes,
-                               CL=segments[,1],
-                               segments[,2:3,drop=FALSE],
-                               fuse=segments[,4,drop=FALSE])
-            allsegs <- rbind(allsegs, segs)
+            ssegments <- rbind(ssegments,sements)
         }
+        allsegs <- rbind(allsegs, ssegments)
     }
     allsegs
 }
