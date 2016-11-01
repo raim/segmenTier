@@ -253,7 +253,7 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
                                    fuse=segments[,4,drop=FALSE])
                 segments <- rbind(segments, segs)
             }
-            ssegments <- rbind(ssegments,sements)
+            ssegments <- rbind(ssegments,segments)
         }
         allsegs <- rbind(allsegs, ssegments)
     }
