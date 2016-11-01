@@ -9,7 +9,8 @@
 #' signficantly speed up scoring function matrix calculations. All other
 #' dependencies are usually present in a basic installation
 #' (\code{graphics}, \code{grDevices})).
-#'@bibliography segmenTier.bib
+#' @references
+#'   @bibliography segmenTier.bib
 #'@importFrom Rcpp evalCpp
 #'@importFrom parallel mclapply
 #'@importFrom graphics image axis par plot points lines legend arrows matplot
