@@ -148,7 +148,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 
         Pci[[k]] <- P
     }
-    colnames(clusters) <- names(centers) <- paste("K",usedk,sep="")
+    colnames(clusters) <- names(centers) <- paste("K",selected,sep="")
 
     list(clusters=clusters, Pci=Pci, Ccc=Ccc,
          selected=selected, usedk=usedk, centers=centers)
@@ -156,7 +156,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 
 segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
                               M=175, Mn=20, a=2, nui=1,
-                              nextmax=TRUE, multi="min",multib="min", 
+                              nextmax=TRUE, multi="max", multib="max", 
                               ncpu=1, verb=1, save.mat="") {
 
         
@@ -172,90 +172,48 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
     ## nextmax, multi, multib
     ## and loop through that instead
 
-    for ( k in 1:ncol(cset$clusters) ) {
+    plst <- list(NA) ## TODO do this via  list and filter all with length==1
+    nk <- length(cset$selected)
+    nscore <- length(scores)
+    nscale <- length(csim.scale)
+    ## all not used:
+    nm <- length(M)
+    nmn <- length(Mn)
+    nn <- length(nui)
+    na <- length(a)
+    
+    params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale,ncol=3))
+    colnames(params) <- c("k","score","scale")
+    params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale)
+    params[,2] <- rep(rep(scores, each=nscale), nk)
+    params[,3] <- rep(csim.scale, nk*nscale)
 
+    allsegs <- NULL
+    for ( i in 1:nrow(params) ) {
+
+        sgtype <- paste(params[i,],collapse="_")
+        k <- which(colnames(cset$clusters)==params[i,"k"])
         seq <- cset$clusters[,k]
-        selected <- cset$selected[k]
+        score <- params[i,"score"]
+        scale <- params[i,"scale"]
 
-        ## segment type - clustering
-        ktype <- paste("K",selected,"_", "k", k, sep="")
+        if ( score=="ccor" ) csim <- cset$Ccc[[k]]
+        if ( score=="icor" ) csim <- cset$Pci[[k]]
+        if ( score=="xcor" ) csim <- cset$Ccc[[k]]
+        if ( score=="cls" ) csim <- a
 
-        ssegments <- NULL
-
-        for ( score in scores  ) {
-
-            segments <- NULL
-            
-            for ( scale in csim.scale ) {
-                
-                if ( score=="ccor" ) csim <- cset$Ccc[[k]]
-                if ( score=="icor" ) csim <- cset$Pci[[k]]
-                if ( score=="xcor" ) csim <- cset$Ccc[[k]]
-
-                ## segment type - scoring function
-                sgtype <- paste(score, scale,sep="")
-            
-                seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                                      score=score,M=M,Mn=Mn,nui=nui.cr,
-                                      multi=multi,multib=multib,nextmax=nextmax,
-                                      save.mat=save.mat,verb=2)
-                
-                ## store segments
-                segs <- seg$segments
-                
-                ## FUSE correlating?
-                ## CHECK HERE SINCE WE HAVE THE SIMILARITY MATRIX?
-                ## TODO: move to extra function?
-                if ( nrow(segs)>1 ) {
-                    fuse <- rep(NA,nrow(segs))
-                    for ( j in 2:nrow(segs) ) 
-                        fuse[j] <- cset$Ccc[[k]][segs[j,1],segs[j-1,1]]
-                    ## FUSE directly adjacent if clusters correlate?
-                    adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
-                    close <- c(FALSE,adj) & fuse > fuse.thresh
-                    if ( sum(close)>0 )
-                        cat(paste(ktype, sgtype,
-                                  "\t",sum(close), "segments could be fused\n"))
-                }
-                
-                ## name segments
-                if ( nrow(segs) > 0 ) {
-                    if ( nrow(segs)==1 ) close <- FALSE 
-                    segs <- cbind(segs,close) # bind fuse information
-                    rownames(segs) <- paste(sgtype, 1:nrow(segs),sep="_")
-                    segments <- rbind(segments,segs)
-                }
-                
-                if ( is.null(segments) ) {
-                    cat(paste("no segments for clustering", ktype,
-                              "and scoring function",sgtype, "\n"))
-                    next
-                }
+        if ( verb>0 )
+            cat(paste("calculating segments", sgtype,"\n"))
         
-        
-                ## SEGMENT TYPE:
-                ## K (cluster number), k (repeated  runs of same clustering),
-                ## NOTE: naming by original K selected[k], the used[k] can be lower
-                ## if not enough data was present
-                ## TODO: instead of constructing a name
-                ## just add all info as table cols here
-                ## score, M, Mn, nui, (dyn.prog. settings), usedk, selectedk
-                                        #sgtype <- paste("K",selected,"_", "k", k, sep="")
-                
-                ## storing results
-                colnames(segments) <- c("cluster","start","end","fuse")
-                segids <- paste(ktype, "_", rownames(segments),sep="")
-                segtypes <- paste(ktype, "_", sgtype, sep="")
-                segs <- data.frame(ID=segids,
-                                   type=segtypes,
-                                   CL=segments[,1],
-                                   segments[,2:3,drop=FALSE],
-                                   fuse=segments[,4,drop=FALSE])
-                segments <- rbind(segments, segs)
-            }
-            ssegments <- rbind(ssegments,segments)
-        }
-        allsegs <- rbind(allsegs, ssegments)
+        seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
+                              score=score,M=M,Mn=Mn,nui=nui.cr,
+                              multi=multi,multib=multib,nextmax=nextmax,
+                              save.mat="",verb=verb)
+        sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
+        segs <- data.frame(ID=sgids,
+                           type=rep(sgtype,length(sgids)),
+                           seg$segments)
+        allsegs <- rbind(allsegs,segs)        
     }
     allsegs
 }
