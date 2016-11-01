@@ -95,7 +95,7 @@ processTimeseries <- function(ts,
         next
     }
 
-    list(ts=tsd, tot=tot, rm.vals=rm.vals, low.vals=low)
+    list(ts=tsd, tot=tot, zero.vals=zs, rm.vals=rm.vals, low.vals=low)
 }
 
 clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
