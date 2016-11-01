@@ -181,21 +181,37 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
     nmn <- length(Mn)
     nn <- length(nui)
     na <- length(a)
-    
-    params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale,ncol=3))
-    colnames(params) <- c("k","score","scale")
-    params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale)
-    params[,2] <- rep(rep(scores, each=nscale), nk)
-    params[,3] <- rep(csim.scale, nk*nscale)
 
+    ## note: k allows for multiple clusterings with the same K!
+    params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale*nm,ncol=6))
+    colnames(params) <- c("K","k","score","scale","M","Mn")
+    params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale*nm*nmn)
+    
+    params[,2] <- rep(1:ncol(cset$clusters), each=nscore*nscale*nm*nmn) 
+    params[,3] <- rep(rep(scores, each=nk), each=nscale*nm*nmn)
+    params[,4] <- rep(rep(csim.scale, each=nk*nscore), each=nm*nmn)
+    params[,5] <- rep(rep(M, each=nk*nscore*nscale), each=nmn)
+    params[,6] <- rep(Mn, each=nk*nscore*nscale*nm)
+
+    ## segment type name construction
+    ## TODO: do this smarter!
+    typenm <- colnames(params)
+    ## rm those with length==1 to keep short names
+    if ( nm==1 ) typenm <- typenm[-which(typenm=="M")]
+    if ( nmn==1 ) typenm <- typenm[-which(typenm=="Mn")]
+    if ( nscore==1 ) typenm <- typenm[-which(typenm=="score")]
+    if ( nscale==1 ) typenm <- typenm[-which(typenm=="scale")]
+   
     allsegs <- NULL
     for ( i in 1:nrow(params) ) {
 
-        sgtype <- paste(params[i,],collapse="_")
+        sgtype <- paste(params[i,typenm],collapse="_")
         k <- which(colnames(cset$clusters)==params[i,"k"])
         seq <- cset$clusters[,k]
         score <- params[i,"score"]
         scale <- params[i,"scale"]
+        m <- params[i,"M"]
+        mn <- params[i,"Mn"]
 
         if ( score=="ccor" ) csim <- cset$Ccc[[k]]
         if ( score=="icor" ) csim <- cset$Pci[[k]]
@@ -203,10 +219,11 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
         if ( score=="cls" ) csim <- a
 
         if ( verb>0 )
-            cat(paste("calculating segments", sgtype,"\n"))
+            cat(paste("Calculating segment type", sgtype,"\n"))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                              score=score,M=M,Mn=Mn,nui=nui.cr,
+                              score=score,M=m,Mn=mn,
+                              nui=nui.cr,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.mat="",verb=verb)
         sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
