@@ -4,8 +4,8 @@
 #'@docType package
 #'@name segmenTier
 #'@section Dependencies: The package strictly depends on
-#' \code{\link[Rcpp]{Rcpp}},
-#' and \code{\link[parallel]{parallel}} allows to
+#' \code{\link[Rcpp:Rcpp]{Rcpp}},
+#' and \code{\link[parallel:parallel]{parallel}} allows to
 #' signficantly speed up scoring function matrix calculations. All other
 #' dependencies are usually present in a basic installation
 #' (\code{graphics}, \code{grDevices})).
