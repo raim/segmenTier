@@ -161,6 +161,7 @@ clusterTimeseries <- function(tset, selected=16, kiter=100000, nstart=100) {
 #'@export
 segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
                                  M=175, Mn=20, a=2, nui=1,
+                                 fuse.threshold=0.2,
                                  nextmax=TRUE, multi="max", multib="max", 
                                  ncpu=1, verb=1, save.mat="") {
 
@@ -231,18 +232,44 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
                       i,"of",nrow(params),"\n"))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                              score=score,M=m,Mn=mn,
-                              nui=nui,
+                              score=score,M=m,Mn=mn,nui=nui,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.mat="",verb=verb)
-        ## TODO: give fuse suggestions here, where we have the matrices?
-        sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
-        segs <- data.frame(ID=sgids,
-                           type=rep(sgtype,length(sgids)),
-                           seg$segments)
-        allsegs <- rbind(allsegs,segs)        
+
+        ## tag adjacent segments from correlating clusters
+        if ( nrow(seg$segments)>1 )
+            close <- fuseSegments(seg$segments, Ccc=cset$Ccc[[k]],
+                                  fuse.threshold=fuse.threshold)
+        if ( nrow(seg$segments) > 0 ) {
+            if ( nrow(segs)==1 ) close <- FALSE 
+            
+            sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
+            segs <- data.frame(ID=sgids,
+                               type=rep(sgtype,length(sgids)),
+                               seg$segments,
+                               fuse=close)
+            allsegs <- rbind(allsegs,segs)
+        }
     }
     allsegs
+}
+
+#' tags adjacent segments if they are from correlating (>\code{fuse.thresh})
+#' clusters
+#' @export
+fuseSegments <- function(segs, Ccc, fuse.thresh=.2) {
+
+    fuse <- rep(NA,nrow(segs))
+    for ( j in 2:nrow(segs) ) 
+        fuse[j] <- Ccc[segs[j,1],segs[j-1,1]]
+
+    ## FUSE directly adjacent if clusters correlate?
+    adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
+    close <- c(FALSE,adj) & fuse > fuse.thresh
+    if ( sum(close)>0 )
+        cat(paste("\t",sum(close), "segments could be fused\n"))
+
+    close
 }
     
 
