@@ -206,7 +206,7 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
     for ( i in 1:nrow(params) ) {
 
         sgtype <- paste(params[i,typenm],collapse="_")
-        k <- which(colnames(cset$clusters)==params[i,"k"])
+        k <- params[i,"k"]
         seq <- cset$clusters[,k]
         score <- params[i,"score"]
         scale <- params[i,"scale"]
