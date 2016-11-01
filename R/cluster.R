@@ -244,7 +244,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, scores="ccor",
                 cat(paste("\t",sum(close), "segments could be fused\n"))
         }
         if ( nrow(seg$segments) > 0 ) {
-            if ( nrow(segs)==1 ) close <- FALSE 
+            if ( nrow(seg$segments)==1 ) close <- FALSE 
             
             sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
             segs <- data.frame(ID=sgids,
