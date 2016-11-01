@@ -231,7 +231,7 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
 #' as reported)
 #' @details This is a high-level wrapper for \code{\link{segmentClusters}}
 #' which allows segmentation over multiple clusterings as provided by the
-#' function \code{\link{clusterTimeseries} and over multiple segmentation
+#' function \code{\link{clusterTimeseries}} and over multiple segmentation
 #' paramers. Specifially, parameters \code{csim.scale}, \code{score},
 #' \code{M} and \code{Mn} can all be vectors.
 #'@export
