@@ -198,7 +198,7 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
 #' high-level wrapper for multiple runs of segmentation by
 #' \code{\link{segmentClusters}} for multiple clusterings and
 #' multiple segmentation parameters
-#' @param cset a clustering set as returned by \code{\link{clusterTimerseries}}
+#' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param csim.scale exponent to scale similarity matrices, must be odd
 #' to maintain negative correlations!
 #' @param score the scoring function to be used: "ccor", "icor" or "cls"
