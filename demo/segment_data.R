@@ -10,7 +10,7 @@ trafo <- "" # "ash" # "log" #
 low.thresh <- 1 # -Inf/0 # filter by log(DC-component=total signal over time)
 dft.range <- 2:7 # range of DFT to cluster to use for clustering
 selected <- c(8,12,16) # cluster number K
-kiter <- 100000 # max. iterations in kmeans
+iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
 ### SEGMENTATION PARAMETERS
@@ -42,10 +42,9 @@ tset <- processTimeseries(ts=tsd, smooth=FALSE, trafo=trafo,
                           use.snr=use.snr, low.thresh=low.thresh)
 
 
-cset <- clusterTimeseries(tset, selected=selected,kiter=kiter, nstart=nstart)
+cset <- clusterTimeseries(tset, selected=selected,iter.max=iter.max, nstart=nstart)
 
-allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale,
-                                scores=scores,
+allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
                                 M=M, Mn=Mn, a=2, nui=nui.cr,
                                 nextmax=nextmax, multi=multi,multib=multib, 
                                 ncpu=1, verb=1, save.mat="")
