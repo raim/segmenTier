@@ -84,6 +84,8 @@ clusterSegments <- function() {}
 #' character "0" (zero).
 #' @param csim cluster-cluster or position-cluster similarity
 #' matrix, for scoring functions "ccor" and "icor", respectively
+#' @param csim.scale exponent to scale similarity matrices, must be odd
+#' to maintain negative correlations!
 #' @param score the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.

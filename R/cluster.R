@@ -215,7 +215,7 @@ segmentClusterset <- function(cset, csim.scale=1, scores="ccor",
             if ( nrow(segs) > 0 ) {
                 if ( nrow(segs)==1 ) close <- FALSE 
                 segs <- cbind(segs,close)
-                rownames(segs) <- paste(paste(score,scale,sep=""),
+                rownames(segs) <- paste(paste(score,csim.scale,sep=""),
                                         1:nrow(segs),sep="_")
                 segments <- rbind(segments,segs)
             }
