@@ -163,10 +163,10 @@ NumericVector ccSMicor(NumericVector seq, int c, int M, int Mn,
   for (int i = 0; i < nrow; i++) {
     // sum of similarities of positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
-    SV(idx) = -M + csim( i, c-1 ); 
+    SV(idx) = -M + csim( i, c-1 ); // SM(i,i)
     for ( int k = i-1; k >= 0; k-- ) {
       idx = (i + 1) * i / 2 + k;
-      SV(idx) =  SV(idx+1) + csim( k, c-1 ); 
+      SV(idx) =  SV(idx+1) + csim( k, c-1 ); // SM(k,i)
     }
   }
   return SV; 
@@ -201,10 +201,10 @@ NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn,
   for (int i = 0; i < nrow; i++) {
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
-    SV(idx) = -M + csim( seq[i]-1, c-1 );
+    SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
     for ( int k = i-1; k >= 0; k-- ) {
       idx = (i + 1) * i / 2 + k;
-      SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); 
+      SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); // SM(k,i)
     }
   }
   return SV;
@@ -224,11 +224,11 @@ NumericVector ccSMncor(NumericVector seq, int c, int M, int Mn,
   for (int i = 0; i < nrow; i++) {
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
-    SV(idx) = -M + csim( seq[i]-1, c-1 );
+    SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
     for ( int k = i-1; k >= 0; k-- ) {
       idx = (i + 1) * i / 2 + k;
       if ( seq[k]==0 ) SV(idx) = SV(idx+1);
-      else SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); 
+      else SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 );  // SM(k,i)
     }
   }
   return SV;
@@ -269,7 +269,7 @@ NumericVector ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
   for (int i = 0; i < nrow; i++) 
     for ( int k = 0; k <= i; k++) {
       idx = (i + 1) * i / 2 + k;
-      SV(idx) = scorecls_c(k+1, i+1, c, seq, M, csim);
+      SV(idx) = scorecls_c(k+1, i+1, c, seq, M, csim); // SM(k,i)
     }
   return SV;
 }
@@ -336,8 +336,8 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
       // fill from k=0..i
       for ( int k=0; k<kmax; k++ ) {
 	// score(k,i,c)
-	idx = (i + 1) * i / 2 + k; // matrix SM(k,i) <-> vector SV(idx)
-	scr[k] = SV(idx);  // scorecor_c(k,i,c,seq,M,a);
+	idx = (i + 1) * i / 2 + k; 
+	scr[k] = SV(idx);  // SV(idx) = SM(k,i) = scorecor_c(k,i,c,seq,M,a);
 	// + max_c' S(k-1,c')
 	if ( k > 0 ) {
 	  // TODO: is -Inf dangerous? smarter solution?
