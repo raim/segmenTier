@@ -57,32 +57,23 @@ allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
 
 ## PLOT RESULTS
 
-
-## TODO: convert genomeBrowser to library
-## or include simplified versions of the plot in segmenTier
-browser.path <- sub("GENBRO=","",system("env|grep GENBRO",intern=TRUE))
-source(file.path(browser.path,"src/genomeBrowser_utils.R")) # for coor2index
-source(file.path(browser.path,"src/genomeBrowser.R")) ## for chrS
-
 N <- nrow(tsd)
-coors <- c(chr=1,start=1,end=N)
+coors <- c(chr=1,start=1,end=N) # "chromosome" coordinates
 
+## get time-series data
 tsd <- tset$ts # incl. all trafos and zeros set to NA
-#tsd[tset$zero.vals,] <- NA
-tot <- tset$tot
-low <- tset$low.vals
+tot <- tset$tot # total of the time-series
+low <- tset$low.vals # cut-off for non-clustered positions
 
-library("colorRamps")
-colors0 <- matlab.like(100)  ## read count
+colors0 <- gray.colors(100) ## heatmap colors for the timeseries 
 colors0[1] <- "#FFFFFF" ## replace minimal by white
-
 
 par(mfcol=c(3,1),mai=c(.01,1.5,.01,.01),mgp=c(1.7,.5,0),xaxs="i")
 plot(1:N,tot,log=ifelse(trafo!="","","y"),type="l",lwd=2,axes=FALSE)
 points((1:N)[low],tot[low],col=2,cex=.5)
 axis(2);
-plotHeat(tsd,coors=coors,chrS=0,colors=colors0, colnorm=TRUE)
+segment.plotHeat(tsd,coors=coors,chrS=0,colors=colors0, colnorm=TRUE)
 columns <- c(name="ID", type="type", start="start", end="end")
-tmp <- plotFeatures(allsegs, coors=coors,
-                    typord=TRUE,cuttypes=TRUE,
-                    ylab="", names=FALSE,columns=columns,tcx=.5)
+segment.plotFeatures(allsegs, coors=coors,
+                     typord=TRUE,cuttypes=TRUE,
+                     ylab="", names=FALSE,columns=columns,tcx=.5)
