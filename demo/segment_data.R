@@ -77,7 +77,6 @@ colors0 <- matlab.like(100)  ## read count
 colors0[1] <- "#FFFFFF" ## replace minimal by white
 
 
-##png("testset_srg1_scales.png",width=10,height=5,units="in",res=300)
 par(mfcol=c(3,1),mai=c(.01,1.5,.01,.01),mgp=c(1.7,.5,0),xaxs="i")
 plot(1:N,tot,log=ifelse(trafo!="","","y"),type="l",lwd=2,axes=FALSE)
 points((1:N)[low],tot[low],col=2,cex=.5)
@@ -87,4 +86,3 @@ columns <- c(name="ID", type="type", start="start", end="end")
 tmp <- plotFeatures(allsegs, coors=coors,
                     typord=TRUE,cuttypes=TRUE,
                     ylab="", names=FALSE,columns=columns,tcx=.5)
-##dev.off()
