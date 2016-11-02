@@ -120,6 +120,10 @@ double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 /// MATRIX SCORING FUNCTIONS
 // these are called in the algorithm and calculate the scoring function
 // matrices for individual scoring functions
+// TODO: convert all triangular scoring matrices to vectors
+// to save memory (and perhaps time?); use e.g.
+// index = x + (y+1)*y/2  to get field x,y of a lower triangular matrix
+// incl. diagonal; see http://stackoverflow.com/questions/26402320/map-upper-triangular-matrix-on-vector-skipping-the-diagonal
 
 //' Scoring Function Matrix "icor"
 //' @details  Scoring function "icor" calculates the sum of similarities of
