@@ -92,7 +92,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ccSMicor
-NumericMatrix ccSMicor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
+NumericVector ccSMicor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
 RcppExport SEXP segmenTier_ccSMicor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -107,7 +107,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ccSMccor
-NumericMatrix ccSMccor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
+NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
 RcppExport SEXP segmenTier_ccSMccor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -122,7 +122,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ccSMncor
-NumericMatrix ccSMncor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
+NumericVector ccSMncor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
 RcppExport SEXP segmenTier_ccSMncor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -137,7 +137,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ccSMcls
-NumericMatrix ccSMcls(NumericVector seq, int c, int M, int Mn, int csim);
+NumericVector ccSMcls(NumericVector seq, int c, int M, int Mn, int csim);
 RcppExport SEXP segmenTier_ccSMcls(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

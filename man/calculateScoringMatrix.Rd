@@ -32,7 +32,8 @@ option that currently requires to be set to FALSE to avoid an error in
 data collection from parallel processes}
 }
 \value{
-Returns the scoring function matrices \code{SM} for all clusters
+Returns the scoring function matrices \code{SM} (in vector form,
+since the matrix is triangular) for all clusters as a list.
 in the sequence \code{seq}.
 }
 \description{

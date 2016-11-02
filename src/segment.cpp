@@ -117,13 +117,16 @@ double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 }
 
 
-/// MATRIX SCORING FUNCTIONS
-// these are called in the algorithm and calculate the scoring function
-// matrices for individual scoring functions
-// TODO: convert all triangular scoring matrices to vectors
-// to save memory (and perhaps time?); use e.g.
-// index = x + (y+1)*y/2  to get field x,y of a lower triangular matrix
-// incl. diagonal; see http://stackoverflow.com/questions/26402320/map-upper-triangular-matrix-on-vector-skipping-the-diagonal
+/// SCORING FUNCTION MATRICES
+// These are called in the algorithm and calculate the scoring function
+// matrices for individual scoring functions.
+// Note that these matrices SM of size NxN are only half-filled (symmetric,
+// triangular), and since these structures are responsible 
+// for the memory consumption of this algorithm, the triangular scoring 
+// matrices SM are internally represented as vectors SV of size (N^2+N)/2;
+// and indices are mapped as: SM( k,i ) = SV( (i + 1) * i / 2 + k )
+// see stackoverflow post by user `prosfilaes' for the mapping between matrix
+// and vector indices http://stackoverflow.com/a/17606716/7106549 ,
 
 //' Scoring Function Matrix "icor"
 //' @details  Scoring function "icor" calculates the sum of similarities of
@@ -149,21 +152,24 @@ double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 //' \code{seq} and cluster \code{c} for scoring function "icor".
 //' @export
 // [[Rcpp::export]]
-NumericMatrix ccSMicor(NumericVector seq, int c, int M, int Mn,
+NumericVector ccSMicor(NumericVector seq, int c, int M, int Mn,
 		       NumericMatrix csim) {
 
   if ( c==1 ) M = Mn; // nuissance cluster - lower M!
   int nrow = seq.length(); // note: nrow could be obtained from csim, seq
                            // used only for consistency of function signature
-  NumericMatrix SM(nrow,nrow);
-  std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
+  int idx = (nrow+1)*nrow/2; // size of vector representing triangular matrix
+  NumericVector SV(idx); // vector form of triangular scoring function matrix
   for (int i = 0; i < nrow; i++) {
     // sum of similarities of positions k:i to cluster c
-    SM(i,i) = -M + csim( i, c-1 ); 
-    for ( int k = i-1; k >= 0; k-- ) 
-      SM(k,i) =  SM(k+1,i) + csim( k, c-1 ); 
+    idx = (i + 1) * i / 2 + i;
+    SV(idx) = -M + csim( i, c-1 ); 
+    for ( int k = i-1; k >= 0; k-- ) {
+      idx = (i + 1) * i / 2 + k;
+      SV(idx) =  SV(idx+1) + csim( k, c-1 ); 
+    }
   }
-  return SM;
+  return SV; 
 }
 
 //' Scoring Function Matrix "ccor" 
@@ -185,20 +191,23 @@ NumericMatrix ccSMicor(NumericVector seq, int c, int M, int Mn,
 //' \code{seq} and cluster \code{c} for scoring function "ccor".
 //' @export
 // [[Rcpp::export]]
-NumericMatrix ccSMccor(NumericVector seq, int c, int M, int Mn, 
+NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn, 
 		       NumericMatrix csim) {
   
   if ( c==1 ) M = Mn; // nuissance cluster - lower M!
   int nrow = seq.length(); 
-  NumericMatrix SM(nrow,nrow);
-  std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
+  int idx = (nrow+1)*nrow/2; // size of vector representing triangular matrix
+  NumericVector SV(idx); // vector form of triangular scoring function matrix
   for (int i = 0; i < nrow; i++) {
     // sum of similarities of clusters at positions k:i to cluster c
-    SM(i,i) = -M + csim( seq[i]-1, c-1 );
-    for ( int k = i-1; k >= 0; k-- ) 
-      SM(k,i) =  SM(k+1,i) + csim( seq[k]-1, c-1 ); 
+    idx = (i + 1) * i / 2 + i;
+    SV(idx) = -M + csim( seq[i]-1, c-1 );
+    for ( int k = i-1; k >= 0; k-- ) {
+      idx = (i + 1) * i / 2 + k;
+      SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); 
+    }
   }
-  return SM;
+  return SV;
 }
 
 
@@ -206,20 +215,23 @@ NumericMatrix ccSMccor(NumericVector seq, int c, int M, int Mn,
 //' @inheritParams ccSMccor
 //' @export
 // [[Rcpp::export]]
-NumericMatrix ccSMncor(NumericVector seq, int c, int M, int Mn,
+NumericVector ccSMncor(NumericVector seq, int c, int M, int Mn,
 		       NumericMatrix csim) {
   // NOTE: Mn not used here, just for function signature consistency
   int nrow = seq.length(); 
-  NumericMatrix SM(nrow,nrow);
-  std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
+  int idx = (nrow+1)*nrow/2; // size of vector representing triangular matrix
+  NumericVector SV(idx); // vector form of triangular scoring function matrix
   for (int i = 0; i < nrow; i++) {
     // sum of similarities of clusters at positions k:i to cluster c
-    SM(i,i) = -M + csim( seq[i]-1, c-1 );
-    for ( int k = i-1; k >= 0; k-- ) 
-      if ( seq[k]==0 ) SM(k,i) =  SM(k+1,i);
-      else SM(k,i) =  SM(k+1,i) + csim( seq[k]-1, c-1 ); 
+    idx = (i + 1) * i / 2 + i;
+    SV(idx) = -M + csim( seq[i]-1, c-1 );
+    for ( int k = i-1; k >= 0; k-- ) {
+      idx = (i + 1) * i / 2 + k;
+      if ( seq[k]==0 ) SV(idx) = SV(idx+1);
+      else SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); 
+    }
   }
-  return SM;
+  return SV;
 }
 
 
@@ -244,7 +256,7 @@ NumericMatrix ccSMncor(NumericVector seq, int c, int M, int Mn,
 //' \code{seq} and cluster \code{c} for simplest scoring function "cls".
 //' @export
 // [[Rcpp::export]]
-NumericMatrix ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
+NumericVector ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
 
   // note: "Mn" not used, required for consistency with ccSM functions
   // to allow call from R wrapper
@@ -252,12 +264,14 @@ NumericMatrix ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
   //int a = csim; // note: "csim" required for call from R wrapper (as Mn)
 
   int nrow = seq.length();
-  NumericMatrix SM(nrow,nrow);
-  std::fill( SM.begin(), SM.end(), NumericVector::get_na() ) ;
+  int idx = (nrow+1)*nrow/2; // size of vector representing triangular matrix
+  NumericVector SV(idx); // vector form of triangular scoring function matrix
   for (int i = 0; i < nrow; i++) 
-    for ( int k = 0; k <= i; k++) 
-      SM(k,i) = scorecls_c(k+1, i+1, c, seq, M, csim);
-  return SM;
+    for ( int k = 0; k <= i; k++) {
+      idx = (i + 1) * i / 2 + k;
+      SV(idx) = scorecls_c(k+1, i+1, c, seq, M, csim);
+    }
+  return SV;
 }
 
 // TODO: rm dependency on seq, since on seq.length is required here!
@@ -302,8 +316,8 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
 
   // initialize second position: score(1,2,c)
   for ( int c=0; c<M; c++ ) {
-    NumericMatrix SM = SML[c]; // scoring function matrix!
-    S(1,c) = SM(0,1);
+    NumericVector SV = SML[c]; // scoring function matrix (in vector form)!
+    S(1,c) = SV(1);
     K(1,c) = 1;
   }
 
@@ -314,15 +328,16 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
     for ( int c=0; c<M; c++ ) {
       
       int kmax = i-1; // 
-      
-      NumericMatrix SM = SML[c]; // scoring function matrix!
+      int idx;
+      NumericVector SV = SML[c]; // scoring function matrix (in vector form)!
       NumericVector scr(kmax);
 
       // S(k-1,c') + score(k,i,c)
       // fill from k=0..i
       for ( int k=0; k<kmax; k++ ) {
 	// score(k,i,c)
-	scr[k] = SM(k,i);  // scorecor_c(k,i,c,seq,M,a);
+	idx = (i + 1) * i / 2 + k; // matrix SM(k,i) <-> vector SV(idx)
+	scr[k] = SV(idx);  // scorecor_c(k,i,c,seq,M,a);
 	// + max_c' S(k-1,c')
 	if ( k > 0 ) {
 	  // TODO: is -Inf dangerous? smarter solution?
@@ -350,4 +365,3 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
   return Rcpp::List::create(Rcpp::Named("S") = S,
 			    Rcpp::Named("K") = K);
 }
-

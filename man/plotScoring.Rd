@@ -4,11 +4,11 @@
 \alias{plotScoring}
 \title{plot the scoring function matrices as a heatmap}
 \usage{
-plotScoring(SM, seq, score, out.file, verb = 2)
+plotScoring(SML, seq, score, out.file, verb = 2)
 }
 \arguments{
-\item{SM}{a list with scoring function matrices for each cluster,
-see \code{\link{calculateScoringMatrix}}}
+\item{SML}{a list with scoring function matrices for each cluster,
+as provided by \code{\link{calculateScoringMatrix}}}
 
 \item{seq}{the original cluster sequence, optional for axis labeling}
 

@@ -257,32 +257,55 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
 ## PLOTTING RESULTS
 
+#' converts the vector form of the triangular scoring matrix
+#' into a matrix
+#' @param SV vector form of the triangular scoring matrix as returned
+#' by \code{\link{calculateScoringMatrix}}
+#'@export
+fillScoringMatrix <- function(SV) {
+    ## L <- (N+1)*N/2
+    L <- length(SV)
+    N <- -.5 + sqrt(.25 + 2*L)
+    SM <- matrix(NA,nrow=N, ncol= N)
+    getIdx <- function(i,k) ((i + 1) * i / 2 + k)
+    for ( i in 0:(N-1) ) {
+        idx <- getIdx(i,i)
+        SM[i+1,i+1] <- SV[idx+1] 
+        for ( k in (i-1):0 ) {
+            if ( k<0 ) next
+            idx <- getIdx(i,k)
+            SM[k+1,i+1] <- SV[idx+1] 
+        }
+    }
+    SM
+}
+
 #' plot the scoring function matrices as a heatmap
-#' @param SM a list with scoring function matrices for each cluster,
-#' see \code{\link{calculateScoringMatrix}}
+#' @param SML a list with scoring function matrices for each cluster,
+#' as provided by \code{\link{calculateScoringMatrix}}
 #' @param seq the original cluster sequence, optional for axis labeling
 #' @param score name of the used scoring function
 #' @param out.file if supplied the scoring matrices will be plotted to
 #' individual png files named <out.file>_<number>.png
 #' @param verb level of verbosity; 0: no output, 1: progress messages
-
 #' @export
-plotScoring <- function(SM, seq, score, out.file, verb=2) {
+plotScoring <- function(SML, seq, score, out.file, verb=2) {
     files <- NULL
-    for ( c in 1:length(SM) ) {
+    for ( c in 1:length(SML) ) {
         if ( !missing(out.file) ) {
             file.name <- paste(out.file,"_",c,".png",sep="")
             files <- c(files, file.name)
             png(file.name,width=5,height=5,res=200,units="in")
         }
-        
-        image(x=1:nrow(SM[[c]]),y=1:nrow(SM[[c]]),z=SM[[c]],axes=FALSE,
+        ## expand scoring function vector to triangular matrix
+        SM <- fillScoringMatrix(SML[[c]])
+        image(x=1:nrow(SM),y=1:nrow(SM),z=SM,axes=FALSE,
               main=paste("scoring function:",
                          ifelse(missing(score),"",score)),
               ylab=NA,xlab=NA)
         if ( !missing(seq) ) {
-            axis(2,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
-            axis(3,at=1:nrow(SM[[c]]),labels=seq,cex.axis=.5,las=2)
+            axis(2,at=1:nrow(SM),labels=seq,cex.axis=.5,las=2)
+            axis(3,at=1:nrow(SM),labels=seq,cex.axis=.5,las=2)
         }
         legend("bottomright",paste("cluster", c),cex=2,bty="n")
         
@@ -461,7 +484,8 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
 #' @param preschedule \code{\link[parallel:mclapply]{parallel::mclapply}}
 #' option that currently requires to be set to FALSE to avoid an error in
 #' data collection from parallel processes
-#' @return Returns the scoring function matrices \code{SM} for all clusters
+#' @return Returns the scoring function matrices \code{SM} (in vector form,
+#' since the matrix is triangular) for all clusters as a list.
 #' in the sequence \code{seq}.
 #' @export
 calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim, 
@@ -476,17 +500,17 @@ calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim,
   getMat <- get(score,mode="function") 
 
   if ( ncpu<2 ) { # single CPU
-      SM <- lapply(C, function(c) getMat(seq, c, M, Mn, csim))
+      SML <- lapply(C, function(c) getMat(seq, c, M, Mn, csim))
   } else { # multiple CPUs: use package parallel!
       
       ## TODO: make parLapply work
       options(warn=0)
-      SM <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
-                              mc.cores=ncpu,mc.preschedule=preschedule)
+      SML <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
+                                mc.cores=ncpu,mc.preschedule=preschedule)
       options(warn=0)
   }
-  names(SM) <- C
-  SM
+  names(SML) <- C
+  SML
 }
 
 
