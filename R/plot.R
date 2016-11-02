@@ -5,7 +5,7 @@
 
 #' plot features as arrows
 #'@export
-plotFeatures <- function(data, coors, types, strand,
+segment.plotFeatures <- function(data, coors, types, strand,
                          typord=FALSE, cuttypes=FALSE,
                          names=FALSE, legend=FALSE, axis1=FALSE, ylab=NA,
                          args,line=1,ycx=1,tcx=1,tpos=NULL,
@@ -131,15 +131,15 @@ plotFeatures <- function(data, coors, types, strand,
          cex.axis=ycx)
   if ( axis1 ) axis(1,line=-1)
 
-  ## return list of features plotted
-  rownames(feat[feat[,columns["type"]] %in% types,])
+  ## silently return list of plotted features
+  features <- rownames(feat[feat[,columns["type"]] %in% types,])
 }
 
 #' plot 3D genomeData as a heatmap
 ## NOTE: fast indexing via chrS (cumulative chrosome lengths)
 ## is possible only for fully expanded 'data')
 #'@export
-plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, ylab="", axes=FALSE, axis2=FALSE, colnorm=FALSE, chrS, coor, args) {
+segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, ylab="", axes=FALSE, axis2=FALSE, colnorm=FALSE, chrS, coor, args) {
   
   ## parse arguments, which will also override other 
   if ( !missing(args) ) {    
