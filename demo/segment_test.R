@@ -1,6 +1,8 @@
 
 library("segmenTier")
-##source("~/programs/segmenTier/R/segment.R")
+#library("Rcpp")
+#source("~/programs/segmenTier/R/segment.R")
+#sourceCpp("~/programs/segmenTier/src/segment.cpp")
 
 ## a sequence of clusters - note that `0' will be treated
 ## as the nuissance cluster, which will not result in segments
