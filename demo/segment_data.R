@@ -1,10 +1,9 @@
 
 library("segmenTier")
-source("~/programs/segmenTier/R/cluster.R")
-source("~/programs/segmenTier/R/segment.R")
 
 ## load time-series data
-## contains tsd from primseg436 from unpublished yeast transcriptome timeseries
+## contains tsd from primseg436 for
+## a 7.6 kb genomic region
 data(primseg436)
 
 ### TIME-SERIES CLUSTERING PARAMETERS
