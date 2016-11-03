@@ -340,10 +340,10 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
 
       // S(k-1,c') + score(k,i,c)
       // fill from k=0..i
-      idx = (i + 1) * i / 2; // index in vector form of scoring function matrix 
+      ; // index in vector form of scoring function matrix 
       for ( int k=0; k<kmax; k++ ) {
 	// score(k,i,c)
-	idx += k; 
+	idx = (i + 1) * i / 2 + k; 
 	scr[k] = SV(idx);  // SV(idx) = SM(k,i) = scorecor_c(k,i,c,seq,M,a);
 	// + max_c' S(k-1,c')
 	if ( k > 0 ) {
