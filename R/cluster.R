@@ -114,19 +114,9 @@ processTimeseries <- function(ts,
     ## remove data rows: NA or low
     rm.vals <- na.rows | low
 
-    ## enought distinct values?
-    ## TODO: issue segment based on low-filter
-    ## OOR: postprocessing - extend segments into low levels?
-    if ( sum(!rm.vals)<10 ) {
-        cat(paste("not enough data\n"))
-        next
-    } 
-    if ( sum(!duplicated(dat[!rm.vals,]))<2 ) {
-        cat(paste("not enough diversity\n"))
-        next
-    }
-
-    list(dat=dat, ts=tsd, tot=tot, zero.vals=zs, rm.vals=rm.vals, low.vals=low)
+    ## silent return
+    res <- list(dat=dat, ts=tsd, tot=tot,
+                zero.vals=zs, rm.vals=rm.vals, low.vals=low)
 }
 
 #' simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
@@ -145,6 +135,19 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
     rm.vals <- tset$rm.vals
     N <- nrow(dat)
 
+    ## enought distinct values?
+    ## TODO: issue segment based on low-filter
+    ## OOR: postprocessing - extend segments into low levels?
+    warn <- NULL
+    if ( sum(!rm.vals)<10 ) 
+        warn <- "not enough data"
+    else if ( sum(!duplicated(dat[!rm.vals,]))<2 ) 
+      warn <- "not enough data diversity"
+    if ( !is.null(warn) ) {
+        warning(warn)
+        return(NULL)
+    }
+    
     ## CLUSTERING
     ## stored data
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(selected))
@@ -158,12 +161,15 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
         cat(paste("clustering, N=",N,", K=",K, "\n"))
         
         ## cluster
-        km <- stats::kmeans(dat[!rm.vals,],K,iter.max=iter.max,nstart=nstart)
+        km <- stats::kmeans(dat[!rm.vals,],K,iter.max=iter.max,nstart=nstart,
+                            algorithm="Hartigan-Wong")
         ## use alternative algo if this error occured
         if (km$ifault==4) {
-            km <- stats::kmeans(dat[!rm.vals,],K,iter.max=iter.max,nstart=nstart,
+            km <- stats::kmeans(dat[!rm.vals,],K,
+                                iter.max=iter.max,nstart=nstart,
                                 algorithm="MacQueen")
-            cat(paste("quick-transfer error in kmeans, taking MacQueen\n"))
+            warn <- "quick-transfer error in kmeans algorithm Hartigan-Wong, taking MacQueen"
+            warning(warn)
         }
         
         ## prepare cluster sequence
@@ -204,8 +210,9 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
     colnames(clusters) <- names(centers) <-
         names(Pci) <- names(Ccc) <- paste("K",selected,sep="")
 
-    list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
-         selected=selected, usedk=usedk)
+    ## silent return
+    res <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
+                selected=selected, usedk=usedk, warn=warn)
 }
 
 #' high-level wrapper for multiple runs of segmentation by
@@ -332,6 +339,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
             allsegs <- rbind(allsegs,segs)
         }
     }
+    if ( is.null(allsegs) & verb>0 )
+      cat(paste("\tNO SEGMENTS FOUND, returning NULL\n"))
     allsegs
 }
 
