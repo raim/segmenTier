@@ -105,7 +105,7 @@ processTimeseries <- function(ts,
         low <- tot < low.thresh
     }
     ## for plots
-    tsd[zs,] <- NA
+    #tsd[zs,] <- NA
 
     ## store which are NA and set to 0
     na.rows <- rowSums(is.na(dat))==ncol(dat)
@@ -258,7 +258,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     allsegs <- NULL
 
     ## generate parameter combinations as matrix/list
-    ##plst <- list(NA) ## TODO do this via  list ?
+    ## TODO: allow explict combinations via a list
     nk <- length(cset$selected)
     nscore <- length(score)
     nscale <- length(csim.scale)
