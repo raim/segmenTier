@@ -61,7 +61,6 @@ allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
 ts <- tset$ts # incl. all trafos and zeros set to NA
 ts[tset$zero.vals,] <- NA
 tot <- tset$tot # total of the time-series
-low <- tset$low.vals # cut-off for non-clustered positions
 
 N <- nrow(ts)
 coors <- c(chr=1,start=1,end=N) # "chromosome" coordinates
