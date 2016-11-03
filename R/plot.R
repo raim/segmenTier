@@ -145,8 +145,8 @@ segment.plotFeatures <- function(data, coors, types, strand,
          cex.axis=ycx)
   if ( axis1 ) axis(1,line=-1)
 
-  ## silently return list of plotted features
-  features <- rownames(feat[feat[,columns["type"]] %in% types,])
+  ## silently return y-position of types (list of plotted features)
+  features <- typey #rownames(feat[feat[,columns["type"]] %in% types,])
 }
 
 #' plot 3D genomeData as a heatmap
