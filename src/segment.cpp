@@ -202,7 +202,6 @@ NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
-    
     for ( int k = i-1; k >= 0; k-- ) {
       idx = (i + 1) * i / 2 + k;
       SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); // SM(k,i)
@@ -308,6 +307,7 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
   // result matrices S(i,c) and K(i,c)
   int N = seq.length();  // TODO: get N and M from SM
   int M = C.length();
+  int idx; // index for mapping to vector form of score function matrix
   NumericMatrix S(N,M); // total score matrix
   NumericMatrix K(N,M); // for backtracing
   
@@ -325,10 +325,7 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
 
   // go through sequence of clusters
   // start at position 3, since 1-2 were initialized already
-  int idx;
   for ( int i=2; i<N; i++ ) {
-	
-
     for ( int c=0; c<M; c++ ) {
       
       int kmax = i-1; // 
@@ -337,7 +334,6 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
 
       // S(k-1,c') + score(k,i,c)
       // fill from k=0..i
-      ; // index in vector form of scoring function matrix 
       for ( int k=0; k<kmax; k++ ) {
 	// score(k,i,c)
 	idx = (i + 1) * i / 2 + k; 
