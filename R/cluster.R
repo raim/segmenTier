@@ -200,10 +200,12 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
         }
         selected <- sub("\\.1$","",sel)
     }
-    colnames(clusters) <- names(centers) <- paste("K",selected,sep="")
+    ## name all results by K, will be used!
+    colnames(clusters) <- names(centers) <-
+        names(Pci) <- names(Ccc) <- paste("K",selected,sep="")
 
-    list(clusters=clusters, Pci=Pci, Ccc=Ccc,
-         selected=selected, usedk=usedk, centers=centers)
+    list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
+         selected=selected, usedk=usedk)
 }
 
 #' high-level wrapper for multiple runs of segmentation by
@@ -255,39 +257,28 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         
     allsegs <- NULL
 
-    ## TODO: generate param combinatoric matrix/list
-    ## clusterings, ncol(cset$clusters),
-    ## csim.scales
-    ## scoring functions
-    ## M
-    ## Mn
-    ## nui
-    ## nextmax, multi, multib
-    ## and loop through that instead
-
-    plst <- list(NA) ## TODO do this via  list and filter all with length==1
+    ## generate parameter combinations as matrix/list
+    ##plst <- list(NA) ## TODO do this via  list ?
     nk <- length(cset$selected)
     nscore <- length(score)
     nscale <- length(csim.scale)
-    ## all not used:
     nm <- length(M)
     nmn <- length(Mn)
-    nn <- length(nui)
-    na <- length(a)
+    ## TODO
+    ##nn <- length(nui)
+    ##na <- length(a)
 
-    ## note: k allows for multiple clusterings with the same K!
-    params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale*nm,ncol=6))
-    colnames(params) <- c("K","k","score","scale","M","Mn")
+    ## parameter matrix
+    params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale*nm,ncol=5))
+    colnames(params) <- c("K","score","scale","M","Mn")
     params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale*nm*nmn)
-    
-    params[,2] <- rep(1:ncol(cset$clusters), each=nscore*nscale*nm*nmn) 
-    params[,3] <- rep(rep(score, nk), each=nscale*nm*nmn)
-    params[,4] <- rep(rep(csim.scale, nk*nscore), each=nm*nmn)
-    params[,5] <- rep(rep(M, nk*nscore*nscale), each=nmn)
-    params[,6] <- rep(Mn, each= nk*nscore*nscale*nm)
+    params[,2] <- rep(rep(score, nk), each=nscale*nm*nmn)
+    params[,3] <- rep(rep(csim.scale, nk*nscore), each=nm*nmn)
+    params[,4] <- rep(rep(M, nk*nscore*nscale), each=nmn)
+    params[,5] <- rep(Mn, each= nk*nscore*nscale*nm)
 
     ## segment type name construction
-    ## TODO: do this smarter!
+    ## TODO: do this smarter? 
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
     if ( nm==1 ) typenm <- typenm[-which(typenm=="M")]
@@ -302,16 +293,16 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     for ( i in 1:nrow(params) ) {
 
         sgtype <- paste(params[i,typenm],collapse="_")
-        k <- params[i,"k"]
-        seq <- cset$clusters[,k]
+        K <- as.character(params[i,"K"])
+        seq <- cset$clusters[,K]
         scr <- params[i,"score"]
         scale <- params[i,"scale"]
         m <- params[i,"M"]
         mn <- params[i,"Mn"]
 
-        if ( scr=="ccor" ) csim <- cset$Ccc[[k]]
-        if ( scr=="icor" ) csim <- cset$Pci[[k]]
-        if ( scr=="xcor" ) csim <- cset$Ccc[[k]]
+        if ( scr=="ccor" ) csim <- cset$Ccc[[K]]
+        if ( scr=="icor" ) csim <- cset$Pci[[K]]
+        if ( scr=="xcor" ) csim <- cset$Ccc[[K]]
         if ( scr=="cls" ) csim <- a
 
         if ( verb>0 )
@@ -325,7 +316,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
         ## tag adjacent segments from correlating clusters
         if ( nrow(seg$segments)>1 ) {
-            close <- fuseSegments(seg$segments, Ccc=cset$Ccc[[k]],
+            close <- fuseSegments(seg$segments, Ccc=cset$Ccc[[K]],
                                   fuse.threshold=fuse.threshold)
             if ( sum(close)>0 & verb>0 )
                 cat(paste("\t",sum(close), "segments could be fused\n"))
