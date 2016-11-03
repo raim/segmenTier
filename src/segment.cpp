@@ -164,9 +164,8 @@ NumericVector ccSMicor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( i, c-1 ); // SM(i,i)
-    idx = (i + 1) * i / 2;
     for ( int k = i-1; k >= 0; k-- ) {
-      idx += k;
+      idx = (i + 1) * i / 2 + k;
       SV(idx) =  SV(idx+1) + csim( k, c-1 ); // SM(k,i)
     }
   }
@@ -203,9 +202,9 @@ NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
-    idx = (i + 1) * i / 2;
+    
     for ( int k = i-1; k >= 0; k-- ) {
-      idx += k;
+      idx = (i + 1) * i / 2 + k;
       SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); // SM(k,i)
     }
   }
@@ -227,9 +226,8 @@ NumericVector ccSMncor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
-    idx = (i + 1) * i / 2;
     for ( int k = i-1; k >= 0; k-- ) {
-      idx += k;
+      idx = (i + 1) * i / 2 + k;
       if ( seq[k]==0 ) SV(idx) = SV(idx+1);
       else SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 );  // SM(k,i)
     }
@@ -270,9 +268,8 @@ NumericVector ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
   int idx = (nrow+1)*nrow/2; // size of vector representing triangular matrix
   NumericVector SV(idx); // vector form of triangular scoring function matrix
   for (int i = 0; i < nrow; i++) {
-    idx = (i + 1) * i / 2;
     for ( int k = 0; k <= i; k++) {
-      idx += k;
+      idx = (i + 1) * i / 2 + k;
       SV(idx) = scorecls_c(k+1, i+1, c, seq, M, csim); // SM(k,i)
     }
   }
