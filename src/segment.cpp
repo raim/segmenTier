@@ -164,8 +164,9 @@ NumericVector ccSMicor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( i, c-1 ); // SM(i,i)
+    idx = (i + 1) * i / 2;
     for ( int k = i-1; k >= 0; k-- ) {
-      idx = (i + 1) * i / 2 + k;
+      idx += k;
       SV(idx) =  SV(idx+1) + csim( k, c-1 ); // SM(k,i)
     }
   }
@@ -202,8 +203,9 @@ NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
+    idx = (i + 1) * i / 2;
     for ( int k = i-1; k >= 0; k-- ) {
-      idx = (i + 1) * i / 2 + k;
+      idx += k;
       SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 ); // SM(k,i)
     }
   }
@@ -225,8 +227,9 @@ NumericVector ccSMncor(NumericVector seq, int c, int M, int Mn,
     // sum of similarities of clusters at positions k:i to cluster c
     idx = (i + 1) * i / 2 + i;
     SV(idx) = -M + csim( seq[i]-1, c-1 ); // SM(i,i)
+    idx = (i + 1) * i / 2;
     for ( int k = i-1; k >= 0; k-- ) {
-      idx = (i + 1) * i / 2 + k;
+      idx += k;
       if ( seq[k]==0 ) SV(idx) = SV(idx+1);
       else SV(idx) = SV(idx+1) + csim( seq[k]-1, c-1 );  // SM(k,i)
     }
@@ -266,11 +269,13 @@ NumericVector ccSMcls(NumericVector seq, int c, int M, int Mn, int csim) {
   int nrow = seq.length();
   int idx = (nrow+1)*nrow/2; // size of vector representing triangular matrix
   NumericVector SV(idx); // vector form of triangular scoring function matrix
-  for (int i = 0; i < nrow; i++) 
+  for (int i = 0; i < nrow; i++) {
+    idx = (i + 1) * i / 2;
     for ( int k = 0; k <= i; k++) {
-      idx = (i + 1) * i / 2 + k;
+      idx += k;
       SV(idx) = scorecls_c(k+1, i+1, c, seq, M, csim); // SM(k,i)
     }
+  }
   return SV;
 }
 
@@ -323,12 +328,14 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
 
   // go through sequence of clusters
   // start at position 3, since 1-2 were initialized already
+  int idx;
   for ( int i=2; i<N; i++ ) {
+	
+    idx = (i + 1) * i / 2; // index in vector form of scoring function matrix 
 
     for ( int c=0; c<M; c++ ) {
       
       int kmax = i-1; // 
-      int idx;
       NumericVector SV = SML[c]; // scoring function matrix (in vector form)!
       NumericVector scr(kmax);
 
@@ -336,7 +343,7 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
       // fill from k=0..i
       for ( int k=0; k<kmax; k++ ) {
 	// score(k,i,c)
-	idx = (i + 1) * i / 2 + k; 
+	idx += k; 
 	scr[k] = SV(idx);  // SV(idx) = SM(k,i) = scorecor_c(k,i,c,seq,M,a);
 	// + max_c' S(k-1,c')
 	if ( k > 0 ) {
