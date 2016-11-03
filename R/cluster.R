@@ -189,6 +189,17 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
 
         Pci[[k]] <- P
     }
+    ## count duplicate K
+    if ( any(duplicated(selected)) ) {
+        sel <- paste(selected,".1",sep="")
+        cnt <- 2
+        while( sum(duplicated(sel)) ) {
+            sel[duplicated(sel)] <- sub("\\..*",paste(".",cnt,sep=""),
+                                        sel[duplicated(sel)])
+            cnt <- cnt+1
+        }
+        selected <- sub("\\.1$","",sel)
+    }
     colnames(clusters) <- names(centers) <- paste("K",selected,sep="")
 
     list(clusters=clusters, Pci=Pci, Ccc=Ccc,
