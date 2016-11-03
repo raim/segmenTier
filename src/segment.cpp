@@ -331,7 +331,6 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
   int idx;
   for ( int i=2; i<N; i++ ) {
 	
-    idx = (i + 1) * i / 2; // index in vector form of scoring function matrix 
 
     for ( int c=0; c<M; c++ ) {
       
@@ -341,6 +340,7 @@ List calculateTotalScore(NumericVector seq, NumericVector C,
 
       // S(k-1,c') + score(k,i,c)
       // fill from k=0..i
+      idx = (i + 1) * i / 2; // index in vector form of scoring function matrix 
       for ( int k=0; k<kmax; k++ ) {
 	// score(k,i,c)
 	idx += k; 
