@@ -1,3 +1,4 @@
 *.so
 *.o
+src/symbols.rds
 inst/doc
