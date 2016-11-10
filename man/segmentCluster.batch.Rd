@@ -8,7 +8,8 @@ multiple segmentation parameters}
 \usage{
 segmentCluster.batch(cset, csim.scale = 1, score = "ccor", M = 175,
   Mn = 20, a = 2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
-  multi = "max", multib = "max", ncpu = 1, verb = 1, save.mat = "")
+  multi = "max", multib = "max", ncpu = 1, verb = 1,
+  short.name = TRUE, save.mat = "")
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
@@ -50,6 +51,9 @@ either "min" (default), "max" or "skip"}
 \code{\link{calculateScoringMatrix}}}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
+
+\item{short.name}{if TRUE (default) parameters that are not varied
+will not be part of the segment type and ID}
 
 \item{save.mat}{store the scoring function matrix SM or the back-tracing
 matrix K by adding "SM" and "SK" to the string vector save.mat; useful

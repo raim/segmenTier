@@ -237,18 +237,20 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
 #' either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace phase,
 #' either "min" (default), "max" or "skip"
+#' @param fuse.threshold if adjacent segments are associated with clusters
+#' the centers of which have a Pearson correlation \code{>fuse.threshold}
+#' the field "fuse" will be set to 1 for the second segments (top-to-bottom
+#' as reported)
 #' @param ncpu number of available cores (CPUs), passed to
 #' \code{\link[parallel:mclapply]{parallel::mclapply}} by
 #' \code{\link{calculateScoringMatrix}}
+#' @param short.name if TRUE (default) parameters that are not varied
+#' will not be part of the segment type and ID
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.mat store the scoring function matrix SM or the back-tracing
 #' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
 #' in testing stage or for debugging or illustration of the algorithm;
 #' see \code{\link{plotScoring}}
-#' @param fuse.threshold if adjacent segments are associated with clusters
-#' the centers of which have a Pearson correlation \code{>fuse.threshold}
-#' the field "fuse" will be set to 1 for the second segments (top-to-bottom
-#' as reported)
 #' @details This is a high-level wrapper for \code{\link{segmentClusters}}
 #' which allows segmentation over multiple clusterings as provided by the
 #' function \code{\link{clusterTimeseries}} and over multiple segmentation
@@ -259,7 +261,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                  M=175, Mn=20, a=2, nui=1,
                                  fuse.threshold=0.2,
                                  nextmax=TRUE, multi="max", multib="max", 
-                                 ncpu=1, verb=1, save.mat="") {
+                                 ncpu=1, verb=1, short.name=TRUE,save.mat="") {
 
         
     allsegs <- NULL
@@ -288,18 +290,20 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     ## TODO: do this smarter? 
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
-    if ( nm==1 ) typenm <- typenm[-which(typenm=="M")]
-    if ( nmn==1 ) typenm <- typenm[-which(typenm=="Mn")]
-    if ( nscore==1 ) typenm <- typenm[-which(typenm=="score")]
-    if ( nscale==1 ) typenm <- typenm[-which(typenm=="scale")]
-   
+    if ( short.name ) {
+        if ( nm==1 ) typenm <- typenm[-which(typenm=="M")]
+        if ( nmn==1 ) typenm <- typenm[-which(typenm=="Mn")]
+        if ( nscore==1 ) typenm <- typenm[-which(typenm=="score")]
+        if ( nscale==1 ) typenm <- typenm[-which(typenm=="scale")]
+    }
+    
     if ( verb>0 )
         cat(paste("CALCULATING",nrow(params),"SEGMENTATIONS\n"))
 
     allsegs <- NULL
     for ( i in 1:nrow(params) ) {
 
-        sgtype <- paste(params[i,typenm],collapse="_")
+        sgtype <-paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
         scr <- params[i,"score"]
@@ -322,14 +326,13 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                               save.mat="",verb=verb)
 
         ## tag adjacent segments from correlating clusters
-        if ( nrow(seg$segments)>1 ) {
-            close <- fuseSegments(seg$segments, Ccc=cset$Ccc[[K]],
-                                  fuse.threshold=fuse.threshold)
-            if ( sum(close)>0 & verb>0 )
-                cat(paste("\t",sum(close), "segments could be fused\n"))
-        }
+        close <- fuseSegments(seg$segments, Ccc=cset$Ccc[[K]],
+                              fuse.threshold=fuse.threshold)
+        if ( sum(close)>0 & verb>0 )
+          cat(paste("\t",sum(close), "segments could be fused\n"))
+
+        ## collect results
         if ( nrow(seg$segments) > 0 ) {
-            if ( nrow(seg$segments)==1 ) close <- FALSE 
             
             sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
             segs <- data.frame(ID=sgids,
@@ -348,6 +351,9 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 ## clusters
 fuseSegments <- function(segs, Ccc, fuse.threshold=.2) {
 
+    if ( nrow(segs)==0 ) return(NULL)
+    if ( nrow(segs)==1 ) return(FALSE)
+    
     fuse <- rep(NA,nrow(segs))
     for ( j in 2:nrow(segs) ) 
         fuse[j] <- Ccc[segs[j,1],segs[j-1,1]]
