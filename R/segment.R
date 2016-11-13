@@ -277,50 +277,6 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 ## to collect data from forked processes, but this avoids
 ## the error "long vectors not supported yet: fork.c:378"
 
-#' generate scoring function matrices for each cluster
-#' @param seq a sequence of cluster assignments
-#' @param C optional cluster sorting
-#' @param score the scoring function to be used: "ccor", "icor" or "cls"
-#' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
-#' @param csim cluster-cluster or position-cluster similarity
-#' matrix, for scoring functions "ccor" and "icor", respectively
-#' @param ncpu number of available cores (CPUs), passed to
-#' \code{\link[parallel:mclapply]{parallel::mclapply}}
-#' @param preschedule \code{\link[parallel:mclapply]{parallel::mclapply}}
-#' option that currently requires to be set to FALSE to avoid an error in
-#' data collection from parallel processes
-#' @return Returns the scoring function matrices \code{SM} (in vector form,
-#' since the matrix is triangular) for all clusters as a list.
-#' in the sequence \code{seq}.
-#' @export
-calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim, 
-                                   ncpu=1, preschedule=FALSE) {
-  if ( missing(C) ) 
-    C <- sort(unique(seq)) # get clusters
-
-  ## get requested scoring functions - from segment.cpp !
-  ## NOTE: csim is an integer for scoring function "cls"; and
-  ## a matrix NxC for "icor"; and CxC for "cor"
-  score <- paste("ccSM",score,sep="")
-  getMat <- get(score,mode="function") 
-
-  if ( ncpu<2 ) { # single CPU
-      SML <- lapply(C, function(c) getMat(seq, c, M, Mn, csim))
-  } else { # multiple CPUs: use package parallel!
-      
-      ## TODO: make parLapply work
-      options(warn=0)
-      SML <- parallel::mclapply(C, function(c) getMat(seq, c, M, Mn, csim),
-                                mc.cores=ncpu,mc.preschedule=preschedule)
-      options(warn=0)
-  }
-  names(SML) <- C
-  SML
-}
 
 
 ## TODO: move this to .cpp as well, then the whole algo is available in C++
