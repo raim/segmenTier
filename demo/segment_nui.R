@@ -97,7 +97,7 @@ colnames(consegs) <- colnames(allsegs)
 
 consegs[,"start"] <- constarts
 consegs[,"end"] <- conends
-consegs[,"fuse"] <- "FALSE"
+consegs[,"fuse"] <- FALSE
 consegs[,"type"] <- "consensus"
 
 
