@@ -162,7 +162,16 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     seqr[seq==0] <- 0      # original nuissance clusters
     seqr[is.na(seqr)] <- 0 # replace NA by nuissance
         
-
+    ## set-up similarity matrix for ccls
+    ## internally 'ccor' is used, and we set up the
+    ## cluster-cluster similarity function (matrix) here
+    if ( score=="ccls" ) {
+        L <- length(unique(seqr))
+        csim <- matrix(a, nrow=L, ncol=L) # Delta(C,D!=C) = a
+        diag(csim) <- 1 # Delta(C,C) = 1
+        nui <- -a
+    }
+    
     ## 1b: add nuissance cluster if present:
     ## columns and rows are be added to the similarity matrices, using
     ## nui and -nui as "correlations";
@@ -195,14 +204,6 @@ segmentClusters <- function(seq, csim, csim.scale=1,
             csim <- rbind(rep(-nui,nrow(csim)+1),
                           cbind(rep(-nui,nrow(csim)), csim))
             csim[1,1] <- nui
-        }
-        ## set-up similarity matrix for ccls
-        ## internally 'ccor' is used, and we set up the
-        ## cluster-cluster similarity function (matrix) here
-        if ( score=="ccls" ) {
-            L <- length(unique(seqr))
-            csim <- matrix(a, nrow=L, ncol=L) # Delta(C,D!=C) = a
-            diag(csim) <- 1 # Delta(C,C) = 1
         }
         map <- c('0'=1, map  + 1)
     }
@@ -243,8 +244,8 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## remap: map back to original cluster names
     remap <- as.numeric(names(map))
     ## re-name to original clusters if stored
-    if ( "SM" %in% save.mat )
-        names(SM) <- remap[as.numeric(names(SM))]
+    #if ( "SM" %in% save.mat )
+    #    names(SM) <- remap[as.numeric(names(SM))]
     ## map back segments to original
     seg$segments[,1] <- remap[seg$segments[,1]]
 
@@ -253,8 +254,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
-    if ( "SM" %in% save.mat ) seg$SM <- SM
+    #if ( "SM" %in% save.mat ) seg$SM <- SM
     if ( "SK" %in% save.mat ) seg$SK <- SK
+
+    seg$csim <- csim
     
     return(seg)
     
@@ -320,6 +323,7 @@ calculateScoringMatrix <- function(seq, C, score="ccor", M, Mn, csim,
 }
 
 
+## TODO: move this to .cpp as well, then the whole algo is available in C++
 #' back-tracing : collect clustered segments from the scoring function matrix
 #' @param S matrix S, containing the local scores
 #' @param K matrix K, containing the position k used for score maximization
@@ -338,10 +342,13 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
     
     while ( i>0 ) {
         
-        ##  WHICH cluster had max S at i?
+        ## FIND SEGMENT END
+        ## Note, that this determines the segment's cluster assigment,
+        ## unless multiple clusters deliver the maximal score
+        
+        ##  WHICH cluster(s) had max S at i?
         c <- which(S[i,]==max(S[i,]))
         
-        ## SEARCH END
         ## search next max(S[i,c]) over i--
         if ( nextmax ) {
             while( i>0 & sum(S[i,c] <= S[i-1,c])==length(c) ) 
@@ -349,35 +356,45 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
             ##  which cluster had max S at i?
             c <- which(S[i,]==max(S[i,]))
         }
-        
+
+        ## FIND SEGMENT START
         ## WHICH k was used?
+
+        ## get the k that was used for the maximum score S(i,c)
         k <- K[i,c]
-        
-        ## handle multiple max scores?
+
+        ## ... and handle multiple max scores from several clusters
         if ( length(c)>1 ) {
             w <- paste(i,"back-trace warning:", length(c),
-                       "c:", paste(c,collapse=";"),
-                       "with max_k:", paste(k,collapse=";"),
-                       "\ttaking", multib, "\n")
+                       "clusters with maximal score; c:", paste(c,collapse=";"),
+                       "with max_k:", paste(k,collapse=";"), ":\n\t",
+                       ifelse(multib=="skip", paste("skipping breakpoint",i),
+                              ifelse(multib=="max",
+                                     "taking shorter segment",
+                                     "taking longer segment")), "\n")
+                                     
             warnings <- warn(w,warnings,verb=verb)
             if ( multib=="skip" ) {
                 i <- i-1
                 next 
             }
-            ## max: shortest k, min: longest k
+            ## multib: max is shortest k, min is longest k
+            ## i.e. max delivers the shorter segment, min the longer segment 
             km <- get(multib,mode="function")(k)
             c <- c[which(k==km)] 
             k <- km
         }
+        ## if we still can't find one cluster 
         if ( length(c)>1 ) {
-            w <- paste(i,"back-trace warning STILL:", length(c), "c:",
+            w <- paste(i,"back-trace warning STILL:", length(c),
+                       "clusters with maximal score; c:",
                        paste(c,collapse=";"),"\n") 
             warnings <- warn(w,warnings,verb=verb)
             c <- c[1] #paste(c,collapse=";")
         }
         
         ## ignore k==i segments
-        ## NOTE this should only happen for obsolete k<=i
+        ## NOTE this should only happen for obsolete k<=i instead of k<i
         if ( i %in% k ) {
             w<- paste(i,"back-trace warning:",sum(k%in%i),"0 length segments\n")
             warnings <- warn(w,warnings,verb=verb)
@@ -395,7 +412,8 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
         i <- k -1
     }
     segments <- segments[order(as.numeric(segments[,2])),,drop=FALSE]
-    colnames(segments) <- c("CL","start","end")
+    if ( !is.null(segments) )
+        colnames(segments) <- c("CL","start","end")
     list(segments=segments,warnings=warnings)
 }
     
