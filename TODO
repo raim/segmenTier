@@ -1,0 +1,17 @@
+
+* segment_test and segment_data: cluster sequence for segmentClusters
+0- or 1-based?
+
+* segmentCluster vs. segmentCluster.batch aligned in usage?
+
+* low.thresh vs. nui.thresh
+
+* proper nuissance cluster: set multi and multib properly to get
+segment breaks ?
+
+* check backtrace
+
+* NOTE: after reimplementation w/o scoring functin matrices - why is left 
+part of test data not separated well anymore at M=175?
+
+-> find a way to reflect total score!
