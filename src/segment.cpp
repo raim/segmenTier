@@ -30,7 +30,7 @@ double ccor(int k, int j, int c, NumericVector seq,
   // where k is the running index from k=i to k<=j
   double scr = -M;
   for ( ; k <= j; k++ ) 
-    scr += csim( seq( k )-1, c ); 
+    scr += csim( seq( k )-1, c );  // TODO: in segmentClusters, don't decrease seqr
   return scr;
 }
 
@@ -533,7 +533,6 @@ List calculateScore(NumericVector seq, NumericVector C,
   // initialize matrix to 0 and first seq cluster to 1
   // S(0,-1) = 0  wins over S(0,c) = -Inf; 
   std::fill( S.begin(), S.end(), 0.0 );
-  std::fill( S1.begin(), S1.end(), 0.0 );
   std::fill( K.begin(), K.end(), 1 ) ;
 
   // scoring function "ccls" is a special case of "ccor"
@@ -548,49 +547,47 @@ List calculateScore(NumericVector seq, NumericVector C,
   scorefun scoref = *xpfun;
   
   // calculate score function s(1, i, C) from 1 to i
+  // TODO: can this be done dynamically below?
+  //       -> would avoid L loops over N
   for ( int c=0; c<L; c++ )  {
+    
+    int m;
+    if ( c==0 ) m = Mn; // c==0 is nuissance cluster
+    else m = M;
+
     for ( int i=0; i<N; i++ ) 
-      S1(i,c) = scoref(0,i,c,seq,M,csim);
-    //initialization (basis case) 
-    // S(1,C) = s(1, 1, C) = −M + ∆(x1 , C)
-    // for C = C and S(1,C0) = 0. 
+      S1(i,c) = scoref(0, i, c, seq, m, csim);
+
+    // initialization (basis case) 
+    // S(1,C) = s(1, 1, C) = −M + ∆(x1 , C) for C = C and S(1,C0) = 0. 
     S(0,c) = S1(0,c);
-    S(1,c) = S1(1,c);
-    K(0,c) = 1;
-    K(1,c) = 1;
+    S(1,c) = S1(1,c); // TODO: necessary? why not start at i=1 below?
   }
   
   //S(i,C) = max_{j<i} max_{D!=C} ( S(j−1, D) + s(j, i, C) )
   // go through sequence of clusters
   // start at index 1, since 0 were initialized already
-  for ( int i=1; i<N; i++ ) {
+  for ( int i=2; i<N; i++ ) {
     for ( int c=0; c<L; c++ ) {
       
       int kmax = i-1; // j<i
       NumericVector scr(kmax); // store values from k=0 to k=i-1
 
-      // S(j-1,D) + s(j,i,c)
-      // fill from k=0..i
-      for ( int k=0; k<kmax; k++ ) {
-
-	// s(j,i,c)
+      // max_D ( S(k-1,D) + score(k,i,c) 
+      scr[0] = S1(0, c); // s(1,i,c) // TODO: is this necessary here?
+      for ( int k=1; k<kmax; k++ ) {
 	
-	if ( k==0 ) {
-	  scr[0] = S1(0, c); // TODO: is this necessary here?
-	} else if ( k>0 ) {
-	  // s(j,i,C) = -M + s(1,j,C) - s(1,i-1,C)
-	  scr[k] = -M + S1(i, c) - S1(k-1, c);
-	  
-	  // + max_c' S(j-1,D) : find this max on the fly and add
-	  // TODO: is -Inf dangerous? smarter solution?
-	  double mxsk = - std::numeric_limits<double>::infinity();
-	  for ( int cp=0; cp<M; cp++ ) 
-	    if ( cp!=c ) 
-	      if ( S(k-1,cp) > mxsk ) mxsk = S(k-1,cp);
-	  scr[k] += mxsk;
-	}                
+	// s(j,i,C) = -M + s(1,j,C) - s(1,i-1,C)
+	scr[k] = -M + S1(i, c) - S1(k-1, c);
+	
+	// + max_c' S(j-1,D) : add this sub-max on the fly 
+	double mxsk = - std::numeric_limits<double>::infinity();
+	for ( int cp=0; cp<L; cp++ ) 
+	  if ( cp!=c ) 
+	    if ( S(k-1,cp) > mxsk ) mxsk = S(k-1,cp);
+	scr[k] += mxsk;
       }
-      // max_k ( max_c' S(k-1,c') + score(k,i,c) )
+      // max_k ( max_D ( S(k-1,D) + score(k,i,c) ) )
       float mxsc = max( scr );
       S(i,c) = mxsc;
 
@@ -607,3 +604,83 @@ List calculateScore(NumericVector seq, NumericVector C,
   return Rcpp::List::create(Rcpp::Named("S") = S,
 			    Rcpp::Named("K") = K);
 }
+
+// [[Rcpp::export]]
+List calculateTotalScore_test2(NumericVector seq, NumericVector C, 
+			      List SM, NumericMatrix csim, int M, int Mn, 
+			      String multi="max", int verb=1) {
+  
+  // result matrices S(i,c) and K(i,c)
+  int N = seq.length();  // TODO: get N and M from SM
+  int L = C.length();
+  NumericMatrix S2(N,L); // total score matrix
+  NumericMatrix K(N,L); // for backtracing
+  NumericMatrix Si(N,L); // S(k,i,c) dynamically constructed
+  
+  // initialize matrix to 0 and first seq cluster to 1
+  // S(0,-1) = 0  wins over S(0,c) = -Inf; 
+  std::fill( S2.begin(), S2.end(), - std::numeric_limits<double>::infinity());//0.0) ;
+  std::fill( K.begin(), K.end(), 1 ) ;
+
+  // initialize second position: score(1,2,c)
+  for ( int c=0; c<L; c++ ) {
+
+    //S(1,c) = SV(1); //shouldnt this be 0?
+    K(0,c) = 1;
+    //K(1,c) = 1;
+    
+    Si(0,c) = 0.0; // initialize dynamic scoring function matrix
+    //Si(1,c) = 0.0; // initialize dynamic scoring function matrix
+    for ( int i=0; i<N; i++ ) {
+      Si(i,c) = icor(0,i,c,seq,M,csim);
+    }
+    S2(0,c) = 0.0;//SV(0);
+    //S2(1,c) = SV(1); //max( Si(1,) ); //
+  }
+  // go through sequence of clusters
+  // start at position 3, since 1-2 were initialized already
+  for ( int i=2; i<N; i++ ) {
+    for ( int c=0; c<L; c++ ) {
+      
+      int kmax = i-1; // correct ?
+      NumericVector scr2(kmax); // devel
+
+      // S(k-1,c') + score(k,i,c)
+      // fill from k=0..i
+      for ( int k=0; k<kmax; k++ ) {
+
+	if ( k>0 ) {
+	  //scr2[k] = - M + icor(0,i,c,seq,M,csim) - icor(0,k-1,c,seq,M,csim);
+	  scr2[k] = -M + Si(i, c) - Si(k - 1, c);
+	} else {
+	  scr2[k] = icor(k,i,c,seq,M,csim);
+	}
+
+	// + max_c' S(k-1,c')
+	if ( k > 0 ) {
+	  double mxsk2 = - std::numeric_limits<double>::infinity();
+	  for ( int cp=0; cp<L; cp++ ) 
+	    if ( cp!=c ) {
+	      if ( S2(k-1,cp) > mxsk2 ) mxsk2 = S2(k-1,cp);
+	    }
+	  scr2[k] += mxsk2;
+	}
+      }
+      // max_k ( max_c' S(k-1,c') + score(k,i,c) )
+      float mxsc2 = max( scr2 );
+      S2(i,c) = mxsc2;
+
+      // store which k was used for back-tracing
+      if ( multi=="max" ) {
+	NumericVector rcs = clone<NumericVector>(scr2);
+	std::reverse(rcs.begin(), rcs.end());
+	K(i,c) = kmax - which_max( rcs );
+      } else {
+	K(i,c) = which_max( scr2 ) + 1;
+      }
+    }
+  }
+  return Rcpp::List::create(Rcpp::Named("S2") = S2,
+			    Rcpp::Named("K") = K);
+}
+
