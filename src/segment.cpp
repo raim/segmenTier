@@ -521,7 +521,7 @@ List calculateTotalScore_test(NumericVector seq, NumericVector C,
 // [[Rcpp::export]]
 List calculateScore(NumericVector seq, NumericVector C, 
 		    std::string score, NumericMatrix csim, int M, int Mn,
-		    String multi="max", int verb=1) {
+		    String multi="max") {
 
   // result matrices S(i,c) and K(i,c)
   int N = seq.length();  // TODO: get N and M from SM
@@ -533,6 +533,7 @@ List calculateScore(NumericVector seq, NumericVector C,
   // initialize matrix to 0 and first seq cluster to 1
   // S(0,-1) = 0  wins over S(0,c) = -Inf; 
   std::fill( S.begin(), S.end(), 0.0 );
+  std::fill( S1.begin(), S1.end(), 0.0 );
   std::fill( K.begin(), K.end(), 1 ) ;
 
   // scoring function "ccls" is a special case of "ccor"
@@ -554,7 +555,9 @@ List calculateScore(NumericVector seq, NumericVector C,
     // S(1,C) = s(1, 1, C) = −M + ∆(x1 , C)
     // for C = C and S(1,C0) = 0. 
     S(0,c) = S1(0,c);
+    S(1,c) = S1(1,c);
     K(0,c) = 1;
+    K(1,c) = 1;
   }
   
   //S(i,C) = max_{j<i} max_{D!=C} ( S(j−1, D) + s(j, i, C) )
@@ -563,7 +566,7 @@ List calculateScore(NumericVector seq, NumericVector C,
   for ( int i=1; i<N; i++ ) {
     for ( int c=0; c<L; c++ ) {
       
-      int kmax = i; // j<i
+      int kmax = i-1; // j<i
       NumericVector scr(kmax); // store values from k=0 to k=i-1
 
       // S(j-1,D) + s(j,i,c)
@@ -571,7 +574,10 @@ List calculateScore(NumericVector seq, NumericVector C,
       for ( int k=0; k<kmax; k++ ) {
 
 	// s(j,i,c)
-	if ( k>0 ) {
+	
+	if ( k==0 ) {
+	  scr[0] = S1(0, c); // TODO: is this necessary here?
+	} else if ( k>0 ) {
 	  // s(j,i,C) = -M + s(1,j,C) - s(1,i-1,C)
 	  scr[k] = -M + S1(i, c) - S1(k-1, c);
 	  
@@ -582,10 +588,7 @@ List calculateScore(NumericVector seq, NumericVector C,
 	    if ( cp!=c ) 
 	      if ( S(k-1,cp) > mxsk ) mxsk = S(k-1,cp);
 	  scr[k] += mxsk;
-	} else { // TODO: is this necessary here?, just take S(
-	  scr[k] = scoref(k,i,c,seq,M,csim);
-	}
-
+	}                
       }
       // max_k ( max_c' S(k-1,c') + score(k,i,c) )
       float mxsc = max( scr );
