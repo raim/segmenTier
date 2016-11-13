@@ -1,8 +1,9 @@
 
 library("segmenTier")
-#library("Rcpp")
-#source("~/programs/segmenTier/R/segment.R")
-#sourceCpp("~/programs/segmenTier/src/segment.cpp")
+library("Rcpp")
+source("~/programs/segmenTier/R/plot.R")
+source("~/programs/segmenTier/R/segment.R")
+sourceCpp("~/programs/segmenTier/src/segment.cpp")
 
 ## a sequence of clusters - note that `0' will be treated
 ## as the nuissance cluster, which will not result in segments
@@ -32,7 +33,7 @@ a <- -2 # penalty for non-matching clusters in scoring function "ccls"
 ## cluster X cluster correlation matrix csim for "ccor"
 Ccc <- matrix(0,ncol=length(C),nrow=length(C))
 diag(Ccc)<- 1 # set diagonal to 1
-Ccc[1,2] <- Ccc[2,1] <- -.4 # just enough to avoid merging of 2 with 1
+Ccc[1,2] <- Ccc[2,1] <- -.6 # just enough to avoid merging of 2 with 1
 Ccc[2,4] <- Ccc[4,2] <- -.4 # just enought to avoid merging of 2 with 4
 Ccc[1,3] <- Ccc[3,1] <- -.5
 
@@ -73,7 +74,7 @@ for ( score in scores ) {
     ## set csim according to scoring function
     if ( score == "ccor" ) csim <- Ccc
     else if ( score == "icor") csim <- Pci
-    else csim <- NULL
+    else csim <- NULL # will be constructed for 'ccls'
 
     ## result list for total scoring, will also hold the used
     ## scoring function matrices
@@ -91,7 +92,8 @@ for ( score in scores ) {
 
             ## run the algorithm with current parameters, and
             ## store SM and SK matrices for later plots
-            seg <- segmentClusters(seq=seq,csim=csim,score=score,M=M,a=a,nui=1,
+            seg <- segmentClusters(seq=seq,csim=csim,score=score,M=M,Mn=M,
+                                   a=a,nui=1,
                                    multi=multi, multib=multib,nextmax=nextmax,
                                    save.mat=c("SK"))
             ##multS$SM <- seg$SM # TODO: test whether they are the same?
