@@ -170,7 +170,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## throughout further processing!
 
     nui.present <- FALSE
-    if ( 0 %in% seqr & score!="cls" ) {
+    if ( 0 %in% seqr ) {
         
         nui.present <- TRUE
         ## increase clustering by +1
@@ -226,16 +226,20 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     csim <- csim^csim.scale
     
-
+    SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
+                                 csim=csim, ncpu=ncpu)
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 ) 
-      cat(paste("scoring function", score, "scale", csim.scale,
-                "max/min: ", multi, "\t", date(), "\n"))
+      cat(paste("scoring function: ", score,
+                "; scale: ", csim.scale,
+                "; max/min: ", multi,
+                "\t", date(), "\n",sep=""))
     ## TODO: handle Mn in scoring functions
     ## add official nuissance cluster
     ## routine for cls as scoring function, but can use ccor
-    SK <- calculateScore(seq=seqr, C=C, M=M, Mn=M, csim=csim,
-                         score=score, multi=multi)
+    SK<- calculateTotalScore_test(seq=seqr,C=C,SM=SM,
+                                  csim=csim,M=M,Mn=M,multi=multi)
+    #SK<- calculateScore(seq=seqr,C=C,score=score,csim=csim,M=M,Mn=M,multi=multi)
 
     ## 4: back-tracing to generate segments
     if ( verb>0 )
