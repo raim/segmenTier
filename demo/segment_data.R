@@ -1,5 +1,12 @@
 
 library("segmenTier")
+library("Rcpp")
+source("~/programs/segmenTier/R/plot.R")
+source("~/programs/segmenTier/R/segment.R")
+sourceCpp("~/programs/segmenTier/src/segment.cpp")
+source("~/programs/segmenTier/R/cluster.R")
+sourceCpp("~/programs/segmenTier/src/cluster.cpp")
+load("~/programs/segmenTier/data/primseg436.rda")
 
 ## load time-series data
 ## contains tsd from primseg436 for
@@ -18,10 +25,11 @@ nstart <- 100   # number of initial configurations tested in kmeans
 
 ### SEGMENTATION PARAMETERS
 nui.cr <- 1 #  -/+ correlation of nuissance cluster with others and itself
+a <- -2
 
 ## SCORING FUNCTION
 ## which scoring functions to use
-scores <- c("ccor","icor")
+scores <- c("ccor","icor","ccls") #"icor" #
 csim.scale <- c(1,3) # 3 # 1 ## scale exponent of similarity matrices csim
 ## scoring function minimal length penalty
 M <- c(30,175) # 30 # for empty set?
@@ -50,7 +58,7 @@ cset <- clusterTimeseries(tset, selected=selected,iter.max=iter.max, nstart=nsta
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
 allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
-                                M=M, Mn=Mn, a=2, nui=nui.cr,
+                                M=M, Mn=Mn, a=a, nui=nui.cr,
                                 nextmax=nextmax, multi=multi,multib=multib, 
                                 ncpu=1, verb=1, save.mat="")
 
@@ -67,6 +75,9 @@ coors <- c(chr=1,start=1,end=N) # "chromosome" coordinates
 
 colors0 <- rev(gray.colors(100)) ## heatmap colors for the timeseries 
 colors0[1] <- "#FFFFFF" ## replace minimal by white
+
+if ( !interactive() )
+    png("segment_data.png",res=300,units="in", width=10,height=5)
 
 par(mfcol=c(3,1),mai=c(.3,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
 plot(1:N,tot,log=ifelse(trafo!="","","y"),type="l",lwd=2,axes=FALSE,ylab=NA)
@@ -90,3 +101,5 @@ axis(1)
 fuse <- allsegs[allsegs[,"fuse"],]
 points(fuse[,"start"],ypos[fuse[,"type"]],col="red",pch=3, lwd=2,cex=2)
 
+if ( !interactive() )
+    dev.off()
