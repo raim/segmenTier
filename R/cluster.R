@@ -8,6 +8,9 @@ get.fft <- function(x) {
     fft
 }
 
+## dc1.trafo
+ash <- function(x) log(x+sqrt(x^2+1))
+
 ## moving average
 ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 
@@ -42,7 +45,7 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #'@export
 processTimeseries <- function(ts,
                               smooth=FALSE, trafo="", keep.zeros=FALSE,
-                              use.fft=TRUE, dft.range=2:7,
+                              use.fft=TRUE, dc1.trafo="identity", dft.range=2:7,
                               use.snr=TRUE, low.thresh=1) {
     tsd <-ts 
 
@@ -81,6 +84,8 @@ processTimeseries <- function(ts,
             snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
           fft <- snr
         }
+        if ( 1 %in% dft.range )
+            fft[,1] <- get(dc1.trafo,mode="function")(fft[,1]) #
         
         ## get low expression filter!
         tot <- Re(fft[,1]) # NOTE: DC component = rowSums(tsd)
