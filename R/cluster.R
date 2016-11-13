@@ -41,7 +41,7 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #'   @cite Machne2012 Lehmann2013
 #'@export
 processTimeseries <- function(ts,
-                              smooth=FALSE, trafo="",
+                              smooth=FALSE, trafo="", keep.zeros=FALSE,
                               use.fft=TRUE, dft.range=2:7,
                               use.snr=TRUE, low.thresh=1) {
     tsd <-ts 
@@ -67,7 +67,8 @@ processTimeseries <- function(ts,
     ## get DFT
     if ( use.fft ) {
         fft <- get.fft(tsd)
-        fft[zs,] <- NA
+        if ( !keep.zeros ) 
+            fft[zs,] <- NA
         
         ## sequence length
         N <- nrow(fft)
@@ -94,7 +95,8 @@ processTimeseries <- function(ts,
     }else {
 
         dat <- tsd
-        dat[zs,] <- NA
+        if ( !keep.zeros ) 
+            dat[zs,] <- NA
         
         ## sequence length
         N <- nrow(dat)
