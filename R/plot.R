@@ -348,7 +348,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
         rws <- rws + 1 + 2*(length(multis)) # one for each S(c,i) 
     }
     x <- 1:length(seq)
- 
+    xlim <- c(min(x)-1,max(x)+1)
     ## plot results
     if ( !missing(out.file) ) {
         file.name <- paste(out.file, ".png",sep="")
@@ -359,7 +359,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
     
     ## plot original data
     if( !missing(tot) ) {
-        plot(x,tot,log=ifelse(use.log,"","y"),type="l",lwd=2,axes=FALSE)
+        plot(x,tot,log=ifelse(use.log,"","y"),type="l",lwd=2,axes=FALSE,xlim=xlim)
         axis(1);axis(2);
     }
     if( !missing(ts) ) {
@@ -371,12 +371,12 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
             mx <- max(x,na.rm=TRUE)
             mn <- min(x,na.rm=TRUE)
             if ( mx==mn ) rep(NA,length(x)) else ((x-mn)/(mx-mn))}))
-        image(ts.nrm,col=colors0,axes=FALSE)
+        image(ts.nrm,col=colors0,axes=FALSE,xlim=xlim)
     }
     
     ## plot original clustering
     plot(x,seq,axes=FALSE,xlab="i",ylab="cluster",
-         col=cols[as.character(seq)],cex=1,pch=16)
+         col=cols[as.character(seq)],cex=1,pch=16,xlim=xlim)
     axis(2)
     points(which(seq==0),seq[seq==0],pch=16,cex=1)
     
@@ -388,7 +388,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
         ## Scoring Matrix S(c,i) - should be the same over multi
         S <- multS[[multi[1]]]$SK$S # total score S(c,i)
         matplot(S,axes=FALSE,xlab="i",ylab="score S(i,c)",type="l",lty=1,lwd=1,
-                col=cols[1:ncol(S)])
+                col=cols[1:ncol(S)],xlim=xlim)
         axis(1)#,at=x,labels=seq,cex.axis=.6);axis(2)
         ##axis(3,at=x,cex.axis=.6,tcl=.05,mgp=c(0,-.75,0))
         legend("left",legend=scor,bty="n")
@@ -397,7 +397,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
             ## back-tracing matrix K(c,i) - should be the same over multib
             K <- multS[[mult]]$SK$K
             matplot(K,axes=FALSE,xlab="i",ylab=paste(multS[[mult]]$SK$mink,"k"),
-                    type="l",lty=1,lwd=1, col=cols[1:ncol(K)])
+                    type="l",lty=1,lwd=1, col=cols[1:ncol(K)],xlim=xlim)
             legend("left",legend=paste("scoring:",mult),bty="n")
             axis(1)#,at=x,labels=seq,cex.axis=.6);axis(2)
             
@@ -407,8 +407,8 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
             
             yl <- length(multS[[mult]])-1
             par(mgp=c(2,.5,0))
-            plot(NA,xlim=c(1,length(seq)),ylim=c(0,yl+1),axes=FALSE,
-                 ylab="back-tracing",xlab=NA)
+            plot(NA,ylim=c(0,yl+1),axes=FALSE,
+                 ylab="back-tracing",xlab=NA,xlim=xlim)
             
             for ( k in 1:length(multib) ) {
                 multb <- multib[k]
