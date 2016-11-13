@@ -260,7 +260,7 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
 #' \code{M} and \code{Mn} can all be vectors.
 #'@export
 segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
-                                 M=175, Mn=20, a=2, nui=1,
+                                 M=175, Mn=20, a=-2, nui=1,
                                  fuse.threshold=0.2,
                                  nextmax=TRUE, multi="max", multib="max", 
                                  ncpu=1, verb=1, short.name=TRUE,save.mat="") {
@@ -315,15 +315,14 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
         if ( scr=="ccor" ) csim <- cset$Ccc[[K]]
         if ( scr=="icor" ) csim <- cset$Pci[[K]]
-        if ( scr=="xcor" ) csim <- cset$Ccc[[K]]
-        if ( scr=="cls" ) csim <- a
+        if ( scr=="ccls" ) csim <- NULL
 
         if ( verb>0 )
             cat(paste("Calculating segment type",sgtype,";",
                       i,"of",nrow(params),"\n"))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                              score=scr,M=m,Mn=mn,nui=nui,
+                              score=scr,M=m,Mn=mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.mat="",verb=verb)
 
