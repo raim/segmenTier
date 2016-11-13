@@ -19,35 +19,36 @@ seq <- c(4,4,1,2,4,4,4,2,4,4,3,4,4,2,4,1,4,4,0,0,0,0,0,0,1,2,2,2,4,1,1,1,1,
 C <- unique(seq)
 C <- C[as.character(C)!="0"]
 
-## CLUSTER SIMILARITIES
-## scoring function "ccor":
-## cluster X cluster correlation matrix csim for "ccor"
-cr <- matrix(0,ncol=length(C),nrow=length(C))
-diag(cr)<- 1 # set diagonal to 1
-cr[1,2] <- cr[2,1] <- -.4 # just enough to avoid merging of 2 with 1
-cr[1,3] <- cr[3,1] <- -.5
-cr[2,4] <- cr[4,2] <- -.4 # just enought to avoid merging of 2 with 4
-
-## scoring function "icor":
-## position X cluster correlation matrix csim for "icor"
-ic <- matrix(0,ncol=length(C),nrow=length(seq))
-for ( i in 1:length(seq) ) {
-    for ( j in 1:ncol(ic) )
-        set.seed(42) # to keep results constant
-        ic[i,j] <- sample(seq(-1,.1,.01))[3] # set bad correlation
-    if ( seq[i]!=0 ) { # set good correlation to its own cluster
-        set.seed(42) # to keep results constant
-        ic[i,seq[i]] <- sample(seq(.3,1,.01))[1]
-    }
-}
-
 ## SCORING FUNCTIONS to be tested
-scores <- c("ccor","cls","icor")
+scores <- c("ccor","icor", "ccls") # ,"cls"
 
 ## SCORING FUNCTION PARAMETERS
 ## segment size and penalty parameters
 M <- 3 # minimal segment size; note: this is not a strict cutoff
-a <- 2 # penalty for non-matching clusters in scoring function "cls"
+a <- -2 # penalty for non-matching clusters in scoring function "ccls"
+
+## CLUSTER SIMILARITIES
+## scoring function "ccor":
+## cluster X cluster correlation matrix csim for "ccor"
+Ccc <- matrix(0,ncol=length(C),nrow=length(C))
+diag(Ccc)<- 1 # set diagonal to 1
+Ccc[1,2] <- Ccc[2,1] <- -.4 # just enough to avoid merging of 2 with 1
+Ccc[2,4] <- Ccc[4,2] <- -.4 # just enought to avoid merging of 2 with 4
+Ccc[1,3] <- Ccc[3,1] <- -.5
+
+## scoring function "icor":
+## position X cluster correlation matrix csim for "icor"
+Pci <- matrix(0,ncol=length(C),nrow=length(seq))
+for ( i in 1:length(seq) ) {
+    for ( j in 1:ncol(Pci) )
+        set.seed(42) # to keep results constant
+        Pci[i,j] <- sample(seq(-1,.1,.01))[3] # set bad correlation
+    if ( seq[i]!=0 ) { # set good correlation to its own cluster
+        set.seed(42) # to keep results constant
+        Pci[i,seq[i]] <- sample(seq(.3,1,.01))[1]
+    }
+}
+
 
 ## TOTAL SCORING MATRIX S(i,c)
 ## handling of multiple max. score k 
@@ -70,8 +71,8 @@ names(scrR) <- scores
 for ( score in scores ) {
 
     ## set csim according to scoring function
-    if ( score == "ccor" ) csim <- cr
-    else if ( score == "icor") csim <- ic
+    if ( score == "ccor" ) csim <- Ccc
+    else if ( score == "icor") csim <- Pci
     else csim <- NULL
 
     ## result list for total scoring, will also hold the used
@@ -92,12 +93,11 @@ for ( score in scores ) {
             ## store SM and SK matrices for later plots
             seg <- segmentClusters(seq=seq,csim=csim,score=score,M=M,a=a,nui=1,
                                    multi=multi, multib=multib,nextmax=nextmax,
-                                   save.mat=c("SM","SK"))
-            multS$SM <- seg$SM # TODO: test whether they are the same?
+                                   save.mat=c("SK"))
+            ##multS$SM <- seg$SM # TODO: test whether they are the same?
             multS[[multi]]$SK <- seg$SK
             ## store segments!
             multS[[multi]][[multib]] <- seg$segments
-
         }
     }
     ## store all results for the current scoring function
@@ -108,5 +108,5 @@ for ( score in scores ) {
 plotSegments(scrR, seq=seq) #,out="segment_test")
 
 ## plot scoring function matrices
-for ( score in scores ) 
-    plotScoring(scrR[[score]]$SM, seq=seq, score=score) 
+##for ( score in scores ) 
+##    plotScoring(scrR[[score]]$SM, seq=seq, score=score) 
