@@ -175,16 +175,8 @@ segmentClusters <- function(seq, csim, csim.scale=1,
         nui.present <- TRUE
         ## increase clustering by +1
         ## nuissance cluster will be cluster 1 
-        seqr <- seqr + 1
-        ## 1c: add data for nuissance cluster to matrices cr and P
-        ## TODO: Instead, we may place a measurements u into a “garbage bin” or
-        ## nuissance cluster C0 if σ(u, C) < θ for all regular
-        ## clusters C some threshold similarity value θ.
-        ## -> no threshold in original data, but skip zero-vals
-        ## -> cluster DFT, co-cluster previous threshold values
-        ## -> assign zero-vals to nuissance cluster
-        ## -> add positions u to nuissance cluster if sigma(u,C) < \theta
-        ##    for all C
+        seqr <- seqr + 1 ## TODO: get rid of this, avoid correction in .cpp
+        
         if ( score=="icor" ) {
             ## cor(i,c) - similarity of position i to cluster medians
             ## reduce passed matrix to actually present clusters
@@ -217,7 +209,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     ## get clusters
     C <- sort(unique(seqr))
-    C <- C[C!=0] # rm nuissance - should only be there for "cls"
+    ##C <- C[C!=0] # rm nuissance - should only be there for "cls"
 
     ## scale similarity matrix!
     ## TODO: check if number is odd, do this with tolerance
@@ -226,8 +218,9 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     csim <- csim^csim.scale
     
-    SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
-                                 csim=csim, ncpu=ncpu)
+    #SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
+    #                             csim=csim, ncpu=ncpu)
+
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 ) 
       cat(paste("scoring function: ", score,
@@ -236,10 +229,11 @@ segmentClusters <- function(seq, csim, csim.scale=1,
                 "\t", date(), "\n",sep=""))
     ## TODO: handle Mn in scoring functions
     ## add official nuissance cluster
-    ## routine for cls as scoring function, but can use ccor
-    SK<- calculateTotalScore_test(seq=seqr,C=C,SM=SM,
-                                  csim=csim,M=M,Mn=M,multi=multi)
-    #SK<- calculateScore(seq=seqr,C=C,score=score,csim=csim,M=M,Mn=M,multi=multi)
+
+    #SK<- calculateTotalScore_test(seq=seqr,C=C,SM=SM,
+    #                              csim=csim,M=M,Mn=Mn,multi=multi)
+    SK<- calculateScore(seq=seqr, C=C, score=score, csim=csim,
+                        M=M, Mn=Mn, multi=multi)
 
     ## 4: back-tracing to generate segments
     if ( verb>0 )
