@@ -55,7 +55,7 @@ tset <- processTimeseries(ts=tsd,
 ## CLUSTER PRE-PROCESSED TIME SERIES
 cset <- clusterTimeseries(tset, selected=selected,iter.max=iter.max, nstart=nstart)
 
-## filter low-correlating
+## filter low-correlating by theta
 for ( k in 1:ncol(cset$clusters) ) {
     cls <- cset$clusters[,k]
     Pci <- cset$Pci[[k]]
