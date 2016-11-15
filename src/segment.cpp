@@ -209,7 +209,6 @@ double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
 //' score, should the "max" (shorter segment) or "min" (longer segment) be used?
 //' This has little effect on real-life large data sets, since the situation
 //' will rarely occur. Default is "max".
-//' @param verb level of verbosity, currently not used (TODO: rm?)
 //' @return Returns the total score matrix \code{S(i,c)} and the matrix 
 //' \code{K(i,c)} which stores the position \code{k} which delivered
 //' the maximal score at position \code{i}. This is used in the back-tracing
