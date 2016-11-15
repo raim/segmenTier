@@ -8,8 +8,10 @@ get.fft <- function(x) {
     fft
 }
 
-## dc1.trafo
+## asinh trafo: alternative to log
 ash <- function(x) log(x+sqrt(x^2+1))
+## log trafo handling zeros by adding 1
+log_1 <- function(x) log(x+1)
 
 ## moving average
 ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
@@ -21,9 +23,11 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #' data)
 #' @param smooth use stats' package \code{link[stats:smooth]{smooth}} to
 #' smooth timeseries before processing
-#' @param trafo prior data transformation, either empty ("") or "log"
-#' for (\code{ln(ts+1)}) or "ash" for "asinh x = log(x + sqrt(x^2+1))"
-#' transformation which has less effects on extreme values
+#' @param trafo prior data transformation, pass any function name, e.g.,
+#' "log", or the package functions "asinh" (\code{ln(x + sqrt(x^2+1))}) or
+#' "log_1" for (\code{ln(ts+1)}) 
+#' @param low.thresh use this threshold to cut-off data, which will be
+#' added to the absent/nuissance cluster later
 #' @param use.fft use the Discrete Fourier Transform of the data
 #' @param dft.range a vector of integers, giving the components of the
 #' Discrete Fourier Transform to be used where 1 is the first component (DC)
@@ -32,8 +36,9 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #' @param use.snr use a scaled amplitude, where each component of the
 #' Discrete Fourier Transform is divided by the mean of all other components,
 #' which is similar to a signal-to-noise ratio (SNR)
-#' @param low.thresh use this threshold to cut-off data, which will be
-#' added to the absent/nuissance cluster later
+#' @param dc.trafo data transformation for the first (DC) component of
+#' the DFT, pass any function name, e.g., "log", or the package functions
+#' "asinh" (\code{ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}) 
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
 #' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
@@ -44,8 +49,8 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #'   @cite Machne2012 Lehmann2013
 #'@export
 processTimeseries <- function(ts,
-                              smooth=FALSE, trafo="", keep.zeros=FALSE,
-                              use.fft=TRUE, dc1.trafo="identity", dft.range=2:7,
+                              smooth=FALSE, trafo="identity", keep.zeros=FALSE,
+                              use.fft=TRUE, dc.trafo="identity", dft.range=2:7,
                               use.snr=TRUE, low.thresh=1) {
     tsd <-ts 
 
@@ -62,10 +67,8 @@ processTimeseries <- function(ts,
     ## transform raw data?
     ## NOTE that DFT and SNR below (use.fft) are an alternative
     ## data normalization procedure
-    if ( trafo == "log" ) # ln
-        tsd <- log(tsd+1)
-    if ( trafo == "ash" ) # asinh x = log(x + sqrt(x^2+1))
-        tsd <- log(tsd+sqrt(tsd^2+1))
+    ## default: identity
+    tsd <- get(trafo,mode="function")(tsd)
     
     ## get DFT
     if ( use.fft ) {
@@ -85,7 +88,7 @@ processTimeseries <- function(ts,
           fft <- snr
         }
         if ( 1 %in% dft.range )
-            fft[,1] <- get(dc1.trafo,mode="function")(fft[,1]) #
+            fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) #
         
         ## get low expression filter!
         tot <- Re(fft[,1]) # NOTE: DC component = rowSums(tsd)

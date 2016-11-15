@@ -14,7 +14,7 @@ trafo <- "" # "ash" # "log" #
 low.thresh <- -Inf #1/0 # minimal mean value (DC component of DFT if use.fft)
 keep.zeros <- FALSE
 dft.range <- 1:7 # range of DFT to cluster to use for clustering
-dc1.trafo <- "ash"
+dc.trafo <- "ash"
 selected <- c(16) # cluster number K
 iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
@@ -49,7 +49,7 @@ nextmax <-TRUE
 tset <- processTimeseries(ts=tsd,
                           smooth=FALSE, trafo=trafo, keep.zeros=keep.zeros,
                           use.fft=use.fft, dft.range=dft.range,
-                          use.snr=use.snr, dc1.trafo=dc1.trafo,
+                          use.snr=use.snr, dc.trafo=dc.trafo,
                           low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
