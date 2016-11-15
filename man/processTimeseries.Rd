@@ -5,7 +5,8 @@
 \title{process a time-series apt for the \code{\link{segmenTier}}
 clustering wrapper \code{\link{clusterTimeseries}}}
 \usage{
-processTimeseries(ts, smooth = FALSE, trafo = "", use.fft = TRUE,
+processTimeseries(ts, smooth = FALSE, trafo = "identity",
+  keep.zeros = FALSE, use.fft = TRUE, dc.trafo = "identity",
   dft.range = 2:7, use.snr = TRUE, low.thresh = 1)
 }
 \arguments{
@@ -16,11 +17,15 @@ data)}
 \item{smooth}{use stats' package \code{link[stats:smooth]{smooth}} to
 smooth timeseries before processing}
 
-\item{trafo}{prior data transformation, either empty ("") or "log"
-for (\code{ln(ts+1)}) or "ash" for "asinh x = log(x + sqrt(x^2+1))"
-transformation which has less effects on extreme values}
+\item{trafo}{prior data transformation, pass any function name, e.g.,
+"log", or the package functions "asinh" (\code{ln(x + sqrt(x^2+1))}) or
+"log_1" for (\code{ln(ts+1)})}
 
 \item{use.fft}{use the Discrete Fourier Transform of the data}
+
+\item{dc.trafo}{data transformation for the first (DC) component of
+the DFT, pass any function name, e.g., "log", or the package functions
+"asinh" (\code{ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})}
 
 \item{dft.range}{a vector of integers, giving the components of the
 Discrete Fourier Transform to be used where 1 is the first component (DC)

@@ -36,6 +36,14 @@ clusterMaxCor_c <- function(data, clusters, mincor = 0.0, warn = 0L) {
     .Call('segmenTier_clusterMaxCor_c', PACKAGE = 'segmenTier', data, clusters, mincor, warn)
 }
 
+icor <- function(k, j, c, seq, M, csim) {
+    .Call('segmenTier_icor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
+}
+
+ccor <- function(k, j, c, seq, M, csim) {
+    .Call('segmenTier_ccor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
+}
+
 #' Scoring Function "icor" - Test
 #' @details  Scoring function "icor" calculates the sum of similarities of
 #' positions k:i to cluster c.
@@ -112,105 +120,52 @@ scorecls_c <- function(k, i, c, seq, M, a) {
     .Call('segmenTier_scorecls_c', PACKAGE = 'segmenTier', k, i, c, seq, M, a)
 }
 
-#' Scoring Function Matrix "icor"
-#' @details  Scoring function "icor" calculates the sum of similarities of
+#' dynamic programming routine 
+#' @details: This is \code{\link{segmenTier}}'s core dynamic programing
+#' routine. It constructs the total score matrix S(i,c), based on
+#' the passed scoring function ("icor" or "ccor")
+#' Scoring function "icor" calculates the sum of similarities of
 #' data at positions k:i to cluster centers c over all k and i.
 #' The similarities are calculated e.g., as a (Pearson) correlation between
 #' the data at individual positions and the tested cluster c center.
 #' Note the difference to "ccor" where the cluster centers are compared
 #' instead of original data at positions k and i with a cluster.
-#' @param seq the cluster sequence (where positions k:i are considered);
-#' notably this argument is not required here, but only used for
-#' consistency with other scoring functions
-#' @param c the cluster to which similarities are to be calculated; note, 
-#' that c=1 is the nuissance cluster
-#' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
-#' @param csim position-cluster similarity matrix, where the rows
-#' are the positions in the sequence \code{seq} and columns are the
-#' the clusters
-#' @return Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
-#' \code{seq} and cluster \code{c} for scoring function "icor".
-#' @export
-ccSMicor <- function(seq, c, M, Mn, csim) {
-    .Call('segmenTier_ccSMicor', PACKAGE = 'segmenTier', seq, c, M, Mn, csim)
-}
-
-#' Scoring Function Matrix "ccor" 
-#' @details  Scoring function "ccor" calculates the sum of similarities
+#' Scoring function "ccor" calculates the sum of similarities
 #' between the clusters at positions k:i to cluster c over all k and i.
 #' Note the difference to "icor" where real data from positions are
 #' compared to cluster centers, while here two cluster centers are compared.
-#' @param seq the cluster sequence (where clusters at positions k:i are
-#' considered). Note that \code{seq} is defined differently here than
-#' the wrapper interfaces and MUST be a sequence of positive integers >0.
-#' @param c the cluster to which similarities are to be calculated
-#' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
-#' @param csim cluster-cluster similarity matrix
-#' @return Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
-#' \code{seq} and cluster \code{c} for scoring function "ccor".
-#' @export
-ccSMccor <- function(seq, c, M, Mn, csim) {
-    .Call('segmenTier_ccSMccor', PACKAGE = 'segmenTier', seq, c, M, Mn, csim)
-}
-
-#' like ccSMccor, but also calculates scores for the nuissance cluster 
-#' @inheritParams ccSMccor
-#' @export
-ccSMncor <- function(seq, c, M, Mn, csim) {
-    .Call('segmenTier_ccSMncor', PACKAGE = 'segmenTier', seq, c, M, Mn, csim)
-}
-
-#' Scoring Function Matrix "cls"
-#' @details  Scoring function "cls" merely counts the number of
-#' of clusters in sequence k:i, over all k and i, that are identical
+#' Scoring function "ccls" is a special case of "ccor" and is NOT handled
+#' here, but is reflected in the cluster similarity matrix \code{csim}. It
+#' is handled and automatically constructed in the R wrapper 
+#' \code{\link{clusterSegments}}, and merely counts the 
+#' number of clusters in sequence k:i, over all k and i, that are identical
 #' to the tested cluster \code{c}, and sub-tracts a minimal size penality
 #' and a penalty the for the count of non-identical clusters.
-#' Note: this function used in the scoring unction scorecls_c for individual
-#' calculations.
 #' @param seq the cluster sequence (where clusters at positions k:i are
-#' considered). Note that \code{seq} is defined differently here than
-#' in the wrapper interfaces and MUST be a sequence of positive integers >0.
-#' @param c the cluster to which similarities are to be calculated
+#' considered). Note, that unlike the R wrapper, clustering numbers
+#' here are 0-based, where 0 is the nuissance cluster.
+#' @param C the list of clusters, including nuissance cluster '0', see 
+#' \code{seq}
+#' @param score the scoring function to be used, one of "ccor" or "icor";
+#' the scoring function "ccls" is a special case of "ccor" and should
+#' be handled via the similarity function (matrix) "csim" as e.g. done
+#' by the R wrapper function \code{\link{segmentClusters}}. See "details".
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.
 #' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
-#' @param csim integer, the penalty \code{a} for non-matching clusters
-#' @return Returns the scoring matrix \code{SM(n,n)} for the cluster sequence
-#' \code{seq} and cluster \code{c} for simplest scoring function "cls".
-#' @export
-ccSMcls <- function(seq, c, M, Mn, csim) {
-    .Call('segmenTier_ccSMcls', PACKAGE = 'segmenTier', seq, c, M, Mn, csim)
-}
-
-#' dynamic programming routine 
-#' @details: This is \code{\link{segmenTier}}'s core dynamic programing
-#' routine. It takes the scoring function matrices for all clusters,
-#'  and dynamically constructs the total score matrix S(i,c).
-#' @param seq the cluster sequence (where clusters at positions k:i are
-#' considered). 
-#' @param C the list of clusters
-#' @param SM list of scoring function matrices
+#' shorter distances between segments
+#' @param csim a matrix, providing either the cluster-cluster (scoring 
+#' function "ccor") or the position-cluster similarity function
 #' @param multi if multiple \code{k} are found which return the same maximal
-#' score, should the "max" (shortest distance) or "min" \code{k} be used?
+#' score, should the "max" (shorter segment) or "min" (longer segment) be used?
 #' This has little effect on real-life large data sets, since the situation
 #' will rarely occur. Default is "max".
-#' @param verb level of verbosity, currently not used (TODO: rm?)
 #' @return Returns the total score matrix \code{S(i,c)} and the matrix 
 #' \code{K(i,c)} which stores the position \code{k} which delivered
 #' the maximal score at position \code{i}. This is used in the back-tracing
 #' phase.
 #' @export
-calculateTotalScore <- function(seq, C, SM, multi = "max", verb = 1L) {
-    .Call('segmenTier_calculateTotalScore', PACKAGE = 'segmenTier', seq, C, SM, multi, verb)
+calculateScore <- function(seq, C, score, csim, M, Mn, multi = "max") {
+    .Call('segmenTier_calculateScore', PACKAGE = 'segmenTier', seq, C, score, csim, M, Mn, multi)
 }
 

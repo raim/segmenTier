@@ -43,6 +43,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// icor
+double icor(int k, int j, int c, NumericVector seq, int M, NumericMatrix csim);
+RcppExport SEXP segmenTier_icor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type j(jSEXP);
+    Rcpp::traits::input_parameter< int >::type c(cSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
+    rcpp_result_gen = Rcpp::wrap(icor(k, j, c, seq, M, csim));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ccor
+double ccor(int k, int j, int c, NumericVector seq, int M, NumericMatrix csim);
+RcppExport SEXP segmenTier_ccor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type j(jSEXP);
+    Rcpp::traits::input_parameter< int >::type c(cSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
+    rcpp_result_gen = Rcpp::wrap(ccor(k, j, c, seq, M, csim));
+    return rcpp_result_gen;
+END_RCPP
+}
 // scoreicor_c
 double scoreicor_c(int k, int i, int c, NumericVector seq, int M, NumericMatrix csim);
 RcppExport SEXP segmenTier_scoreicor_c(SEXP kSEXP, SEXP iSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
@@ -91,78 +123,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ccSMicor
-NumericVector ccSMicor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
-RcppExport SEXP segmenTier_ccSMicor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< int >::type Mn(MnSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(ccSMicor(seq, c, M, Mn, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ccSMccor
-NumericVector ccSMccor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
-RcppExport SEXP segmenTier_ccSMccor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< int >::type Mn(MnSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(ccSMccor(seq, c, M, Mn, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ccSMncor
-NumericVector ccSMncor(NumericVector seq, int c, int M, int Mn, NumericMatrix csim);
-RcppExport SEXP segmenTier_ccSMncor(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< int >::type Mn(MnSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(ccSMncor(seq, c, M, Mn, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ccSMcls
-NumericVector ccSMcls(NumericVector seq, int c, int M, int Mn, int csim);
-RcppExport SEXP segmenTier_ccSMcls(SEXP seqSEXP, SEXP cSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< int >::type Mn(MnSEXP);
-    Rcpp::traits::input_parameter< int >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(ccSMcls(seq, c, M, Mn, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
-// calculateTotalScore
-List calculateTotalScore(NumericVector seq, NumericVector C, List SM, String multi, int verb);
-RcppExport SEXP segmenTier_calculateTotalScore(SEXP seqSEXP, SEXP CSEXP, SEXP SMSEXP, SEXP multiSEXP, SEXP verbSEXP) {
+// calculateScore
+List calculateScore(NumericVector seq, NumericVector C, std::string score, NumericMatrix csim, int M, int Mn, String multi);
+RcppExport SEXP segmenTier_calculateScore(SEXP seqSEXP, SEXP CSEXP, SEXP scoreSEXP, SEXP csimSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP multiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type C(CSEXP);
-    Rcpp::traits::input_parameter< List >::type SM(SMSEXP);
+    Rcpp::traits::input_parameter< std::string >::type score(scoreSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< int >::type Mn(MnSEXP);
     Rcpp::traits::input_parameter< String >::type multi(multiSEXP);
-    Rcpp::traits::input_parameter< int >::type verb(verbSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateTotalScore(seq, C, SM, multi, verb));
+    rcpp_result_gen = Rcpp::wrap(calculateScore(seq, C, score, csim, M, Mn, multi));
     return rcpp_result_gen;
 END_RCPP
 }

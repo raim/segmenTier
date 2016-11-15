@@ -6,7 +6,7 @@
 clustering sequence.}
 \usage{
 segmentClusters(seq, csim, csim.scale = 1, cset, k = 1, score = "ccor",
-  M = 175, Mn = 20, a = 2, nui = 1, nextmax = TRUE, multi = "max",
+  M = 175, Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
   multib = "max", ncpu = 1, verb = 1, save.mat = "")
 }
 \arguments{

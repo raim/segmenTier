@@ -7,7 +7,7 @@
 multiple segmentation parameters}
 \usage{
 segmentCluster.batch(cset, csim.scale = 1, score = "ccor", M = 175,
-  Mn = 20, a = 2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
+  Mn = 20, a = -2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
   multi = "max", multib = "max", ncpu = 1, verb = 1,
   short.name = TRUE, save.mat = "")
 }
