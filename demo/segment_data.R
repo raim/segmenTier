@@ -16,7 +16,7 @@ data(primseg436)
 ### TIME-SERIES CLUSTERING PARAMETERS
 use.fft <- TRUE # cluster discrete Fourier transform of data?
 use.snr <- TRUE # take SNR of DFT
-trafo <- "" # "ash" # "log" # 
+trafo <- "identity" # "ash" # "log_1" # 
 low.thresh <- 1 # -Inf/0 # minimal mean value (DC component of DFT if use.fft)
 dft.range <- 2:7 # range of DFT to cluster to use for clustering
 selected <- c(16) # cluster number K
