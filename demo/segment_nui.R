@@ -9,13 +9,13 @@ data(primseg436)
 ### TIME-SERIES CLUSTERING PARAMETERS
 use.fft <- TRUE # cluster discrete Fourier transform of data?
 use.snr <- TRUE # take SNR of DFT
-trafo <- "" # "ash" # "log" #
+trafo <- "identity" # "ash" # "log" #
 ## nuissance assignment test: 
 low.thresh <- -Inf #1/0 # minimal mean value (DC component of DFT if use.fft)
 keep.zeros <- FALSE
 dft.range <- 1:7 # range of DFT to cluster to use for clustering
 dc.trafo <- "ash"
-centers <- c(16) # cluster number K
+K <- c(16) # cluster number K
 iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
@@ -53,7 +53,7 @@ tset <- processTimeseries(ts=tsd,
                           low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
-cset <- clusterTimeseries(tset, centers=centers,iter.max=iter.max, nstart=nstart)
+cset <- clusterTimeseries(tset, K=K,iter.max=iter.max, nstart=nstart)
 
 ## filter low-correlating by theta
 for ( k in 1:ncol(cset$clusters) ) {

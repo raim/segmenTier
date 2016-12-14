@@ -48,10 +48,10 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #' @references 
 #'   @cite Machne2012 Lehmann2013
 #'@export
-processTimeseries <- function(ts,
-                              smooth=FALSE, trafo="identity", keep.zeros=FALSE,
+processTimeseries <- function(ts, trafo="identity",
                               use.fft=TRUE, dc.trafo="identity", dft.range=2:7,
-                              use.snr=TRUE, low.thresh=1) {
+                              use.snr=TRUE, low.thresh=1, 
+                              smooth=FALSE, keep.zeros=FALSE) {
     tsd <-ts 
 
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
@@ -68,7 +68,7 @@ processTimeseries <- function(ts,
     ## NOTE that DFT and SNR below (use.fft) are an alternative
     ## data normalization procedure
     ## default: identity
-    tsd <- get(trafo,mode="function")(tsd)
+    tsd <- get(trafo, mode="function")(tsd)
     
     ## get DFT
     if ( use.fft ) {
@@ -136,14 +136,14 @@ processTimeseries <- function(ts,
 #' simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
 #' of a time-series preprocessed by \code{\link{processTimeseries}}.
 #' @param tset a timeseries processed by \code{\link{processTimeseries}}
-#' @param centers selected cluster numbers, the argument \code{centers}
+#' @param K selected cluster numbers, the argument \code{centers}
 #' of \code{\link[stats:kmeans]{kmeans}} 
 #' @param iter.max the maximum number of iterations allowed in
 #' \code{\link[stats:kmeans]{kmeans}}, see there
 #' @param nstart initialization \code{\link[stats:kmeans]{kmeans}}:
 #' "how many random sets should be chosen?", see there
 #'@export
-clusterTimeseries <- function(tset, centers=16, iter.max=100000, nstart=100) {
+clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
 
 
     ## TODO:
@@ -170,22 +170,22 @@ clusterTimeseries <- function(tset, centers=16, iter.max=100000, nstart=100) {
     
     ## CLUSTERING
     ## stored data
-    clusters <- matrix(NA, nrow=nrow(dat), ncol=length(centers))
-    centers <- Pci <- Ccc <- rep(list(NA), length(centers))
+    clusters <- matrix(NA, nrow=nrow(dat), ncol=length(K))
+    centers <- Pci <- Ccc <- rep(list(NA), length(K))
     
-    usedk <- centers
-    for ( k in 1:length(centers) ) {
+    usedk <- K
+    for ( k in 1:length(K) ) {
 
         ## get cluster number K
-        K <- min(c(centers[k],sum(!duplicated(dat[!rm.vals,]))))
-        cat(paste("clustering, N=",N,", K=",K, "\n"))
+        Kused <- min(c(K[k],sum(!duplicated(dat[!rm.vals,]))))
+        cat(paste("clustering, N=",N,", K=",Kused, "\n"))
         
         ## cluster
-        km <- stats::kmeans(dat[!rm.vals,],K,iter.max=iter.max,nstart=nstart,
-                            algorithm="Hartigan-Wong")
+        km <- stats::kmeans(dat[!rm.vals,], Kused, iter.max=iter.max,
+                            nstart=nstart, algorithm="Hartigan-Wong")
         ## use alternative algo if this error occured
         if (km$ifault==4) {
-            km <- stats::kmeans(dat[!rm.vals,],K,
+            km <- stats::kmeans(dat[!rm.vals,], Kused,
                                 iter.max=iter.max,nstart=nstart,
                                 algorithm="MacQueen")
             warn <- "quick-transfer error in kmeans algorithm Hartigan-Wong, taking MacQueen"
@@ -197,7 +197,7 @@ clusterTimeseries <- function(tset, centers=16, iter.max=100000, nstart=100) {
         seq[!rm.vals] <- km$cluster
         
         ## store which K was used, the clustering and cluster centers
-        usedk[k] <- K
+        usedk[k] <- Kused
         clusters[,k] <- seq
         centers[[k]] <- km$centers
         
@@ -210,29 +210,29 @@ clusterTimeseries <- function(tset, centers=16, iter.max=100000, nstart=100) {
         ## NOTE: we could also calculate P(i,c) for "low" values
         ## (see processTimeseries)
         ##       but probably weaken the splits between adjacent ?
-        P <- matrix(NA,nrow=N,ncol=K)
+        P <- matrix(NA,nrow=N,ncol=Kused)
         P[!rm.vals,] <- clusterCor_c(dat[!rm.vals,], km$centers)
 
         Pci[[k]] <- P
     }
     ## count duplicate K
-    if ( any(duplicated(centers)) ) {
-        sel <- paste(centers,".1",sep="")
+    if ( any(duplicated(K)) ) {
+        sel <- paste(K,".1",sep="")
         cnt <- 2
         while( sum(duplicated(sel)) ) {
             sel[duplicated(sel)] <- sub("\\..*",paste(".",cnt,sep=""),
                                         sel[duplicated(sel)])
             cnt <- cnt+1
         }
-        centers <- sub("\\.1$","",sel)
+        K <- sub("\\.1$","",sel)
     }
     ## name all results by K, will be used!
     colnames(clusters) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste("K",centers,sep="")
+        names(Pci) <- names(Ccc) <- paste("K",K,sep="")
 
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
-                 centers=centers, usedk=usedk, warn=warn)
+                 K=K, usedk=usedk, warn=warn)
     class(cset) <- "clustering"
 
     ## silent return
@@ -292,7 +292,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
     ## generate parameter combinations as matrix/list
     ## TODO: allow explict combinations via a list
-    nk <- length(cset$centers)
+    nk <- length(cset$K)
     nscore <- length(score)
     nscale <- length(csim.scale)
     nm <- length(M)
