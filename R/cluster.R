@@ -52,8 +52,18 @@ processTimeseries <- function(ts, trafo="identity",
                               use.fft=TRUE, dc.trafo="identity", dft.range=2:7,
                               use.snr=TRUE, low.thresh=1, 
                               smooth=FALSE, keep.zeros=FALSE) {
-    tsd <-ts 
 
+    ## processing ID - this will be inherited to clusters
+    ## and from there to segment ID and type
+    processing <- paste(ifelse(trafo=="identity","raw",trafo),sep="_")
+    if ( use.fft )
+      processing <- paste(processing,
+                          paste("fft",paste(dft.range,collapse=","),sep=""),
+                          ifelse(dc.trafo=="identity","",dc.trafo),
+                          ifelse(use.snr,"snr",""),
+                          sep="_")
+    
+    tsd <-ts 
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
     zs <- apply(tsd,1,sum)==0 # remember all zeros
 
@@ -126,7 +136,8 @@ processTimeseries <- function(ts, trafo="identity",
 
     ## time-series data set for clustering in clusterTimeseries
     tset <- list(dat=dat, ts=tsd, tot=tot,
-                 zero.vals=zs, rm.vals=rm.vals, low.vals=low)
+                 zero.vals=zs, rm.vals=rm.vals, low.vals=low,
+                 id=processing)
     class(tset) <- "timeseries"
     
     ## silent return
@@ -151,6 +162,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
     ## and prepend tset names 
 
     ## get time series data
+    id <- tset$id
     dat <- tset$dat
     rm.vals <- tset$rm.vals
     N <- nrow(dat)
@@ -228,7 +240,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
     }
     ## name all results by K, will be used!
     colnames(clusters) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste("K",K,sep="")
+        names(Pci) <- names(Ccc) <- paste(id,"_K",K,sep="")
 
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
@@ -288,7 +300,6 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                  ncpu=1, verb=1, short.name=TRUE,save.mat="") {
 
         
-    allsegs <- NULL
 
     ## generate parameter combinations as matrix/list
     ## TODO: allow explict combinations via a list
@@ -327,7 +338,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     allsegs <- NULL
     for ( i in 1:nrow(params) ) {
 
-        sgtype <-paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
+        sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
         scr <- params[i,"score"]
@@ -363,12 +374,15 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                seg$segments,
                                fuse=close)
             allsegs <- rbind(allsegs,segs)
-        }
+            
+            if ( verb>0 )
+              cat(paste("\t", nrow(seg$segments), "added.\n"))
+        } else if ( verb>0 )
+          cat(paste("\tno segments.\n"))
     }
     if ( is.null(allsegs) & verb>0 )
       cat(paste("\tNO SEGMENTS FOUND, returning NULL\n"))
 
-    class(allsegs) <- "segmentset"    
     allsegs
 }
 
