@@ -1,5 +1,12 @@
 
 library("segmenTier")
+library("Rcpp")
+source("~/programs/segmenTier/R/plot.R")
+source("~/programs/segmenTier/R/segment.R")
+sourceCpp("~/programs/segmenTier/src/segment.cpp")
+source("~/programs/segmenTier/R/cluster.R")
+sourceCpp("~/programs/segmenTier/src/cluster.cpp")
+load("~/programs/segmenTier/data/primseg436.rda")
 
 ## load time-series data
 ## contains tsd from primseg436 for
@@ -53,7 +60,7 @@ tset <- processTimeseries(ts=tsd,
                           low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
-cset <- clusterTimeseries(tset, K=K,iter.max=iter.max, nstart=nstart)
+cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
 
 ## filter low-correlating by theta
 for ( k in 1:ncol(cset$clusters) ) {
@@ -76,6 +83,7 @@ allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
 
 
 ## break-count
+N <- length(cset$clusters[,1])
 starts <- ends <- rep(0,N)
 tab <- table(allsegs[,"start"])
 starts[as.numeric(names(tab))] <- tab
