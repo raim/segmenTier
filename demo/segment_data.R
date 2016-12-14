@@ -19,7 +19,7 @@ use.snr <- TRUE # take SNR of DFT
 trafo <- "identity" # "ash" # "log_1" # 
 low.thresh <- 1 # -Inf/0 # minimal mean value (DC component of DFT if use.fft)
 dft.range <- 2:7 # range of DFT to cluster to use for clustering
-selected <- c(16) # cluster number K
+centers <- c(16) # cluster number K
 iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
@@ -53,7 +53,7 @@ tset <- processTimeseries(ts=tsd, smooth=FALSE, trafo=trafo,
                           use.snr=use.snr, low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
-cset <- clusterTimeseries(tset, selected=selected,iter.max=iter.max, nstart=nstart)
+cset <- clusterTimeseries(tset, centers=centers,iter.max=iter.max, nstart=nstart)
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS

@@ -125,22 +125,28 @@ processTimeseries <- function(ts,
     rm.vals <- na.rows | low
 
     ## silent return
-    res <- list(dat=dat, ts=tsd, tot=tot,
-                zero.vals=zs, rm.vals=rm.vals, low.vals=low)
+    tset <- list(dat=dat, ts=tsd, tot=tot,
+                 zero.vals=zs, rm.vals=rm.vals, low.vals=low)
 }
 
 #' simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
 #' of a time-series preprocessed by \code{\link{processTimeseries}}.
 #' @param tset a timeseries processed by \code{\link{processTimeseries}}
-#' @param selected selected cluster numbers, the argument \code{centers}
+#' @param centers selected cluster numbers, the argument \code{centers}
 #' of \code{\link[stats:kmeans]{kmeans}} 
 #' @param iter.max the maximum number of iterations allowed in
 #' \code{\link[stats:kmeans]{kmeans}}, see there
 #' @param nstart initialization \code{\link[stats:kmeans]{kmeans}}:
 #' "how many random sets should be chosen?", see there
 #'@export
-clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
+clusterTimeseries <- function(tset, centers=16, iter.max=100000, nstart=100) {
 
+
+    ## TODO:
+    ## call recursively if multiple tsets are available
+    ## and prepend tset names 
+
+    ## get time series data
     dat <- tset$dat
     rm.vals <- tset$rm.vals
     N <- nrow(dat)
@@ -160,14 +166,14 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
     
     ## CLUSTERING
     ## stored data
-    clusters <- matrix(NA, nrow=nrow(dat), ncol=length(selected))
-    centers <- Pci <- Ccc <- rep(list(NA), length(selected))
+    clusters <- matrix(NA, nrow=nrow(dat), ncol=length(centers))
+    centers <- Pci <- Ccc <- rep(list(NA), length(centers))
     
-    usedk <- selected
-    for ( k in 1:length(selected) ) {
+    usedk <- centers
+    for ( k in 1:length(centers) ) {
 
         ## get cluster number K
-        K <- min(c(selected[k],sum(!duplicated(dat[!rm.vals,]))))
+        K <- min(c(centers[k],sum(!duplicated(dat[!rm.vals,]))))
         cat(paste("clustering, N=",N,", K=",K, "\n"))
         
         ## cluster
@@ -206,23 +212,23 @@ clusterTimeseries <- function(tset, selected=16, iter.max=100000, nstart=100) {
         Pci[[k]] <- P
     }
     ## count duplicate K
-    if ( any(duplicated(selected)) ) {
-        sel <- paste(selected,".1",sep="")
+    if ( any(duplicated(centers)) ) {
+        sel <- paste(centers,".1",sep="")
         cnt <- 2
         while( sum(duplicated(sel)) ) {
             sel[duplicated(sel)] <- sub("\\..*",paste(".",cnt,sep=""),
                                         sel[duplicated(sel)])
             cnt <- cnt+1
         }
-        selected <- sub("\\.1$","",sel)
+        centers <- sub("\\.1$","",sel)
     }
     ## name all results by K, will be used!
     colnames(clusters) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste("K",selected,sep="")
+        names(Pci) <- names(Ccc) <- paste("K",centers,sep="")
 
     ## silent return
-    res <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
-                selected=selected, usedk=usedk, warn=warn)
+    cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
+                 centers=centers, usedk=usedk, warn=warn)
 }
 
 #' high-level wrapper for multiple runs of segmentation by
@@ -278,7 +284,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
     ## generate parameter combinations as matrix/list
     ## TODO: allow explict combinations via a list
-    nk <- length(cset$selected)
+    nk <- length(cset$centers)
     nscore <- length(score)
     nscale <- length(csim.scale)
     nm <- length(M)
