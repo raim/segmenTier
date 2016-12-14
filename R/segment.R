@@ -259,6 +259,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     if ( "SK" %in% save.mat ) seg$SK <- SK
 
     seg$csim <- csim
+    class(seg) <- "segments"
     
     return(seg)
     
