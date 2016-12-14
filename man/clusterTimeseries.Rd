@@ -5,12 +5,12 @@
 \title{simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
 of a time-series preprocessed by \code{\link{processTimeseries}}.}
 \usage{
-clusterTimeseries(tset, selected = 16, iter.max = 1e+05, nstart = 100)
+clusterTimeseries(tset, centers = 16, iter.max = 1e+05, nstart = 100)
 }
 \arguments{
 \item{tset}{a timeseries processed by \code{\link{processTimeseries}}}
 
-\item{selected}{selected cluster numbers, the argument \code{centers}
+\item{centers}{selected cluster numbers, the argument \code{centers}
 of \code{\link[stats:kmeans]{kmeans}}}
 
 \item{iter.max}{the maximum number of iterations allowed in
