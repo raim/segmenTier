@@ -213,13 +213,14 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ##C <- C[C!=0] # rm nuissance - should only be there for "cls"
 
     ## scale similarity matrix!
-    ## check if number is odd, do this with tolerance
-    #if ( csim.scale %% 2 < .Machine$double.eps^0.5 )
-    #    warning("csim.scale should be odd: ", csim.scale)
     sgn <- sign(csim) # store sign
     csim <- csim^csim.scale # scale matrix
-    csim <- sgn*csim # restore sign
-    
+    ## if exponent is even (checking within machine tolerance)
+    ## the sign is re-added
+    if ( csim.scale %% 2 < .Machine$double.eps^0.5 )
+      csim <- sgn*csim # restore sign
+           #warning("csim.scale should be odd: ", csim.scale)
+ 
     #SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
     #                             csim=csim, ncpu=ncpu)
 
