@@ -55,11 +55,12 @@ processTimeseries <- function(ts, trafo="identity",
 
     ## processing ID - this will be inherited to clusters
     ## and from there to segment ID and type
-    processing <- paste(ifelse(trafo=="identity","raw",trafo),sep="_")
+    processing <- ifelse(trafo=="identity","raw",trafo)
     if ( use.fft )
       processing <- paste(processing,
-                          paste("fft",paste(dft.range,collapse=","),sep=""),
-                          ifelse(dc.trafo=="identity","",dc.trafo),
+                          paste("dft",paste(range(dft.range),collapse="-"),
+                                sep=""),
+                          ifelse(dc.trafo=="identity","dft",dc.trafo),
                           ifelse(use.snr,"snr",""),
                           sep="_")
     
