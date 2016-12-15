@@ -388,9 +388,9 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
       cat(paste("\tNO SEGMENTS FOUND, returning NULL\n"))
     else {
         ## OVERRIDE ID
-        if ( !missing(id) ) {
+        if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
-        }
+    }
 
 
     allsegs
