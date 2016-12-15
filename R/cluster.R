@@ -60,7 +60,7 @@ processTimeseries <- function(ts, trafo="identity",
       processing <- paste(processing,
                           paste("dft",paste(range(dft.range),collapse="-"),
                                 sep=""),
-                          paste("dc",dc.trafo,sep="")
+                          paste("dc",dc.trafo,sep=""),
                           ifelse(use.snr,"snr",""),
                           sep="_")
     
