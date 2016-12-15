@@ -317,7 +317,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
     ## parameter matrix
     params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale*nm,ncol=5))
-    colnames(params) <- c("K","score","scale","M","Mn")
+    colnames(params) <- c("K","S","E","M","Mn") # clustering, scoring, exponent, M, Mn
     params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale*nm*nmn)
     params[,2] <- rep(rep(score, nk), each=nscale*nm*nmn)
     params[,3] <- rep(rep(csim.scale, nk*nscore), each=nm*nmn)
@@ -331,8 +331,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     if ( short.name ) {
         if ( nm==1 ) typenm <- typenm[-which(typenm=="M")]
         if ( nmn==1 ) typenm <- typenm[-which(typenm=="Mn")]
-        if ( nscore==1 ) typenm <- typenm[-which(typenm=="score")]
-        if ( nscale==1 ) typenm <- typenm[-which(typenm=="scale")]
+        if ( nscore==1 ) typenm <- typenm[-which(typenm=="S")]
+        if ( nscale==1 ) typenm <- typenm[-which(typenm=="E")]
     }
     
     if ( verb>0 )
@@ -344,8 +344,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
-        scr <- params[i,"score"]
-        scale <- params[i,"scale"]
+        scr <- params[i,"S"]
+        scale <- params[i,"E"]
         m <- params[i,"M"]
         mn <- params[i,"Mn"]
 
