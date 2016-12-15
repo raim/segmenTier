@@ -283,6 +283,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
 #' \code{\link{calculateScoringMatrix}}
 #' @param short.name if TRUE (default) parameters that are not varied
 #' will not be part of the segment type and ID
+#' @param id if set, the default segment IDs are replaced by this
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.mat store the scoring function matrix SM or the back-tracing
 #' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
@@ -297,8 +298,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
 segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                  M=175, Mn=20, a=-2, nui=1,
                                  fuse.threshold=0.2,
-                                 nextmax=TRUE, multi="max", multib="max", 
-                                 ncpu=1, verb=1, short.name=TRUE,save.mat="") {
+                                 nextmax=TRUE, multi="max", multib="max",
+                                 short.name=TRUE, id,
+                                 ncpu=1, verb=1, save.mat="") {
 
         
 
@@ -368,8 +370,10 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
         ## collect results
         if ( nrow(seg$segments) > 0 ) {
-            
-            sgids <- paste(sgtype,1:nrow(seg$segments),sep="_")
+
+            if ( missing(id) )
+                id <- sgtype
+            sgids <- paste(id, 1:nrow(seg$segments),sep="_")
             segs <- data.frame(ID=sgids,
                                type=rep(sgtype,length(sgids)),
                                seg$segments,
