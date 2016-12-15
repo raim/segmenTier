@@ -55,12 +55,12 @@ processTimeseries <- function(ts, trafo="identity",
 
     ## processing ID - this will be inherited to clusters
     ## and from there to segment ID and type
-    processing <- ifelse(trafo=="identity","raw",trafo)
+    processing <- trafo # ifelse(trafo=="identity","raw",trafo)
     if ( use.fft )
       processing <- paste(processing,
                           paste("dft",paste(range(dft.range),collapse="-"),
                                 sep=""),
-                          ifelse(dc.trafo=="identity","dft",dc.trafo),
+                          paste("dc",dc.trafo,sep="")
                           ifelse(use.snr,"snr",""),
                           sep="_")
     
@@ -79,7 +79,8 @@ processTimeseries <- function(ts, trafo="identity",
     ## NOTE that DFT and SNR below (use.fft) are an alternative
     ## data normalization procedure
     ## default: identity
-    tsd <- get(trafo, mode="function")(tsd)
+    if ( trafo!="raw" )
+        tsd <- get(trafo, mode="function")(tsd)
     
     ## get DFT
     if ( use.fft ) {
@@ -98,7 +99,7 @@ processTimeseries <- function(ts, trafo="identity",
             snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
           fft <- snr
         }
-        if ( 1 %in% dft.range )
+        if ( 1 %in% dft.range & dc.trafo!="raw" )
             fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) #
         
         ## get low expression filter!
