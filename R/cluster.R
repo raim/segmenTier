@@ -372,9 +372,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         ## collect results
         if ( nrow(seg$segments) > 0 ) {
 
-            if ( missing(id) )
-                id <- sgtype
-            sgids <- paste(id, 1:nrow(seg$segments),sep="_")
+            sgids <- paste(sgtype, 1:nrow(seg$segments),sep="_")
             segs <- data.frame(ID=sgids,
                                type=rep(sgtype,length(sgids)),
                                seg$segments,
@@ -388,6 +386,12 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     }
     if ( is.null(allsegs) & verb>0 )
       cat(paste("\tNO SEGMENTS FOUND, returning NULL\n"))
+    else {
+        ## OVERRIDE ID
+        if ( !missing(id) ) {
+            allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
+        }
+
 
     allsegs
 }
