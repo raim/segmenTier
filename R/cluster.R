@@ -48,8 +48,8 @@ ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
 #' @references 
 #'   @cite Machne2012 Lehmann2013
 #'@export
-processTimeseries <- function(ts, trafo="identity",
-                              use.fft=TRUE, dc.trafo="identity", dft.range=2:7,
+processTimeseries <- function(ts, trafo="raw",
+                              use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
                               use.snr=TRUE, low.thresh=1, 
                               smooth=FALSE, keep.zeros=FALSE) {
 
