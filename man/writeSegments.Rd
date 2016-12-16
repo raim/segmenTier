@@ -6,7 +6,7 @@
 segments by \code{\link{presegment}} to single files that are
 then further processed by segmenTier.}
 \usage{
-writeSegments(data, segments, path)
+writeSegments(data, segments, name, path)
 }
 \arguments{
 \item{data}{a data matrix to which coordinates in \code{segments}
