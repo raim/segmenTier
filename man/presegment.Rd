@@ -35,8 +35,7 @@ the segment coordinates to chromosomal coordinates}
 
 \item{seg.path}{a directory path where individual segments' data will
 be written to as tab-delimited .csv files; no files will be written if
-\code{seg.path} is not provided.
-#'@export}
+\code{seg.path} is not provided.}
 
 \item{fig.path}{a directory path for plots of the segment end scanning;
 no figures will be plotted if \code{fig.path} is not provided.}
