@@ -278,8 +278,16 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         lines(rng,avgts[rng],col=3)
         lines(rng,avgfn[rng],col=2);
         abline(h=8,col=3)
-        arrows(x0=bord[1],x1=bord[2],y0=-2,y1=-2,col=3)
-        arrows(x0=k,x1=i,y0=-1,y1=-1,col=2)
+        if ( bord[1]==bord[2] ) {
+            cat(paste(sg, "borders equal\n"))
+            abline(v=bord[1],col=3)
+        }else
+            arrows(x0=bord[1],x1=bord[2],y0=-2,y1=-2,col=3)
+        if ( k==i ) {
+            cat(paste(sg, "k==i equal\n"))
+            abline(v=k,col=3)
+        } else
+            arrows(x0=k,x1=i,y0=-1,y1=-1,col=2)
         dev.off()
     }
 
