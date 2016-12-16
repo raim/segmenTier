@@ -1,15 +1,5 @@
 ### TIME-SERIES CLUSTERING PARAMETERS
 
-### FILE NAME UTILS
-## copied from library stringr to generate 0-padded numberings in
-## in file names
-str_pad <- function (string, width, side = c("left", "right", "both"), pad = " ") {
-    side <- match.arg(side)
-    switch(side, left = stri_pad_left(string, width, pad = pad), 
-           right = stri_pad_right(string, width, pad = pad),
-           both = stri_pad_both(string, width, pad = pad))
-}
-
 
 ### DATA TRANSFORMATION UTILS
 ## get Discrete Fourier Transformation
@@ -278,7 +268,7 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         bord <- range(rng)
         rng<- max(rng[1]-1000,1):(rng[length(rng)]+1000)
         file.name <-file.path(fig.path,
-                              paste("border_",str_pad(sg-1,4,pad="0"),sep=""))
+                              paste("border_",sg-1,sep=""))
         plotdev(file.name,width=4,height=4,type=fig.type)
         plot(rng,numts[rng],type="l",ylim=c(-2,24), main=ifelse(i<=k,"fuse",""));
         lines(rng,avgts[rng],col=3)
@@ -370,7 +360,7 @@ writeSegments <- function(data, segments, path) {
         if ( length(rng) < 100 )
             cat(paste("segment",i, length(rng),"\n"))
         tsd <- ts[rng,]
-        file.name <- paste("segments_",str_pad(i,4,pad="0"),".csv",sep="")
+        file.name <- paste("segments_",i,".csv",sep="")
         if ( !missing(path) )
             file.name <- file.path(path, file.name)
         write.table(tsd,file.name,row.names=FALSE,sep="\t")
