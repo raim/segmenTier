@@ -151,6 +151,13 @@ index2coor <- function(features, chrS,
 }
 
 ## PLOT UTILITIES
+#' Switch between plot devices
+#' @param file.name file name without suffix (.png, etc)
+#' @param type plot type: pdf, png or eps
+#' @param width figure width in inches
+#' @param height figure height in inches
+#' @param res resolution in ppi (pixels per inch), only for 'png'
+#' @export
 plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
   file.name <- paste(file.name, type, sep=".")
   if ( type == "png" )
