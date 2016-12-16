@@ -26,7 +26,9 @@ ash <- function(x) log(x+sqrt(x^2+1))
 log_1 <- function(x) log(x+1)
 
 ## moving average
-ma <- function(x,n=5){stats::filter(x,rep(1/n,n), sides=2)}
+ma <- function(x, n=5, circular=FALSE) {
+    stats::filter(x,rep(1/n,n), sides=2, circular=circular)
+}
 
 ### CHROMOSOME COORDINATE UTILS
 ## copied from genomeBrowser utils on 20161216
