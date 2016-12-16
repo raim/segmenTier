@@ -258,9 +258,10 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         primseg[sg-1,2] <- k
         primseg[sg,1] <- i
         
-        if ( i <= k & verb > 1)  {
-            cat(paste("segment #",sg,i-k,
-                      "overlap, will be fused with",sg-1,"\n"))
+        if ( i <= k )  {
+            if (  verb > 1 )
+                cat(paste("segment #",sg,i-k,
+                          "overlap, will be fused with",sg-1,"\n"))
             fused <- fused +1
         }
         
