@@ -240,7 +240,7 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
     ## TODO: analyze gradients and minima, and add to appropriate segments
     if ( verb>0 )
         cat(paste("Scanning borders.\n"))
-    
+    fused <- 0
     for ( sg in 2:nrow(primseg) ) {
         rng <- primseg[sg-1,2]:primseg[sg,1]
         ## scan from both sides, and if overlapping
@@ -258,9 +258,11 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         primseg[sg-1,2] <- k
         primseg[sg,1] <- i
         
-        if ( i <= k & verb > 1)  
+        if ( i <= k & verb > 1)  {
             cat(paste("segment #",sg,i-k,
                       "overlap, will be fused with",sg-1,"\n"))
+            fused <- fused +1
+        }
         
         if ( missing(fig.path) ) next
     
@@ -268,9 +270,11 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         bord <- range(rng)
         rng<- max(rng[1]-1000,1):(rng[length(rng)]+1000)
         file.name <-file.path(fig.path,
-                              paste("border_",sg-1,sep=""))
+                              ifelse(i<=k,
+                                     paste("fused_",fused,sep=""),
+                                     paste("border_",sg-1-fused,sep=""))
         plotdev(file.name,width=4,height=4,type=fig.type)
-        plot(rng,numts[rng],type="l",ylim=c(-2,24), main=ifelse(i<=k,"fuse",""));
+        plot(rng,numts[rng],type="l",ylim=c(-2,24),main=ifelse(i<=k,"fuse",""))
         lines(rng,avgts[rng],col=3)
         lines(rng,avgfn[rng],col=2);
         abline(h=8,col=3)
@@ -331,7 +335,7 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
     if ( !missing(seg.path) ) {
         if ( verb>0 )
             cat(paste("Writing segment data to single files.\n"))
-        writeSegments(data=ts, segments=primseg, path=seg.path, verb=verb)
+        writeSegments(data=ts, segments=primseg, name="primseg", path=seg.path)
     }
     
     ## map back to original chromosome coordinates
@@ -353,14 +357,16 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
 #' @param path optional output path where files will be written, if not supplied
 #' files will end up in the current working directory (`getwd`)
 #' @export
-writeSegments <- function(data, segments, path) {
+writeSegments <- function(data, segments, name, path) {
 
+    if ( missing(name) ) name <- "segment"
+    ids <- ifelse("ID"%in%colnames(segments),segments[,"ID"],1:nrow(segments))
     for ( i in 1:nrow(segments) ) {
         rng <- segments[i,"start"]:segments[i,"end"]
         if ( length(rng) < 100 )
             cat(paste("segment",i, length(rng),"\n"))
         tsd <- ts[rng,]
-        file.name <- paste("segments_",i,".csv",sep="")
+        file.name <- paste(name, "_",ids[i],".csv",sep="")
         if ( !missing(path) )
             file.name <- file.path(path, file.name)
         write.table(tsd,file.name,row.names=FALSE,sep="\t")
