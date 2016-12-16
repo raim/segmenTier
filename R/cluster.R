@@ -368,13 +368,13 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
 writeSegments <- function(data, segments, name, path) {
 
     if ( missing(name) ) name <- "segment"
-    ids <- ifelse("ID"%in%colnames(segments),segments[,"ID"],1:nrow(segments))
     for ( i in 1:nrow(segments) ) {
         rng <- segments[i,"start"]:segments[i,"end"]
         if ( length(rng) < 100 )
             cat(paste("segment",i, length(rng),"\n"))
         tsd <- ts[rng,]
-        file.name <- paste(name, "_",ids[i],".csv",sep="")
+        id <- ifelse("ID"%in%colnames(segments), segments[i,"ID"], i)
+        file.name <- paste(name, "_",id,".csv",sep="")
         if ( !missing(path) )
             file.name <- file.path(path, file.name)
         write.table(tsd,file.name,row.names=FALSE,sep="\t")
