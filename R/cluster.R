@@ -194,7 +194,7 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 #' @param seg.path a directory path where individual segments' data will
 #' be written to as tab-delimited .csv files; no files will be written if
 #' \code{seg.path} is not provided.
-#' #'@export
+#' @export
 presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
                        map2chrom=FALSE,
                        seg.path, fig.path, fig.type="png", verb=1) {
