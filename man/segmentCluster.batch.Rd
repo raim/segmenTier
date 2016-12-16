@@ -8,8 +8,8 @@ multiple segmentation parameters}
 \usage{
 segmentCluster.batch(cset, csim.scale = 1, score = "ccor", M = 175,
   Mn = 20, a = -2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
-  multi = "max", multib = "max", ncpu = 1, verb = 1,
-  short.name = TRUE, save.mat = "")
+  multi = "max", multib = "max", short.name = TRUE, id, ncpu = 1,
+  verb = 1, save.mat = "")
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
@@ -46,14 +46,16 @@ either "min" (default) or "max"}
 \item{multib}{handling of multiple k with max. score in back-trace phase,
 either "min" (default), "max" or "skip"}
 
+\item{short.name}{if TRUE (default) parameters that are not varied
+will not be part of the segment type and ID}
+
+\item{id}{if set, the default segment IDs are replaced by this}
+
 \item{ncpu}{number of available cores (CPUs), passed to
 \code{\link[parallel:mclapply]{parallel::mclapply}} by
 \code{\link{calculateScoringMatrix}}}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
-
-\item{short.name}{if TRUE (default) parameters that are not varied
-will not be part of the segment type and ID}
 
 \item{save.mat}{store the scoring function matrix SM or the back-tracing
 matrix K by adding "SM" and "SK" to the string vector save.mat; useful

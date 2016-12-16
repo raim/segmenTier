@@ -5,17 +5,14 @@
 \title{process a time-series apt for the \code{\link{segmenTier}}
 clustering wrapper \code{\link{clusterTimeseries}}}
 \usage{
-processTimeseries(ts, smooth = FALSE, trafo = "identity",
-  keep.zeros = FALSE, use.fft = TRUE, dc.trafo = "identity",
-  dft.range = 2:7, use.snr = TRUE, low.thresh = 1)
+processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
+  dft.range = 2:7, use.snr = TRUE, low.thresh = 1, smooth = FALSE,
+  keep.zeros = FALSE)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the timepoints
 and rows individual measurements (e.g., genomic positions for transcriptome
 data)}
-
-\item{smooth}{use stats' package \code{link[stats:smooth]{smooth}} to
-smooth timeseries before processing}
 
 \item{trafo}{prior data transformation, pass any function name, e.g.,
 "log", or the package functions "asinh" (\code{ln(x + sqrt(x^2+1))}) or
@@ -38,6 +35,9 @@ which is similar to a signal-to-noise ratio (SNR)}
 
 \item{low.thresh}{use this threshold to cut-off data, which will be
 added to the absent/nuissance cluster later}
+
+\item{smooth}{use stats' package \code{link[stats:smooth]{smooth}} to
+smooth timeseries before processing}
 }
 \description{
 process a time-series apt for the \code{\link{segmenTier}}
