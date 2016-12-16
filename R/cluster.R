@@ -272,7 +272,7 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         file.name <-file.path(fig.path,
                               ifelse(i<=k,
                                      paste("fused_",fused,sep=""),
-                                     paste("border_",sg-1-fused,sep=""))
+                                     paste("border_",sg-1-fused,sep="")))
         plotdev(file.name,width=4,height=4,type=fig.type)
         plot(rng,numts[rng],type="l",ylim=c(-2,24),main=ifelse(i<=k,"fuse",""))
         lines(rng,avgts[rng],col=3)
