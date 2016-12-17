@@ -3,7 +3,7 @@
 ## Installation
 
 ```R
-install.packages(devtools) # if not already installed
+library(devtools)
 install_github("raim/segmenTier")
 ```
 
