@@ -609,8 +609,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
             if ( !any(Pci[[k]][p,] > nui.thresh, na.rm=TRUE) )
                 cls[p] <- 0
         cset$clusters[,k] <- cls
-    }
-           
+    }           
     
     ## count duplicate K
     if ( any(duplicated(K)) ) {
