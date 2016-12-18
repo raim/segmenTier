@@ -528,8 +528,10 @@ processTimeseries <- function(ts, trafo="raw",
 #' \code{\link[stats:kmeans]{kmeans}}, see there
 #' @param nstart initialization \code{\link[stats:kmeans]{kmeans}}:
 #' "how many random sets should be chosen?", see there
+#' @param nui.thresh threshold correlation of a data point to a cluster
+#' center; if below the data point will be added to nuissance cluster 0
 #'@export
-clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
+clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thresh=-1) {
 
 
     ## TODO:
@@ -594,14 +596,22 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100) {
         Ccc[[k]] <- cr
         
         ## P(c,i) - position X cluster correlation
-        ## NOTE: we could also calculate P(i,c) for "low" values
-        ## (see processTimeseries)
-        ##       but probably weaken the splits between adjacent ?
         P <- matrix(NA,nrow=N,ncol=Kused)
         P[!rm.vals,] <- clusterCor_c(dat[!rm.vals,], km$centers)
 
         Pci[[k]] <- P
     }
+
+    ## re-assign by correlation threshold
+    for ( k in 1:ncol(clusters) ) {
+        cls <- clusters[,k]
+        for ( p in 1:nrow(Pci[[k]]) )
+            if ( !any(Pci[[k]][p,] > nui.thresh, na.rm=TRUE) )
+                cls[p] <- 0
+        cset$clusters[,k] <- cls
+    }
+           
+    
     ## count duplicate K
     if ( any(duplicated(K)) ) {
         sel <- paste(K,".1",sep="")
