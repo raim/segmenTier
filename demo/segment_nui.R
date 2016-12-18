@@ -60,18 +60,8 @@ tset <- processTimeseries(ts=tsd,
                           low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
-cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
+cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart, nui.thresh=nui.thresh)
 
-## filter low-correlating by theta
-for ( k in 1:ncol(cset$clusters) ) {
-    cls <- cset$clusters[,k]
-    Pci <- cset$Pci[[k]]
-    for ( i in 1:nrow(Pci) )
-        if ( !any(Pci[i,] > nui.thresh, na.rm=TRUE) )
-            cls[i] <- -1
-    cls[cls==-1] <- 0
-    cset$clusters[,k] <- cls
-}
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
