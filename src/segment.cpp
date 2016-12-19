@@ -267,7 +267,7 @@ List calculateScore(NumericVector seq, NumericVector C,
   for ( int i=2; i<N; i++ ) {
     for ( int c=0; c<L; c++ ) {
       
-      int kmax = i-1; // j<i
+      int kmax = i-1; // j<i - TODO: j<=i
       NumericVector scr(kmax); // store values from k=0 to k=i-1
 
       // max_D ( S(k-1,D) + score(k,i,c) 
@@ -287,7 +287,7 @@ List calculateScore(NumericVector seq, NumericVector C,
       }
       // max_k ( max_D ( S(k-1,D) + score(k,i,c) ) )
       float mxsc = max( scr );
-      S(i,c) = mxsc; // TODO: why not directly?
+      S(i,c) = mxsc; // TODO: why not directly max(scr) but via mxsc?
 
       // store which k was used for back-tracing
       if ( multi=="max" ) { 
