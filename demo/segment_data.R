@@ -16,15 +16,16 @@ data(primseg436)
 ### TIME-SERIES CLUSTERING PARAMETERS
 use.fft <- TRUE # cluster discrete Fourier transform of data?
 use.snr <- TRUE # take SNR of DFT
-trafo <- "identity" # "ash" # "log_1" # 
-low.thresh <- 1 # -Inf/0 # minimal mean value (DC component of DFT if use.fft)
-dft.range <- 2:7 # range of DFT to cluster to use for clustering
+trafo <- "raw" # "ash" # "log_1" #
+dc.trafo <- "raw" # "ash" # NOTE: add component 1 (DC) to DFT range to use
+low.thresh <- -Inf # -Inf/0 # minimal mean value (DC component of DFT if use.fft)
+dft.range <- 2:7 # range of DFT to use for clustering
 K <- c(16) # cluster number K
 iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
 ### SEGMENTATION PARAMETERS
-nui.cr <- 1 #  -/+ correlation of nuissance cluster with others and itself
+nui.cr <- 2 #  -/+ correlation of nuissance cluster with others and itself
 a <- -2
 
 ## SCORING FUNCTION
@@ -48,7 +49,7 @@ nextmax <-TRUE
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
 ## take DFT and scale amplitudes, and
 ## select components of DFT
-tset <- processTimeseries(ts=tsd, smooth=FALSE, trafo=trafo,
+tset <- processTimeseries(ts=tsd, smooth=FALSE, trafo=trafo, dc.trafo=dc.trafo,
                           use.fft=use.fft, dft.range=dft.range,
                           use.snr=use.snr, low.thresh=low.thresh)
 
