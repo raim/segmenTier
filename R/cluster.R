@@ -531,7 +531,7 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param nui.thresh threshold correlation of a data point to a cluster
 #' center; if below the data point will be added to nuissance cluster 0
 #'@export
-clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thresh=-1) {
+clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thresh=-Inf) {
 
 
     ## TODO:
@@ -635,9 +635,11 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
     tmp <- cset
 }
 
-#' high-level wrapper for multiple runs of segmentation by
+#' A high-level wrapper for multiple runs of segmentation by
 #' \code{\link{segmentClusters}} for multiple clusterings and
-#' multiple segmentation parameters
+#' multiple segmentation parameters. It additionally allows to
+#' tag adjacent segments to be potentially fused due to similarity
+#' of their clusters.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param csim.scale exponent to scale similarity matrices, must be odd
 #' to maintain negative correlations!
