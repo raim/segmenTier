@@ -326,7 +326,7 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
         if ( length(c)>1 ) {
             w <- paste(i,"back-trace warning:", length(c),
                        "clusters with maximal score; c:", paste(c,collapse=";"),
-                       "with max_k:", paste(k,collapse=";"), ":\n\t",
+                       "with max_k:", paste(k,collapse=";"), ":",
                        ifelse(multib=="skip", paste("skipping breakpoint",i),
                               ifelse(multib=="max",
                                      "taking shorter segment",
