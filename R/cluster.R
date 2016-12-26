@@ -748,8 +748,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                               save.mat="",verb=verb)
 
         ## tag adjacent segments from correlating clusters
-        close <- fuseSegments(seg$segments, Ccc=cset$Ccc[[K]],
-                              fuse.threshold=fuse.threshold)
+        close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
+                                 fuse.threshold=fuse.threshold)
         if ( sum(close)>0 & verb>0 )
           cat(paste("\t",sum(close), "segments could be fused\n"))
 
@@ -782,7 +782,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
 
 ## tags adjacent segments if they are from correlating (>\code{fuse.thresh})
 ## clusters
-fuseSegments <- function(segs, Ccc, fuse.threshold=.2) {
+fuseTagSegments <- function(segs, Ccc, fuse.threshold=.2) {
 
     if ( nrow(segs)==0 ) return(NULL)
     if ( nrow(segs)==1 ) return(FALSE)
@@ -797,5 +797,4 @@ fuseSegments <- function(segs, Ccc, fuse.threshold=.2) {
 
     close
 }
-    
 
