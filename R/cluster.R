@@ -120,7 +120,7 @@ idx2str <- function(idx,chrS)
 index2coor <- function(features, chrS,
                        cols=c("start","end","coor"),
                        chrCol="chr", strandCol="strand",
-                       reverse=c("-",-1)) {
+                       strands=c(1,-1)) {
 
   cols <- cols[cols%in%colnames(features)]
   orig <- features[,cols,drop=FALSE]
@@ -138,14 +138,14 @@ index2coor <- function(features, chrS,
     for ( col in cols )
       features[current,col] <- orig[current,col] - chrS[i]
     features[current,chrCol] <- i
-    features[current,strandCol] <- 1
+    features[current,strandCol] <- strands[1]
     ## reverse strand
     current <- orig[,cols[1]]>(chrS[i]+max(chrS)) &
       orig[,cols[1]]<=(chrS[i+1]+max(chrS))
     for ( col in cols )
       features[current,col] <- orig[current,col] - chrS[i] - max(chrS)
     features[current,chrCol] <- i
-    features[current,strandCol] <- -1
+    features[current,strandCol] <- strands[2]
   }
   features
 }
