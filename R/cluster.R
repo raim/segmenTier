@@ -394,11 +394,17 @@ writeSegments <- function(data, segments, name, path) {
 #' @param ts the timeseries as a matrix, where columns are the timepoints
 #' and rows individual measurements (e.g., genomic positions for transcriptome
 #' data)
-#' @param smooth use stats' package \code{link[stats:smooth]{smooth}} to
-#' smooth timeseries before processing
+#' @param smooth.space integer, if set a moving average is calculated for
+#' each time-point between adjacent data points using stats
+#' package's \code{link[stats:smooth]{smooth}} with span \code{smooth.space}
+#' @param smooth.time integer, if set the time-series will be smoothed
+#' using stats package's \code{link[stats:filter]{filter}} to calculate a
+#' moving average with span \code{smooth.time} and
+#' \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
+#' and last time-points (again using span \code{smooth.time})
 #' @param trafo prior data transformation, pass any function name, e.g.,
-#' "log", or the package functions "asinh" (\code{ln(x + sqrt(x^2+1))}) or
-#' "log_1" for (\code{ln(ts+1)}) 
+#' "log", or the package functions "ash" (\code{asinh = ln(x + sqrt(x^2+1))})
+#' or "log_1" for (\code{ln(ts+1)}) 
 #' @param low.thresh use this threshold to cut-off data, which will be
 #' added to the absent/nuissance cluster later
 #' @param use.fft use the Discrete Fourier Transform of the data
@@ -411,7 +417,7 @@ writeSegments <- function(data, segments, name, path) {
 #' which is similar to a signal-to-noise ratio (SNR)
 #' @param dc.trafo data transformation for the first (DC) component of
 #' the DFT, pass any function name, e.g., "log", or the package functions
-#' "asinh" (\code{ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}) 
+#' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}) 
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
 #' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
@@ -424,7 +430,7 @@ writeSegments <- function(data, segments, name, path) {
 processTimeseries <- function(ts, trafo="raw",
                               use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
                               use.snr=TRUE, low.thresh=-Inf, 
-                              smooth=FALSE, keep.zeros=FALSE) {
+                              smooth.space, smooth.time, keep.zeros=FALSE) {
 
     ## processing ID - this will be inherited to clusters
     ## and from there to segment ID and type
@@ -441,13 +447,26 @@ processTimeseries <- function(ts, trafo="raw",
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
     zs <- apply(tsd,1,sum)==0 # remember all zeros
 
-    ## smooth time-series
-    ## TESTED, doesn't help to avoid fragmentation!
-    if ( smooth ) {
-        tsm <- apply(tsd,2,ma,150,FALSE)
-        tsd[!zs,] <- tsm[!zs,]
+    ## smooth time-points between adjacent positions
+    ## currently not used, doesn't help to avoid fragmentation!
+    if ( !missing(smooth.space) ) {
+        if ( smooth.space>1 ) {
+            tsm <- apply(tsd[!zs,], 2 ,ma, smooth.space,FALSE)
+            tsd[!zs,] <- tsm
+        }
     }
-    
+    ## smooth time-series
+    if ( !missing(smooth.time) ) {
+        ## currently used only in clustering final segment time series
+        if ( smooth.time>1 ) {
+            tsm <- t(apply(tsd[!zs,], 1, ma, n=smooth.time, circular=FALSE))
+            ends <- stats::smoothEnds(tsd[!zs,], k=smooth.time)
+            tsd[!zs,] <- tsm
+            tsd[!zs,c(1,ncol(tsd))] <- ends[,c(1,ncol(tsd))]
+        }
+    }
+
+        
     ## transform raw data?
     ## NOTE that DFT and SNR below (use.fft) are an alternative
     ## data normalization procedure
@@ -523,7 +542,116 @@ processTimeseries <- function(ts, trafo="raw",
     tmp <- tset
 }
 
-#' simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
+## TODO: adapt to be used in segmentation as well, is fcls@mu
+## equal/similar to kmeans' 'centers'? Are Ccc and Pci calculated correctly?
+#' wrapper for \code{\link[flowClust]{flowClust}}, currently only used for
+#' clustering of final segment time-series; it could in principle also
+#' be used for segmentation, but that has not been tested.
+#' @param tset processed time-series as provided by
+#' \code{\link{processTimeseries}}
+#' @param B max. num. of EM iterations 
+#' @param tol tolerance for EM convergence
+#' @param lambda intial Box-Cox trafo
+#' @param nu initial Box-Cox trafo, Inf for pure Gaussian
+#' @param nu.est 0: no, 1: non-specific, 2: cluster-specific estimation of nu
+#' @param trans 0: no, 1: non-specific, 2: cluster-specific estim. of lambda
+#' @param ... further parameter to \code{\link[flowClust]{flowClust}}
+#' @export
+flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
+                                nu=4, nu.est=0, trans=1, ...) {
+
+    require("flowClust")
+    require("flowMerge")
+    
+    dat <- tset$dat
+    rm.vals <- tset$rm.vals
+    clsDat <- dat[!rm.vals,]
+
+    if ( ncpu>1 )
+        options(cores=ncpu)
+
+    fcls <- flowClust::flowClust(clsDat, K=K, B=B, tol=tol, lambda=lambda,
+                                 nu=nu, nu.est=nu.est, trans=trans, ...)
+
+    ## collect clusterings
+    cluster.matrix <- matrix(0, nrow=nrow(dat), ncol=length(K))
+    colnames(cluster.matrix) <- as.character(K)
+    bic <- rep(NA, length(K))
+    names(bic) <- as.character(K)
+    icl <- bic
+    for ( i in 1:length(fcls) ) {
+      if ( length(fcls) > 1 ) fc <- fcls[[i]]
+      else fc <- fcls
+      cl.num <- as.character(fc@K)
+                                        #cat(paste(i, cl.num, "\n"))
+      cluster <- flowClust::Map(fc,rm.outliers=F)
+      cluster.matrix[!rm.vals, cl.num] <- cluster
+      bic[cl.num] <- fc@BIC
+      icl[cl.num] <- fc@ICL
+    }
+    ## max BIC and ICL
+    max.bic <- max(bic, na.rm=T)
+    max.clb <- K[which(bic==max.bic)]
+    max.icl <- max(icl, na.rm=T)
+    max.cli <- K[which(icl==max.icl)]
+   
+    ## get final clustering and plot
+    cls <- cluster.matrix[,as.character(max.clb)]
+
+    ## MERGE CLUSTERS from best BIC by flowMerge
+    
+    best <- which(K==max.clb)
+    if ( length(fcls) > 1 ) fc <- fcls[[best]]
+    else fc <- fcls
+    obj <- flowObj(fc, flowFrame(clsDat))
+    mrg <- merge(obj)
+    mrg.cl <- fitPiecewiseLinreg(mrg)
+    obj <- mrg[[mrg.cl]]
+    mcls <- rep(0, nrow(dat))
+    mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
+    mrg.id <- paste(K[best],"m",mrg.cl,sep="")
+    cluster.matrix <- cbind(cluster.matrix, mcls)
+    colnames(cluster.matrix)[ncol(cluster.matrix)] <- mrg.id
+
+    ## collect centers, Pci and Ccc corelation matrices (see clusterTimeseries)
+    ## TODO: TEST FOR SEGMENTATION (currently only used for final
+    ## segment time series)
+    ## -> is `mu' really the same as centers and are Ccc and Pci
+    ## correct? 
+    all <- append(fcls,obj)
+    centers <- Pci <- Ccc <- rep(list(NA),length(all))
+    for ( i in 1:length(all) ) {
+        if ( length(all) > 1 ) fc <- all[[i]]
+        else fc <- all
+        centers[[i]] <- fc@mu
+        ## C(c,c) - cluster X cluster cross-correlation matrix
+        cr <- stats::cor(t(fc@mu))
+
+        Ccc[[i]] <- cr
+        
+        ## P(c,i) - position X cluster correlation
+        P <- matrix(NA,nrow=nrow(dat),ncol=nrow(fc@mu))
+        P[!rm.vals,] <- clusterCor_c(clsDat, fc@mu)
+
+        Pci[[i]] <- P
+    }
+    
+    ## clustering data set for use in segmentCluster.batch 
+    fcset <- list(clusters=cluster.matrix,
+                  centers=centers, Pci=Pci, Ccc=Ccc,
+                  K=K, usedk=K, warn=NULL,
+                  flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
+                  max.clb=max.clb, max.cli=max.cli, merged=mrg.id,
+                  bic=bic, icl=icl)
+    class(fcset) <- "clustering" 
+
+    if ( ncpu>1 )
+        options(cores=1)
+    ## silent return
+    tmp <- fcset
+}
+
+#' wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
 #' of a time-series preprocessed by \code{\link{processTimeseries}}.
 #' @param tset a timeseries processed by \code{\link{processTimeseries}}
 #' @param K selected cluster numbers, the argument \code{centers}
