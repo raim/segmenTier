@@ -583,7 +583,6 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
       if ( length(fcls) > 1 ) fc <- fcls[[i]]
       else fc <- fcls
       cl.num <- as.character(fc@K)
-                                        #cat(paste(i, cl.num, "\n"))
       cluster <- flowClust::Map(fc,rm.outliers=F)
       cluster.matrix[!rm.vals, cl.num] <- cluster
       bic[cl.num] <- fc@BIC
@@ -595,11 +594,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     max.icl <- max(icl, na.rm=T)
     max.cli <- K[which(icl==max.icl)]
    
-    ## get final clustering and plot
-    cls <- cluster.matrix[,as.character(max.clb)]
 
-    ## MERGE CLUSTERS from best BIC by flowMerge
-    
+    ## MERGE CLUSTERS, starting from best BIC by flowMerge
     best <- which(K==max.clb)
     if ( length(fcls) > 1 ) fc <- fcls[[best]]
     else fc <- fcls
