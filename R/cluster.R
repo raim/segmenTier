@@ -852,6 +852,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     for ( i in 1:nrow(params) ) {
 
         sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
+        ## rm first typenm, since these should come formatted (X:id) already
+        sgtype <- sub("^K:","", sgtype)
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
         scr <- params[i,"S"]

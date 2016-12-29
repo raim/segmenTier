@@ -54,7 +54,7 @@ nextmax <-TRUE
 ## take DFT and scale amplitudes, and
 ## select components of DFT
 tset <- processTimeseries(ts=tsd,
-                          smooth=FALSE, trafo=trafo, keep.zeros=keep.zeros,
+                          trafo=trafo, keep.zeros=keep.zeros,
                           use.fft=use.fft, dft.range=dft.range,
                           use.snr=use.snr, dc.trafo=dc.trafo,
                           low.thresh=low.thresh)
