@@ -115,7 +115,7 @@ idx2str <- function(idx,chrS)
 #' @param chrCol name of the column that gives the chromosome number
 #' @param strandCol name of the column that gives forward/reverse strand
 #' information
-#' @param reverse a vector of possible reverse strand indicators
+#' @param strands forward/reverse strand indicators
 #' @export
 index2coor <- function(features, chrS,
                        cols=c("start","end","coor"),
@@ -161,11 +161,11 @@ index2coor <- function(features, chrS,
 plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
   file.name <- paste(file.name, type, sep=".")
   if ( type == "png" )
-    png(file.name, width=width, height=height, units="in", res=res)
+    grDevices::png(file.name, width=width, height=height, units="in", res=res)
   if ( type == "eps" )
-    postscript(file.name, width=width, height=height, paper="special")
+    grDevices::postscript(file.name, width=width, height=height,paper="special")
   if ( type == "pdf" )
-    pdf(file.name, width=width, height=height)
+    grDevices::pdf(file.name, width=width, height=height)
 }
 
 #' pre-segmentation of whole-genome data into chunks that can
@@ -285,17 +285,17 @@ presegment <- function(ts, chrS, avg=1000, favg=100, minrd=8, minds=250,
         plot(rng,numts[rng],type="l",ylim=c(-2,24),main=ifelse(i<=k,"fuse",""))
         lines(rng,avgts[rng],col=3)
         lines(rng,avgfn[rng],col=2);
-        abline(h=8,col=3)
+        graphics::abline(h=8,col=3)
         if ( bord[1]==bord[2] ) {
             #cat(paste(sg, "borders equal\n"))
-            abline(v=bord[1],col=3)
+            graphics::abline(v=bord[1],col=3)
         }else
-            arrows(x0=bord[1],x1=bord[2],y0=-2,y1=-2,col=3)
+            graphics::arrows(x0=bord[1],x1=bord[2],y0=-2,y1=-2,col=3)
         if ( k==i ) {
             #cat(paste(sg, "k==i equal\n"))
-            abline(v=k,col=3)
+            graphics::abline(v=k,col=3)
         } else
-            arrows(x0=k,x1=i,y0=-1,y1=-1,col=2)
+            graphics::arrows(x0=k,x1=i,y0=-1,y1=-1,col=2)
         dev.off()
     }
 
@@ -380,12 +380,12 @@ writeSegments <- function(data, segments, name, path) {
         rng <- segments[i,"start"]:segments[i,"end"]
         if ( length(rng) < 100 )
             cat(paste("segment",i, length(rng),"\n"))
-        tsd <- ts[rng,]
+        dat <- data[rng,]
         id <- ifelse("ID"%in%colnames(segments), segments[i,"ID"], i)
         file.name <- paste(name, "_",id,".csv",sep="")
         if ( !missing(path) )
             file.name <- file.path(path, file.name)
-        write.table(tsd,file.name,row.names=FALSE,sep="\t")
+        utils::write.table(dat,file.name,row.names=FALSE,sep="\t")
     }
  }
 
@@ -549,6 +549,9 @@ processTimeseries <- function(ts, trafo="raw",
 #' be used for segmentation, but that has not been tested.
 #' @param tset processed time-series as provided by
 #' \code{\link{processTimeseries}}
+#' @param ncpu number of cores available for parallel mode of
+#' \code{\link[flowClust]{flowClust}}
+#' @param K the requested cluster numbers (vector of integers)
 #' @param B max. num. of EM iterations 
 #' @param tol tolerance for EM convergence
 #' @param lambda intial Box-Cox trafo
