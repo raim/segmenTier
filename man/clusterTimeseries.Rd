@@ -2,11 +2,11 @@
 % Please edit documentation in R/cluster.R
 \name{clusterTimeseries}
 \alias{clusterTimeseries}
-\title{simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
+\title{wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
 of a time-series preprocessed by \code{\link{processTimeseries}}.}
 \usage{
 clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
-  nui.thresh = -1)
+  nui.thresh = -Inf)
 }
 \arguments{
 \item{tset}{a timeseries processed by \code{\link{processTimeseries}}}
@@ -24,7 +24,7 @@ of \code{\link[stats:kmeans]{kmeans}}}
 center; if below the data point will be added to nuissance cluster 0}
 }
 \description{
-simple wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
+wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
 of a time-series preprocessed by \code{\link{processTimeseries}}.
 }
 

@@ -6,7 +6,7 @@
 \code{\link{coor2index}})}
 \usage{
 index2coor(features, chrS, cols = c("start", "end", "coor"), chrCol = "chr",
-  strandCol = "strand", reverse = c("-", -1))
+  strandCol = "strand", strands = c(1, -1))
 }
 \arguments{
 \item{features}{a table of chromosome features that must contain
