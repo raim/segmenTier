@@ -560,9 +560,6 @@ processTimeseries <- function(ts, trafo="raw",
 flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
                                 nu=4, nu.est=0, trans=1, ...) {
 
-    require("flowClust")
-    require("flowMerge")
-    
     dat <- tset$dat
     rm.vals <- tset$rm.vals
     clsDat <- dat[!rm.vals,]
@@ -599,9 +596,9 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     best <- which(K==max.clb)
     if ( length(fcls) > 1 ) fc <- fcls[[best]]
     else fc <- fcls
-    obj <- flowObj(fc, flowFrame(clsDat))
-    mrg <- merge(obj)
-    mrg.cl <- fitPiecewiseLinreg(mrg)
+    obj <- flowMerge::flowObj(fc, flowCore::flowFrame(clsDat))
+    mrg <- flowMerge::merge(obj)
+    mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
     obj <- mrg[[mrg.cl]]
     mcls <- rep(0, nrow(dat))
     mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
