@@ -752,7 +752,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
     }
     ## name all results by K, will be used!
     colnames(clusters) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste(id,"_K",K,sep="")
+        names(Pci) <- names(Ccc) <- paste(id,"_K:",K,sep="")
 
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
@@ -903,7 +903,6 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
-
 
     allsegs
 }
