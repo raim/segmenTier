@@ -6,8 +6,8 @@
 clustering wrapper \code{\link{clusterTimeseries}}}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
-  dft.range = 2:7, use.snr = TRUE, low.thresh = 1, smooth = FALSE,
-  keep.zeros = FALSE)
+  dft.range = 2:7, use.snr = TRUE, low.thresh = -Inf, smooth.space,
+  smooth.time, keep.zeros = FALSE)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the timepoints
@@ -15,14 +15,14 @@ and rows individual measurements (e.g., genomic positions for transcriptome
 data)}
 
 \item{trafo}{prior data transformation, pass any function name, e.g.,
-"log", or the package functions "asinh" (\code{ln(x + sqrt(x^2+1))}) or
-"log_1" for (\code{ln(ts+1)})}
+"log", or the package functions "ash" (\code{asinh = ln(x + sqrt(x^2+1))})
+or "log_1" for (\code{ln(ts+1)})}
 
 \item{use.fft}{use the Discrete Fourier Transform of the data}
 
 \item{dc.trafo}{data transformation for the first (DC) component of
 the DFT, pass any function name, e.g., "log", or the package functions
-"asinh" (\code{ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})}
+"ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})}
 
 \item{dft.range}{a vector of integers, giving the components of the
 Discrete Fourier Transform to be used where 1 is the first component (DC)
@@ -36,8 +36,15 @@ which is similar to a signal-to-noise ratio (SNR)}
 \item{low.thresh}{use this threshold to cut-off data, which will be
 added to the absent/nuissance cluster later}
 
-\item{smooth}{use stats' package \code{link[stats:smooth]{smooth}} to
-smooth timeseries before processing}
+\item{smooth.space}{integer, if set a moving average is calculated for
+each time-point between adjacent data points using stats
+package's \code{link[stats:smooth]{smooth}} with span \code{smooth.space}}
+
+\item{smooth.time}{integer, if set the time-series will be smoothed
+using stats package's \code{link[stats:filter]{filter}} to calculate a
+moving average with span \code{smooth.time} and
+\code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
+and last time-points (again using span \code{smooth.time})}
 }
 \description{
 process a time-series apt for the \code{\link{segmenTier}}

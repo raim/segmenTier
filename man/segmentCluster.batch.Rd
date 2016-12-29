@@ -2,9 +2,11 @@
 % Please edit documentation in R/cluster.R
 \name{segmentCluster.batch}
 \alias{segmentCluster.batch}
-\title{high-level wrapper for multiple runs of segmentation by
+\title{A high-level wrapper for multiple runs of segmentation by
 \code{\link{segmentClusters}} for multiple clusterings and
-multiple segmentation parameters}
+multiple segmentation parameters. It additionally allows to
+tag adjacent segments to be potentially fused due to similarity
+of their clusters.}
 \usage{
 segmentCluster.batch(cset, csim.scale = 1, score = "ccor", M = 175,
   Mn = 20, a = -2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
@@ -63,9 +65,11 @@ in testing stage or for debugging or illustration of the algorithm;
 see \code{\link{plotScoring}}}
 }
 \description{
-high-level wrapper for multiple runs of segmentation by
+A high-level wrapper for multiple runs of segmentation by
 \code{\link{segmentClusters}} for multiple clusterings and
-multiple segmentation parameters
+multiple segmentation parameters. It additionally allows to
+tag adjacent segments to be potentially fused due to similarity
+of their clusters.
 }
 \details{
 This is a high-level wrapper for \code{\link{segmentClusters}}
