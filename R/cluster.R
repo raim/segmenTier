@@ -423,19 +423,19 @@ writeSegments <- function(data, segments, name, path) {
 #'@export
 processTimeseries <- function(ts, trafo="raw",
                               use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
-                              use.snr=TRUE, low.thresh=1, 
+                              use.snr=TRUE, low.thresh=-Inf, 
                               smooth=FALSE, keep.zeros=FALSE) {
 
     ## processing ID - this will be inherited to clusters
     ## and from there to segment ID and type
-    processing <- trafo # ifelse(trafo=="identity","raw",trafo)
+    processing <- paste("T:",trafo,sep="")
     if ( use.fft )
-      processing <- paste(processing,
-                          paste("dft",paste(range(dft.range),collapse="-"),
-                                sep=""),
-                          paste("dc",dc.trafo,sep=""),
-                          ifelse(use.snr,"snr",""),
-                          sep="_")
+      processing <- paste(processing,"_",
+                          paste("D:dft",paste(range(dft.range),collapse="-"),
+                                sep=""),".",
+                          paste("dc",dc.trafo,sep=""),".",
+                          ifelse(use.snr,"snr","raw"),
+                          sep="")
     
     tsd <-ts 
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
@@ -483,7 +483,11 @@ processTimeseries <- function(ts, trafo="raw",
         dat <- fft[,dft.range]
          
         ## get Real and Imaginary pars
-        dat <- cbind(Re(dat),Im(dat))
+        re <- Re(dat)
+        im <- Im(dat)
+        if ( 1 %in% dft.range ) # rm 0 DC component from Im
+            im <- im[,-1]
+        dat <- cbind(re,im)
 
     }else {
 
