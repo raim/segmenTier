@@ -20,6 +20,16 @@ ma <- function(x, n=5, circular=FALSE) {
     stats::filter(x,rep(1/n,n), sides=2, circular=circular)
 }
 
+# calculate 95% confidence intervals for the given
+# data vector using a t-distribution
+ci95 <- function(data,na.rm=FALSE) {
+    if ( na.rm ) data <- data[!is.na(data)]
+    n <- length(data)
+    if ( n<2 ) return(NA)
+    error <- qt(0.975, df=n-1) * sd(data)/sqrt(n)
+    return(error)
+}
+
 ### CHROMOSOME COORDINATE UTILS
 ## copied from genomeBrowser utils on 20161216
 ## https://gitlab.com/raim/genomeBrowser/blob/master/src/genomeBrowser_utils.R
