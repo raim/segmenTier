@@ -647,7 +647,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
                   centers=centers, Pci=Pci, Ccc=Ccc,
                   K=K, usedk=K, warn=NULL,
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
-                  max.clb=max.clb, max.cli=max.cli, merged=mrg.id,
+                  max.clb=max.clb, max.cli=max.cli,
+                  merged.K=mrg.cl, merged=mrg.id,
                   bic=bic, icl=icl)
     class(fcset) <- "clustering" 
 
