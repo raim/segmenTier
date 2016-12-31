@@ -577,8 +577,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     rm.vals <- tset$rm.vals
     clsDat <- dat[!rm.vals,]
 
-    if ( ncpu>1 )
-        options(cores=ncpu)
+    ##if ( ncpu>1 ) # TODO: how to avoid parallel mode?
+    options(cores=ncpu)
 
     fcls <- flowClust::flowClust(clsDat, K=K, B=B, tol=tol, lambda=lambda,
                                  nu=nu, nu.est=nu.est, trans=trans, ...)
