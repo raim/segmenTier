@@ -13,6 +13,11 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
 \item{tset}{processed time-series as provided by
 \code{\link{processTimeseries}}}
 
+\item{ncpu}{number of cores available for parallel mode of
+\code{\link[flowClust]{flowClust}}}
+
+\item{K}{the requested cluster numbers (vector of integers)}
+
 \item{B}{max. num. of EM iterations}
 
 \item{tol}{tolerance for EM convergence}

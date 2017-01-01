@@ -26,7 +26,7 @@ to continuous index}
 \item{strandCol}{name of the column that gives forward/reverse strand
 information}
 
-\item{reverse}{a vector of possible reverse strand indicators}
+\item{strands}{forward/reverse strand indicators}
 }
 \description{
 convert continuous index to chromosome coordinates (reverse of
