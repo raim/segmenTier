@@ -77,7 +77,8 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 #' which is similar to a signal-to-noise ratio (SNR)
 #' @param dc.trafo data transformation for the first (DC) component of
 #' the DFT, pass any function name, e.g., "log", or the package functions
-#' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}) 
+#' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})
+#' @param keep.zeros keep time series with total sum of 0 for clustering
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
 #' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
