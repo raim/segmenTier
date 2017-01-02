@@ -12,6 +12,7 @@
 #' @references
 #'   @bibliography segmenTier.bib
 #'@importFrom Rcpp evalCpp
+#'@importFrom stats qt sd
 #'@importFrom parallel mclapply
 #'@importFrom graphics image axis par plot matplot points lines legend arrows strheight strwidth text
 #'@importFrom grDevices png dev.off rainbow gray xy.coords
