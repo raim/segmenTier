@@ -45,6 +45,8 @@ using stats package's \code{link[stats:filter]{filter}} to calculate a
 moving average with span \code{smooth.time} and
 \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 and last time-points (again using span \code{smooth.time})}
+
+\item{keep.zeros}{keep time series with total sum of 0 for clustering}
 }
 \description{
 process a time-series apt for the \code{\link{segmenTier}}
