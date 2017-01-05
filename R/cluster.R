@@ -1,4 +1,3 @@
-### TIME-SERIES CLUSTERING PARAMETERS
 
 
 ### DATA TRANSFORMATION UTILS
@@ -511,7 +510,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
     }
     
     if ( verb>0 )
-        cat(paste("CALCULATING",nrow(params),"SEGMENTATIONS\n"))
+        cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
     allsegs <- NULL
     for ( i in 1:nrow(params) ) {
@@ -531,8 +530,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         if ( scr=="ccls" ) csim <- NULL
 
         if ( verb>0 )
-            cat(paste("Calculating segment type",sgtype,";",
-                      i,"of",nrow(params),"\n"))
+            cat(paste("Segment type\t",sgtype,
+                      "\t", i,"of",nrow(params),"\n",sep=""))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
                               score=scr,M=m,Mn=mn,nui=nui,a=a,
@@ -543,7 +542,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
                                  fuse.threshold=fuse.threshold)
         if ( sum(close)>0 & verb>0 )
-          cat(paste("\t",sum(close), "segments could be fused\n"))
+            cat(paste("Fused tags\t",sum(close), "\n",sep=""))
 
         ## collect results
         if ( nrow(seg$segments) > 0 ) {
@@ -555,14 +554,15 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                fuse=close)
             allsegs <- rbind(allsegs,segs)
             
-            if ( verb>0 )
-              cat(paste("\t", nrow(seg$segments), "added.\n"))
-        } else if ( verb>0 )
-          cat(paste("\tno segments.\n"))
+        } 
+        if ( verb>0 )
+            cat(paste("Detected segments\t", nrow(seg$segments), "\n",sep=""))
     }
     if ( is.null(allsegs) & verb>0 )
-      cat(paste("\tNO SEGMENTS FOUND, returning NULL\n"))
+        cat(paste("Total segments\t0\n",sep=""))
     else {
+        cat(paste("Total segments\t",nrow(allsegs),"\n",sep=""))
+
         ## OVERRIDE ID
         if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")

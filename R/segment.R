@@ -59,7 +59,13 @@ NULL # this just ends the global package documentation
 
 ### FUNCTIONS
 
-### UTILS
+### MESSAGE UTILS
+
+## nicer timestamp
+time <- function() format(Sys.time(), "%Y%m%d %H:%M:%S")
+## messages
+msg <- function(x) cat(x, file=stdout()) # until piping is implemented
+## stored "warnings" (actually detailed messages)
 warn <- function(w, warnings,verb=FALSE) {
   if (verb) cat(w)
   c(warnings,w)
@@ -227,10 +233,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 ) 
-      cat(paste("scoring function: ", score,
+      cat(paste("Scoring function: ", score,
                 "; scale: ", csim.scale,
                 "; max/min: ", multi,
-                "\t", date(), "\n",sep=""))
+                "\t", time(), "\n",sep=""))
     ## TODO: handle Mn in scoring functions
     ## add official nuissance cluster
 
@@ -241,7 +247,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     ## 4: back-tracing to generate segments
     if ( verb>0 )
-        cat(paste("\tbacktracing with", multib, "\t", date(), "\n"))
+        cat(paste("Backtracing with:", multib, "\t", time(), "\n",sep=""))
     seg <- backtrace(S=SK$S, K=SK$K, multib=multib, nextmax=nextmax, verb=verb)
 
     ## remap: map back to original cluster names
