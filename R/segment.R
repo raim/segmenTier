@@ -235,7 +235,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     if ( verb>0 ) {
         cat(paste("Scoring\t", time(), "\n",sep=""))
         cat(paste("parameters\t",paste("function:", score,
-                                        "scale: ", csim.scale,
+                                        "; scale: ", csim.scale,
                                         "; max/min: ", multi,sep=""),
                   "\n",sep=""))
     }
