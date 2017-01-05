@@ -6,7 +6,7 @@
 of a time-series preprocessed by \code{\link{processTimeseries}}.}
 \usage{
 clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
-  nui.thresh = -Inf)
+  nui.thresh = -Inf, verb = 1)
 }
 \arguments{
 \item{tset}{a timeseries processed by \code{\link{processTimeseries}}}
@@ -22,6 +22,8 @@ of \code{\link[stats:kmeans]{kmeans}}}
 
 \item{nui.thresh}{threshold correlation of a data point to a cluster
 center; if below the data point will be added to nuissance cluster 0}
+
+\item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \description{
 wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
