@@ -358,7 +358,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
         ## get cluster number K
         Kused <- min(c(K[k],sum(!duplicated(dat[!rm.vals,]))))
         if ( verb>0 )
-            cat(paste("Datapoints N\t",N,"\n",
+            cat(paste("Timeseries N\t",N,"\n",
                       "Clusters K\t", Kused, "\n",sep=""))
         
         ## cluster

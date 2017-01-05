@@ -232,11 +232,13 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     #                             csim=csim, ncpu=ncpu)
 
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
-    if ( verb>0 ) 
-      cat(paste("Scoring function: ", score,
-                "; scale: ", csim.scale,
-                "; max/min: ", multi,
-                "\t", time(), "\n",sep=""))
+    if ( verb>0 ) {
+        cat(paste("Scoring\t", time(), "\n",sep=""))
+        cat(paste("parameters\t",pasate("function:", score,
+                                        "scale: ", csim.scale,
+                                        "; max/min: ", multi,sep=""),
+                  "\n",sep=""))
+    }
     ## TODO: handle Mn in scoring functions
     ## add official nuissance cluster
 
@@ -246,8 +248,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
                         M=M, Mn=Mn, multi=multi)
 
     ## 4: back-tracing to generate segments
-    if ( verb>0 )
-        cat(paste("Backtracing with:", multib, "\t", time(), "\n",sep=""))
+    if ( verb>0 ) {
+        cat(paste("Backtracing\t", time(), "\n",sep=""))
+        cat(paste("multib\t", multib,"\n",sep=""))
+    }
     seg <- backtrace(S=SK$S, K=SK$K, multib=multib, nextmax=nextmax, verb=verb)
 
     ## remap: map back to original cluster names
