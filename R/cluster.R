@@ -533,7 +533,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         if ( scr=="ccls" ) csim <- NULL
 
         if ( verb>0 )
-            cat(paste("Segment type\t",sgtype,
+            cat(paste("SEGMENT TYPE\t",sgtype,
                       "\t", i,"of",nrow(params),"\n",sep=""))
         
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
