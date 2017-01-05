@@ -7,7 +7,7 @@ clustering sequence.}
 \usage{
 segmentClusters(seq, csim, csim.scale = 1, cset, k = 1, score = "ccor",
   M = 175, Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
-  multib = "max", ncpu = 1, verb = 1, save.mat = "")
+  multib = "max", ncpu = 1, verb = 1, save.matrix = FALSE)
 }
 \arguments{
 \item{seq}{a clustering sequence. The only strict requirement is that
@@ -57,16 +57,15 @@ either "min" (default), "max" or "skip"}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 
-\item{save.mat}{store the scoring function matrix SM or the back-tracing
-matrix K by adding "SM" and "SK" to the string vector save.mat; useful
-in testing stage or for debugging or illustration of the algorithm;
-see \code{\link{plotScoring}}}
+\item{save.matrix}{store the total score matrix \code{S(i,c)} and the
+backtracing matrix \code{K(i,c)}; useful in testing stage or for
+debugging or illustration of the algorithm; see \code{\link{plotScoring}}}
 }
 \value{
 Returns a list containing the main result ("segments"), "warnings"
 from the dynamic programing and back-tracing phases, and optionally (see
-option \code{save.mat} the score function matrices \code{SM}, the
-total score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+option \code{save.matrix}) (\code{results$SK}) the total score matrix
+\code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
 The main result structure "segments" is a 3-column matrix, where column 1
 is the cluster assignment and colums 2 and 3 are start and end position
 of the segments.

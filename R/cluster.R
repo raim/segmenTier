@@ -465,10 +465,11 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
 #' will not be part of the segment type and ID
 #' @param id if set, the default segment IDs are replaced by this
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @param save.mat store the scoring function matrix SM or the back-tracing
-#' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
-#' in testing stage or for debugging or illustration of the algorithm;
-#' see \code{\link{plotScoring}}
+#' @param save.matrix store the total score matrix \code{S(i,c)} and the
+#' backtracing matrix \code{K(i,c)}; useful in testing stage or for
+#' debugging or illustration of the algorithm; see \code{\link{plotScoring}}
+#' TODO: save.matrix is currently not implemented, since batch function
+#' returns a matrix only
 #' @details This is a high-level wrapper for \code{\link{segmentClusters}}
 #' which allows segmentation over multiple clusterings as provided by the
 #' function \code{\link{clusterTimeseries}} and over multiple segmentation
@@ -480,7 +481,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
                                  fuse.threshold=0.2,
                                  nextmax=TRUE, multi="max", multib="max",
                                  short.name=TRUE, id,
-                                 ncpu=1, verb=1, save.mat="") {
+                                 ncpu=1, verb=1, save.matrix=FALSE) {
 
         
 
@@ -519,6 +520,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
     allsegs <- NULL
+    ## TODO: convert this loop to lapply and try parallel!
+    ## redirect messages to msgfile or store in results
     for ( i in 1:nrow(params) ) {
 
         sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
@@ -542,7 +545,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
                               score=scr,M=m,Mn=mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
-                              save.mat="",verb=verb)
+                              save.matrix=save.matrix,verb=verb)
 
         ## tag adjacent segments from correlating clusters
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
@@ -574,6 +577,8 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
 
+    ## TODO: return a list or special class and add the scoring matrices
+    ## to results if save.matrix
     allsegs
 }
 

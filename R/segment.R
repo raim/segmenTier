@@ -120,10 +120,9 @@ clusterSegments <- function() {}
 #' \code{\link[parallel:mclapply]{parallel::mclapply}} by
 #' \code{\link{calculateScoringMatrix}}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @param save.mat store the scoring function matrix SM or the back-tracing
-#' matrix K by adding "SM" and "SK" to the string vector save.mat; useful
-#' in testing stage or for debugging or illustration of the algorithm;
-#' see \code{\link{plotScoring}}
+#' @param save.matrix store the total score matrix \code{S(i,c)} and the
+#' backtracing matrix \code{K(i,c)}; useful in testing stage or for
+#' debugging or illustration of the algorithm; see \code{\link{plotScoring}}
 #' @details This is the main R wrapper function for the segmentation algorithm.
 #' It takes a sequence of clusterings and returns segments of
 #' consistent clusters. It runs the dynamic programing algorithm for
@@ -133,8 +132,8 @@ clusterSegments <- function() {}
 #' have little effect on real-life data sets.
 #' @return Returns a list containing the main result ("segments"), "warnings"
 #' from the dynamic programing and back-tracing phases, and optionally (see
-#' option \code{save.mat} the score function matrices \code{SM}, the
-#' total score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+#' option \code{save.matrix}) (\code{results$SK}) the total score matrix
+#' \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
 #' The main result structure "segments" is a 3-column matrix, where column 1
 #' is the cluster assignment and colums 2 and 3 are start and end position
 #' of the segments.
@@ -144,7 +143,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
                             score="ccor",
                             M=175, Mn=20, a=-2, nui=1,
                             nextmax=TRUE, multi="max",multib="max", 
-                            ncpu=1, verb=1, save.mat="") {
+                            ncpu=1, verb=1, save.matrix=FALSE) {
 
     stime <- as.numeric(Sys.time()) 
     
@@ -269,7 +268,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
     #if ( "SM" %in% save.mat ) seg$SM <- SM
-    if ( "SK" %in% save.mat ) seg$SK <- SK
+    if ( save.matrix ) seg$SK <- SK
 
     seg$csim <- csim
     class(seg) <- "segments"

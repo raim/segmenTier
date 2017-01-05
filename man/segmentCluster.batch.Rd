@@ -11,7 +11,7 @@ of their clusters.}
 segmentCluster.batch(cset, csim.scale = 1, score = "ccor", M = 175,
   Mn = 20, a = -2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
   multi = "max", multib = "max", short.name = TRUE, id, ncpu = 1,
-  verb = 1, save.mat = "")
+  verb = 1, save.matrix = FALSE)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
@@ -59,10 +59,11 @@ will not be part of the segment type and ID}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 
-\item{save.mat}{store the scoring function matrix SM or the back-tracing
-matrix K by adding "SM" and "SK" to the string vector save.mat; useful
-in testing stage or for debugging or illustration of the algorithm;
-see \code{\link{plotScoring}}}
+\item{save.matrix}{store the total score matrix \code{S(i,c)} and the
+backtracing matrix \code{K(i,c)}; useful in testing stage or for
+debugging or illustration of the algorithm; see \code{\link{plotScoring}}
+TODO: save.matrix is currently not implemented, since batch function
+returns a matrix only}
 }
 \description{
 A high-level wrapper for multiple runs of segmentation by
