@@ -146,13 +146,14 @@ segmentClusters <- function(seq, csim, csim.scale=1,
                             nextmax=TRUE, multi="max",multib="max", 
                             ncpu=1, verb=1, save.mat="") {
 
+    stime <- as.numeric(Sys.time()) 
+    
     ## cluster set from clusterTimeseries
     if ( !missing(cset) ) {
         seq <- cset$clusters[,k]
         if ( score=="ccor" ) csim <- cset$Ccc[[k]]
         if ( score=="icor" ) csim <- cset$Pci[[k]]
     }
-
     
     ## 1: set up sequence and data
     N <- length(seq)
@@ -275,6 +276,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     if ( verb>0 ) 
         cat(paste("Done at  \t", time(), "\n",sep=""))
+
+    etime <- as.numeric(Sys.time())
+    if ( verb>0 )
+        cat(paste("ellapsed\t", round((etime-stime)), " sec\n",sep=""))
     
     return(seg)
     
