@@ -274,7 +274,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     class(seg) <- "segments"
     
     if ( verb>0 ) 
-        cat(paste("Done.\t", time(), "\n",sep=""))
+        cat(paste("Done at  \t", time(), "\n",sep=""))
     
     return(seg)
     
