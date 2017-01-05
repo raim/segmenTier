@@ -273,6 +273,9 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     seg$csim <- csim
     class(seg) <- "segments"
     
+    if ( verb>0 ) 
+        cat(paste("Done.\t", time(), "\n",sep=""))
+    
     return(seg)
     
 }
