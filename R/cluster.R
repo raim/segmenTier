@@ -352,14 +352,17 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(K))
     centers <- Pci <- Ccc <- rep(list(NA), length(K))
     
+    if ( verb>0 )
+        cat(paste("Timeseries N\t",N,"\n",sep=""))
+    
     usedk <- K
     for ( k in 1:length(K) ) {
-
+        
         ## get cluster number K
         Kused <- min(c(K[k],sum(!duplicated(dat[!rm.vals,]))))
+        
         if ( verb>0 )
-            cat(paste("Timeseries N\t",N,"\n",
-                      "Clusters K\t", Kused, "\n",sep=""))
+            cat(paste("Clusters K\t", Kused, "\n",sep=""))
         
         ## cluster
         km <- stats::kmeans(dat[!rm.vals,], Kused, iter.max=iter.max,
