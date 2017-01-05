@@ -319,8 +319,9 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
 #' "how many random sets should be chosen?", see there
 #' @param nui.thresh threshold correlation of a data point to a cluster
 #' center; if below the data point will be added to nuissance cluster 0
+#' @param verb level of verbosity, 0: no output, 1: progress messages
 #'@export
-clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thresh=-Inf) {
+clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thresh=-Inf, verb=1) {
 
 
     ## TODO:
@@ -340,7 +341,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
     if ( sum(!rm.vals)<10 ) 
         warn <- "not enough data"
     else if ( sum(!duplicated(dat[!rm.vals,]))<2 ) 
-      warn <- "not enough data diversity"
+        warn <- "not enough data diversity"
     if ( !is.null(warn) ) {
         warning(warn)
         return(NULL)
@@ -356,7 +357,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
 
         ## get cluster number K
         Kused <- min(c(K[k],sum(!duplicated(dat[!rm.vals,]))))
-        cat(paste("clustering, N=",N,", K=",Kused, "\n"))
+        if ( verb>0 )
+            cat(paste("Datapoints N\t",N,"\n",
+                      "Clusters K\t", Kused, "\n",sep=""))
         
         ## cluster
         km <- stats::kmeans(dat[!rm.vals,], Kused, iter.max=iter.max,
@@ -556,7 +559,7 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
             
         } 
         if ( verb>0 )
-            cat(paste("Detected segments\t", nrow(seg$segments), "\n",sep=""))
+            cat(paste("Segments\t", nrow(seg$segments), "\n",sep=""))
     }
     if ( is.null(allsegs) & verb>0 )
         cat(paste("Total segments\t0\n",sep=""))
