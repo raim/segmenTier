@@ -233,7 +233,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 ) {
-        cat(paste("Scoring\t", time(), "\n",sep=""))
+        cat(paste("Scoring matrix\t", time(), "\n",sep=""))
         cat(paste("parameters\t",paste("function:", score,
                                         "; scale: ", csim.scale,
                                         "; max/min: ", multi,sep=""),
