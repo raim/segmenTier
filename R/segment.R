@@ -250,7 +250,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## 4: back-tracing to generate segments
     if ( verb>0 ) {
         cat(paste("Backtracing\t", time(), "\n",sep=""))
-        cat(paste("parameters\t", paste("multib:",multib,,sep=""), "\n",sep=""))
+        cat(paste("parameters\t", paste("multib:",multib,sep=""), "\n",sep=""))
     }
     seg <- backtrace(S=SK$S, K=SK$K, multib=multib, nextmax=nextmax, verb=verb)
 
