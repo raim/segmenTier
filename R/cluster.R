@@ -92,6 +92,9 @@ processTimeseries <- function(ts, trafo="raw",
                               use.snr=TRUE, low.thresh=-Inf, 
                               smooth.space, smooth.time, keep.zeros=FALSE) {
 
+    if ( typeof(ts)=="list" )
+        ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
+     
     ## processing ID - this will be inherited to clusters
     ## and from there to segment ID and type
     processing <- paste("T:",trafo,sep="")
@@ -118,6 +121,7 @@ processTimeseries <- function(ts, trafo="raw",
     ## smooth time-series
     if ( !missing(smooth.time) ) {
         ## currently used only in clustering final segment time series
+        ## NOTE/TODO: smooth.time must be ODD for smoothEnds
         if ( smooth.time>1 ) {
             tsm <- t(apply(tsd[!zs,], 1, ma, n=smooth.time, circular=FALSE))
             ends <- stats::smoothEnds(tsd[!zs,], k=smooth.time)
