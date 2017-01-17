@@ -8,6 +8,26 @@ get.fft <- function(x) {
     colnames(fft) <- c("DC",as.character(1:(n-1)))
     fft
 }
+## fourier permutation
+do.perm <- function(x, fft=NULL, perm, verb=0) {
+
+    N <- ncol(x)
+    if ( is.null(fft) ) fft <- get.fft(x)
+    xam <- abs(fft)/N
+    pvl <- matrix(0,nrow=nrow(fft), ncol=ncol(fft))
+    dimnames(pvl) <- dimnames(fft)
+    ## TODO: use apply and parallel!
+    for ( i in 1:perm ) {
+        if ( verb>0 & i%%round(perm/10)==0 )
+          cat(paste(round(i/perm,2)*100,"%, "))
+        ## randomize columns and get fourier
+        rft <- get.fft(x[,sample(1:ncol(x))])
+        ram <- abs(rft)/N
+        pvl <- pvl + as.numeric(ram >= xam)
+    }
+    if ( verb ) cat("\n")
+    pvl/perm
+}
 
 ## asinh trafo: alternative to log
 ash <- function(x) log(x+sqrt(x^2+1))
@@ -66,6 +86,8 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 #' or "log_1" for (\code{ln(ts+1)}) 
 #' @param low.thresh use this threshold to cut-off data, which will be
 #' added to the absent/nuissance cluster later
+#' @param perm number of permutations of the data set, to obtain
+#" p-values for the oscillation
 #' @param use.fft use the Discrete Fourier Transform of the data
 #' @param dft.range a vector of integers, giving the components of the
 #' Discrete Fourier Transform to be used where 1 is the first component (DC)
@@ -77,7 +99,6 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 #' @param dc.trafo data transformation for the first (DC) component of
 #' the DFT, pass any function name, e.g., "log", or the package functions
 #' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})
-#' @param keep.zeros keep time series with total sum of 0 for clustering
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
 #' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
@@ -87,10 +108,10 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 #' @references 
 #'   @cite Machne2012 Lehmann2013
 #'@export
-processTimeseries <- function(ts, trafo="raw",
+processTimeseries <- function(ts, trafo="raw", 
                               use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
-                              use.snr=TRUE, low.thresh=-Inf, 
-                              smooth.space, smooth.time, keep.zeros=FALSE) {
+                              perm=0, use.snr=TRUE, low.thresh=-Inf, 
+                              smooth.space, smooth.time) {
 
     if ( typeof(ts)=="list" )
         ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
@@ -136,28 +157,41 @@ processTimeseries <- function(ts, trafo="raw",
     ## data normalization procedure
     ## default: identity
     if ( trafo!="raw" )
-        tsd <- get(trafo, mode="function")(tsd)
+        tsd <- get(trafo, mode="function")(tsd) # ash, log_1, etc
     
     ## get DFT
+    fft <- pvl <- NULL
     if ( use.fft ) {
-        fft <- get.fft(tsd)
-        if ( !keep.zeros ) 
-            fft[zs,] <- NA
-        
-        ## sequence length
-        N <- nrow(fft)
 
+        ## get DFT
+        tmp <- get.fft(tsd[!zs,])
+        fft <- matrix(NA, ncol=ncol(tmp), nrow=nrow(tsd))
+        colnames(fft) <- colnames(tmp)
+        fft[!zs,] <- tmp
+
+        ## do DFT on permuted time-series to obtain p-values
+        ## TODO: include amplitude and DC scaling in permutation?
+        if ( perm>0 ) { 
+            tmp <- do.perm(tsd[!zs,],fft=fft[!zs,],perm)
+            pvl <- matrix(NA, ncol=ncol(tmp), nrow=nrow(tsd))
+            colnames(pvl) <- colnames(tmp)
+            pvl[!sz,] <- tmp
+        }
+        
         ## amplitude-scaling (~SNR), see Machne&Murray 2012
         if ( use.snr ) {
-          amp <- abs(fft)
+            amp <- abs(fft)
           snr <- fft
           for ( a in 2:ncol(fft) )
             snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
           fft <- snr
         }
-        if ( 1 %in% dft.range & dc.trafo!="raw" )
-            fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) #
         
+        ## DC scaling
+        if ( 1 %in% dft.range & dc.trafo!="raw" )
+            fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) # ash, log_1, etc
+
+        ## PREPARE DATA FOR CLUSTERING
         ## get low expression filter!
         tot <- Re(fft[,1]) # NOTE: DC component = rowSums(tsd)
         low <- tot < low.thresh
@@ -175,19 +209,13 @@ processTimeseries <- function(ts, trafo="raw",
     }else {
 
         dat <- tsd
-        if ( !keep.zeros ) 
-            dat[zs,] <- NA
-        
-        ## sequence length
-        N <- nrow(dat)
+        dat[zs,] <- NA # set zero-vals to NA
 
         ## get low expression filter
         tot <- rowSums(dat,na.rm=TRUE)
         low <- rep(FALSE, nrow(dat))
         low <- tot < low.thresh
     }
-    ## for plots
-    #tsd[zs,] <- NA
 
     ## store which are NA and set to 0
     na.rows <- rowSums(is.na(dat))==ncol(dat)
@@ -197,7 +225,7 @@ processTimeseries <- function(ts, trafo="raw",
     rm.vals <- na.rows | low
 
     ## time-series data set for clustering in clusterTimeseries
-    tset <- list(dat=dat, ts=tsd, tot=tot,
+    tset <- list(dat=dat, ts=tsd, dft=fft, pvalues=pvl, tot=tot,
                  zero.vals=zs, rm.vals=rm.vals, low.vals=low,
                  id=processing)
     class(tset) <- "timeseries"
