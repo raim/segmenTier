@@ -7,7 +7,7 @@ clustering wrapper \code{\link{clusterTimeseries}}}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
   dft.range = 2:7, perm = 0, use.snr = TRUE, low.thresh = -Inf,
-  smooth.space, smooth.time)
+  smooth.space, smooth.time, verb = 0)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the timepoints
@@ -47,6 +47,8 @@ using stats package's \code{link[stats:filter]{filter}} to calculate a
 moving average with span \code{smooth.time} and
 \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 and last time-points (again using span \code{smooth.time})}
+
+\item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \description{
 process a time-series apt for the \code{\link{segmenTier}}

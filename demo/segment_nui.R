@@ -19,7 +19,6 @@ use.snr <- TRUE # take SNR of DFT
 trafo <- "identity" # "ash" # "log" #
 ## nuissance assignment test: 
 low.thresh <- -Inf #1/0 # minimal mean value (DC component of DFT if use.fft)
-keep.zeros <- FALSE
 dft.range <- 1:7 # range of DFT to cluster to use for clustering
 dc.trafo <- "ash"
 K <- c(16) # cluster number K
@@ -53,8 +52,7 @@ nextmax <-TRUE
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
 ## take DFT and scale amplitudes, and
 ## select components of DFT
-tset <- processTimeseries(ts=tsd,
-                          trafo=trafo, keep.zeros=keep.zeros,
+tset <- processTimeseries(ts=tsd, trafo=trafo, 
                           use.fft=use.fft, dft.range=dft.range,
                           use.snr=use.snr, dc.trafo=dc.trafo,
                           low.thresh=low.thresh)
@@ -128,7 +126,7 @@ coors <- c(chr=1,start=1,end=N) # "chromosome" coordinates
 colors0 <- rev(gray.colors(100)) ## heatmap colors for the timeseries 
 colors0[1] <- "#FFFFFF" ## replace minimal by white
 
-png(paste("~/programs/segmenTier/test/testset_nui",nui.thresh,"_low",low.thresh,ifelse(keep.zeros,"_with0","_no0"),".png",sep=""), width=8,height=6, res=300, units="in")
+png(paste("~/programs/segmenTier/test/testset_nui",nui.thresh,"_low",low.thresh,".png",sep=""), width=8,height=6, res=300, units="in")
 
 par(mfcol=c(4,1),mai=c(.3,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
 
