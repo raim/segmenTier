@@ -26,7 +26,7 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
         pvl <- pvl + as.numeric(ram >= xam)
     }
     if ( verb ) cat("\n")
-    pvl/perm
+    Re(pvl/perm)
 }
 
 ## asinh trafo: alternative to log
@@ -99,6 +99,7 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 #' @param dc.trafo data transformation for the first (DC) component of
 #' the DFT, pass any function name, e.g., "log", or the package functions
 #' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})
+#' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
 #' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
@@ -111,7 +112,7 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 processTimeseries <- function(ts, trafo="raw", 
                               use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
                               perm=0, use.snr=TRUE, low.thresh=-Inf, 
-                              smooth.space, smooth.time) {
+                              smooth.space, smooth.time, verb=0) {
 
     if ( typeof(ts)=="list" )
         ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
@@ -172,10 +173,10 @@ processTimeseries <- function(ts, trafo="raw",
         ## do DFT on permuted time-series to obtain p-values
         ## TODO: include amplitude and DC scaling in permutation?
         if ( perm>0 ) { 
-            tmp <- do.perm(tsd[!zs,],fft=fft[!zs,],perm)
+            tmp <- do.perm(tsd[!zs,],fft=fft[!zs,], perm, verb=verb)
             pvl <- matrix(NA, ncol=ncol(tmp), nrow=nrow(tsd))
             colnames(pvl) <- colnames(tmp)
-            pvl[!sz,] <- tmp
+            pvl[!zs,] <- tmp
         }
         
         ## amplitude-scaling (~SNR), see Machne&Murray 2012
