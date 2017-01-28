@@ -509,46 +509,39 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
 #' paramers. Specifially, parameters \code{csim.scale}, \code{score},
 #' \code{M} and \code{Mn} can all be vectors.
 #'@export
-segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
-                                 M=175, Mn=20, a=-2, nui=1,
-                                 fuse.threshold=0.2,
-                                 nextmax=TRUE, multi="max", multib="max",
+segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                  short.name=TRUE, id,
-                                 ncpu=1, verb=1, save.matrix=FALSE) {
-
-        
-
-    ## generate parameter combinations as matrix/list
-    ## TODO: allow explict combinations via a list
+                                 ncpu=1, verb=1, save.matrix=FALSE,
+                                 varySettings=list(E=1,
+                                                   S="ccor",
+                                                   M=c(150,175),
+                                                   Mn=c(20,100),
+                                                   a=-2, nui=1:4,
+                                                   nextmax=TRUE,
+                                                   multi="max",
+                                                   multib="max"))
+                                        #    csim.scale=1, score="ccor",
+#M=175, Mn=20, a=-2, nui=1,
+# nextmax=TRUE, multi="max", multib="max",
+{
+    
     nk <- length(cset$K)
-    nscore <- length(score)
-    nscale <- length(csim.scale)
-    nm <- length(M)
-    nmn <- length(Mn)
-    ## TODO
-    ##nn <- length(nui)
-    ##na <- length(a)
+    vS <- append(list(K=colnames(cset$clusters)), varySettings)
+    vL <- sapply(vS,length)
+    rL <- c(1,vL)
+    params <- as.data.frame(matrix(NA,ncol=length(vS),
+                                 nrow=prod(sapply(vS,length))))
+    colnames(params) <- names(vS)
+    ## fill parameter matrix
+    for ( j in 1:ncol(params) ) 
+        params[,j] <- rep(rep(vS[[j]],prod(rL[1:(j)])),
+                        each=prod(rL[(j+2):length(rL)]))
 
-    ## parameter matrix
-    params <- as.data.frame(matrix(NA,nrow=nk*nscore*nscale*nm,ncol=5))
-    colnames(params) <- c("K","S","E","M","Mn") # clustering, scoring, exponent, M, Mn
-    params[,1] <- rep(colnames(cset$clusters), each=nscore*nscale*nm*nmn)
-    params[,2] <- rep(rep(score, nk), each=nscale*nm*nmn)
-    params[,3] <- rep(rep(csim.scale, nk*nscore), each=nm*nmn)
-    params[,4] <- rep(rep(M, nk*nscore*nscale), each=nmn)
-    params[,5] <- rep(Mn, each= nk*nscore*nscale*nm)
-
-    ## segment type name construction
-    ## TODO: do this smarter? 
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
-    if ( short.name ) {
-        if ( nm==1 ) typenm <- typenm[-which(typenm=="M")]
-        if ( nmn==1 ) typenm <- typenm[-which(typenm=="Mn")]
-        if ( nscore==1 ) typenm <- typenm[-which(typenm=="S")]
-        if ( nscale==1 ) typenm <- typenm[-which(typenm=="E")]
-    }
-    
+    if ( short.name ) 
+        typenm <- typenm[vL>1]
+
     if ( verb>0 )
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
@@ -562,21 +555,23 @@ segmentCluster.batch <- function(cset, csim.scale=1, score="ccor",
         sgtype <- sub("^K:","", sgtype)
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
-        scr <- params[i,"S"]
-        scale <- params[i,"E"]
-        m <- params[i,"M"]
-        mn <- params[i,"Mn"]
+        S <- params[i,"S"]
+        E <- params[i,"E"]
+        M <- params[i,"M"]
+        Mn <- params[i,"Mn"]
+        nui <- params[i,"nui"]
+        a <- params[i,"a"]
 
-        if ( scr=="ccor" ) csim <- cset$Ccc[[K]]
-        if ( scr=="icor" ) csim <- cset$Pci[[K]]
-        if ( scr=="ccls" ) csim <- NULL
+        if ( S=="ccor" ) csim <- cset$Ccc[[K]]
+        if ( S=="icor" ) csim <- cset$Pci[[K]]
+        if ( S=="ccls" ) csim <- NULL
 
         if ( verb>0 )
             cat(paste("SEGMENT TYPE\t",sgtype,
                       "\t", i,"of",nrow(params),"\n",sep=""))
         
-        seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                              score=scr,M=m,Mn=mn,nui=nui,a=a,
+        seg <-segmentClusters(seq=seq,csim=csim,csim.scale=E,
+                              score=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.matrix=save.matrix,verb=verb)
 
