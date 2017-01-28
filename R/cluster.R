@@ -469,24 +469,11 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
 #' tag adjacent segments to be potentially fused due to similarity
 #' of their clusters.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
-#' @param csim.scale exponent to scale similarity matrices, must be odd
-#' to maintain negative correlations!
-#' @param score the scoring function to be used: "ccor", "icor" or "cls"
-#' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
-#' @param a an additional penalty only used for pure cluster-based
-#' scoring w/o cluster similarity measures in scoring function "cls"
-#' @param nui the similarity score to be used for nuissance clusters in the
-#' cluster similarity matrices
-#' @param nextmax go backwards while score is increasing before openening a
-#' new segment, default is TRUE
-#' @param multi handling of multiple k with max. score in forward phase,
-#' either "min" (default) or "max"
-#' @param multib handling of multiple k with max. score in back-trace phase,
-#' either "min" (default), "max" or "skip"
+#' @param varySettings list of settings where each entry can be a vector;
+#' the function will construct a matrix of all possible combinations of
+#' parameter values in this list, call \code{\link{segmentClusters}} for
+#' each, and report a matrix of segments where the segment `type' is
+#' constructed from the varied parameters; see option \code{short.name}
 #' @param fuse.threshold if adjacent segments are associated with clusters
 #' the centers of which have a Pearson correlation \code{>fuse.threshold}
 #' the field "fuse" will be set to 1 for the second segments (top-to-bottom
@@ -496,7 +483,8 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
 #' \code{\link{calculateScoringMatrix}}
 #' @param short.name if TRUE (default) parameters that are not varied
 #' will not be part of the segment type and ID
-#' @param id if set, the default segment IDs are replaced by this
+#' @param id if set, the default segment IDs, constructed from numbered
+#' segment types, are replaced by this
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.matrix store the total score matrix \code{S(i,c)} and the
 #' backtracing matrix \code{K(i,c)}; useful in testing stage or for
@@ -556,7 +544,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
         S <- params[i,"S"]
-        E <- params[i,"E"]
+        E <-params[i,"E"]
         M <- params[i,"M"]
         Mn <- params[i,"Mn"]
         nui <- params[i,"nui"]
