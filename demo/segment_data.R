@@ -25,25 +25,19 @@ iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
 ### SEGMENTATION PARAMETERS
-nui.cr <- 2 #  -/+ correlation of nuissance cluster with others and itself
-a <- -2
-
-## SCORING FUNCTION
-## which scoring functions to use
-scores <- c("ccor","icor","ccls") #"icor" #
-csim.scale <- c(1,3) # 3 # 1 ## scale exponent of similarity matrices csim
-## scoring function minimal length penalty
-M <- c(30,175) # 30 # for empty set?
-Mn <- 15 # for nuissance clusters: allow smaller segments!
-
-## TOTAL SCORE and BACK-TRACING
-## NOTE: these have little effect on real data sets, except perhaps nextmax?
-## handling of multiple max. score k in scoring
-multi <- "max" # c("max","min")
-## handling of multiple max. score clusters in back-tracing
-multib <- "max" # c("max","skip","min")
-## in back-tracing, search for the next non-decreasing S(i,c)
-nextmax <-TRUE
+vary <- list(
+    ## SCORING
+    E=c(1,3), # scale exponent of similarity matrices csim
+    S=c("ccor","icor","ccls"), # SCORING FUNCTIONS
+    M=c(30,175), # scoring function minimal length penalty
+    Mn=15, # for nuissance clusters: allow smaller segments!?
+    a=-2, 
+    nui=2, #-/+ correlation of nuissance cluster with others and itself
+    ## BACKTRACING
+    nextmax=TRUE, # in back-tracing, search for the next non-decreasing S(i,c)
+    multi="max", # "min" # handling of multiple max. score k in scoring
+    multib="max" # "min" # multiple max. score clusters in back-tracing
+)
 
 
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
@@ -58,15 +52,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
-varySettings <- list(E=csim.scale,
-                     S=scores,
-                     M=M,
-                     Mn=Mn,
-                     a=a, nui=nui.cr,
-                     nextmax=nextmax,
-                     multi=multi,
-                     multib=multib)
-allsegs <- segmentCluster.batch(cset, varySettings=varySettings, 
+allsegs <- segmentCluster.batch(cset, varySettings=vary, 
                                 ncpu=1, verb=1, save.mat=FALSE)
 
 ## PLOT RESULTS
