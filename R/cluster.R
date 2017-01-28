@@ -555,23 +555,23 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         sgtype <- sub("^K:","", sgtype)
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
-        scr <- params[i,"S"]
-        scale <- params[i,"E"]
-        m <- params[i,"M"]
-        mn <- params[i,"Mn"]
+        S <- params[i,"S"]
+        E <- params[i,"E"]
+        M <- params[i,"M"]
+        Mn <- params[i,"Mn"]
         nui <- params[i,"nui"]
         a <- params[i,"a"]
 
-        if ( scr=="ccor" ) csim <- cset$Ccc[[K]]
-        if ( scr=="icor" ) csim <- cset$Pci[[K]]
-        if ( scr=="ccls" ) csim <- NULL
+        if ( S=="ccor" ) csim <- cset$Ccc[[K]]
+        if ( S=="icor" ) csim <- cset$Pci[[K]]
+        if ( S=="ccls" ) csim <- NULL
 
         if ( verb>0 )
             cat(paste("SEGMENT TYPE\t",sgtype,
                       "\t", i,"of",nrow(params),"\n",sep=""))
         
-        seg <-segmentClusters(seq=seq,csim=csim,csim.scale=scale,
-                              score=scr,M=m,Mn=mn,nui=nui,a=a,
+        seg <-segmentClusters(seq=seq,csim=csim,csim.scale=E,
+                              score=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.matrix=save.matrix,verb=verb)
 
