@@ -276,10 +276,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     if ( verb>0 ) 
         cat(paste("Done at  \t", time(), "\n",sep=""))
 
-    etime <- as.numeric(Sys.time())
-    if ( verb>0 )
+    if ( verb>0 ) {
+        etime <- as.numeric(Sys.time())
         cat(paste("ellapsed\t", round((etime-stime)), " sec\n",sep=""))
-    
+    }
     return(seg)
     
 }

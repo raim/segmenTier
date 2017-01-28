@@ -6,8 +6,8 @@
 clustering wrapper \code{\link{clusterTimeseries}}}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
-  dft.range = 2:7, use.snr = TRUE, low.thresh = -Inf, smooth.space,
-  smooth.time, keep.zeros = FALSE)
+  dft.range = 2:7, perm = 0, use.snr = TRUE, low.thresh = -Inf,
+  smooth.space, smooth.time, verb = 0)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the timepoints
@@ -29,6 +29,8 @@ Discrete Fourier Transform to be used where 1 is the first component (DC)
 corresponding to the mean value, and 2:n are the higher components
 correspondong to 2:n full cycles in the data}
 
+\item{perm}{number of permutations of the data set, to obtain}
+
 \item{use.snr}{use a scaled amplitude, where each component of the
 Discrete Fourier Transform is divided by the mean of all other components,
 which is similar to a signal-to-noise ratio (SNR)}
@@ -46,7 +48,7 @@ moving average with span \code{smooth.time} and
 \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 and last time-points (again using span \code{smooth.time})}
 
-\item{keep.zeros}{keep time series with total sum of 0 for clustering}
+\item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \description{
 process a time-series apt for the \code{\link{segmenTier}}
