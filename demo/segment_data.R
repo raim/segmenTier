@@ -61,7 +61,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
 allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
                                 M=M, Mn=Mn, a=a, nui=nui.cr,
                                 nextmax=nextmax, multi=multi,multib=multib, 
-                                ncpu=1, verb=1, save.mat="")
+                                ncpu=1, verb=1, save.mat=TRUE)
 
 ## PLOT RESULTS
 

@@ -66,7 +66,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart, nui.thres
 allsegs <- segmentCluster.batch(cset, csim.scale=csim.scale, score=scores,
                                 M=M, Mn=Mn, a=2, nui=nui.cr,
                                 nextmax=nextmax, multi=multi,multib=multib, 
-                                ncpu=1, verb=1, save.mat="")
+                                ncpu=1, verb=1, save.mat=TRUE)
 
 
 
@@ -162,4 +162,5 @@ lines(1:N -0.5,ends,  type="h",col="#FF0000AA",lwd=2)
 axis(1)
 axis(2)
 mtext("hit count", 2, 2)
+
 dev.off()

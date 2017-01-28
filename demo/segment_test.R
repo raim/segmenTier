@@ -95,7 +95,7 @@ for ( score in scores ) {
             seg <- segmentClusters(seq=seq,csim=csim,score=score,M=M,Mn=M,
                                    a=a,nui=1,
                                    multi=multi, multib=multib,nextmax=nextmax,
-                                   save.mat=c("SK"))
+                                   save.mat=TRUE)
             ##multS$SM <- seg$SM # TODO: test whether they are the same?
             multS[[multi]]$SK <- seg$SK
             ## store segments!
