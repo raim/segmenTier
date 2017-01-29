@@ -574,14 +574,15 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                               save.matrix=save.matrix,verb=verb)
 
         ## tag adjacent segments from correlating clusters
-        close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
-                                 fuse.threshold=fuse.threshold)
-        if ( sum(close)>0 & verb>0 )
-            cat(paste("Fused tags\t",sum(close), "\n",sep=""))
+        #close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
+        #                         fuse.threshold=fuse.threshold)
+        
+        #if ( sum(close)>0 & verb>0 )
+         #   cat(paste("Fused tags\t",sum(close), "\n",sep=""))
 
         ## collect results
         if ( nrow(seg$segments) > 0 ) {
-
+            close <- rep(FALSE, nrow(seg$segments))
             sgids <- paste(sgtype, 1:nrow(seg$segments),sep="_")
             segs <- data.frame(ID=sgids,
                                type=rep(sgtype,length(sgids)),
