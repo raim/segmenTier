@@ -265,7 +265,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     ## rm nuissance segments
     cat(paste("NUI SEGS", sum(seg$segments[,1]!=0), "\n"))
-    seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
+    ##seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
