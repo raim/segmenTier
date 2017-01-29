@@ -1,10 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// [[Rcpp::export]]
-void callPrint(RObject x) { 
-    Rcpp::print(x);             // will work on any SEXP object
-}
 
 /// INDIVIDUAL SCORING FUNCTIONS
 // only scorecls_c is actually used in algorithm, others for testing
