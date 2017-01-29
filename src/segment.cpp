@@ -1,6 +1,11 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+// [[Rcpp::export]]
+void callPrint(RObject x) { 
+    Rcpp::print(x);             // will work on any SEXP object
+}
+
 /// INDIVIDUAL SCORING FUNCTIONS
 // only scorecls_c is actually used in algorithm, others for testing
 
@@ -251,6 +256,13 @@ List calculateScore(NumericVector seq, NumericVector C,
     if ( c==0 ) m = Mn; // c==0 is nuissance cluster
     else m = M;
 
+    callPrint("HALLO");
+    callPrint(m);
+    callPrint(c);
+    callPrint("\nNEXT\n");
+
+    //TODO: is nuissance used? it seems that Mn has
+    // no effect and the passed cluster sequence starts at 1!?
     for ( int i=0; i<N; i++ ) 
       S1(i,c) = scoref(0, i, c, seq, m, csim);
 
@@ -267,7 +279,7 @@ List calculateScore(NumericVector seq, NumericVector C,
   for ( int i=2; i<N; i++ ) {
     for ( int c=0; c<L; c++ ) {
       
-      int kmax = i-1; // j<i - TODO: j<=i
+      int kmax = i-1; // j<i - TODO: j<=i -> kmax <- i
       NumericVector scr(kmax); // store values from k=0 to k=i-1
 
       // max_D ( S(k-1,D) + score(k,i,c) 
