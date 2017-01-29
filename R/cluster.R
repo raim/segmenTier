@@ -534,10 +534,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     if ( verb>0 )
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
-    allsegs <- NULL
+    allsegs <- sgtypes <- NULL
     SK <- rep(list(NA), nrow(params))
-    sgtypes <- paste(paste(typenm,params[,typenm],sep=":"),collapse="_")
-    names(SK) <- sgtypes
     ## TODO: convert this loop to lapply and try parallel!
     ## redirect messages to msgfile or store in results
     for ( i in 1:nrow(params) ) {
@@ -545,6 +543,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
         ## rm first typenm, since these should come formatted (X:id) already
         sgtype <- sub("^K:","", sgtype)
+        sgtypes <- c(sgtypes, sgtype)
 
         ## clustering input
         K <- as.character(params[i,"K"])
@@ -602,7 +601,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         cat(paste("Total segments\t0\n",sep=""))
     else {
         cat(paste("Total segments\t",nrow(allsegs),"\n",sep=""))
-
+        if ( save.matrix )
+            names(SK) <- sgtypes
         ## OVERRIDE ID
         if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
