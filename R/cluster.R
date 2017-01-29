@@ -527,7 +527,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
 
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
-    if ( short.name ) 
+    ## UNLESS there is no variation
+    if ( short.name & sum(vL>1)>0 ) 
         typenm <- typenm[vL>1]
 
     if ( verb>0 )
