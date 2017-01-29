@@ -252,7 +252,7 @@ List calculateScore(NumericVector seq, NumericVector C,
     if ( c==0 ) m = Mn; // c==0 is nuissance cluster
     else m = M;
 
-    Rcpp::Rcout << "HALLOE: " << m << std::endl;
+    // Rcpp::Rcout << "HALLO: " << m << std::endl;
 
     //TODO: is nuissance used? it seems that Mn has
     // no effect and the passed cluster sequence starts at 1!?
