@@ -244,7 +244,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     #SK<- calculateTotalScore_test(seq=seqr,C=C,SM=SM,
     #                              csim=csim,M=M,Mn=Mn,multi=multi)
-    cat(paste("CLUSTERS:", paste(unique(seqr),collapse=";"), sep="\n"))
+    ##cat(paste("CLUSTERS:", paste(unique(seqr),collapse=";"), sep="\n"))
     SK<- calculateScore(seq=seqr, C=C, score=score, csim=csim,
                         M=M, Mn=Mn, multi=multi)
 
@@ -264,8 +264,8 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     seg$segments[,1] <- remap[seg$segments[,1]]
 
     ## rm nuissance segments
-    cat(paste("NUI SEGS", sum(seg$segments[,1]!=0), "\n"))
-    ##seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
+    ##cat(paste("NUI SEGS", sum(seg$segments[,1]!=0), "\n"))
+    seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
