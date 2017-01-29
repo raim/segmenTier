@@ -535,6 +535,9 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
     allsegs <- NULL
+    SK <- rep(list(NA), nrow(params))
+    sgtypes <- paste(paste(typenm,params[,typenm],sep=":"),collapse="_")
+    names(SK) <- sgtypes
     ## TODO: convert this loop to lapply and try parallel!
     ## redirect messages to msgfile or store in results
     for ( i in 1:nrow(params) ) {
@@ -572,6 +575,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                               score=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.matrix=save.matrix,verb=verb)
+        if ( save.matrix ) 
+            SK[[i]] <- seg$SK
 
         ## tag adjacent segments from correlating clusters
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
@@ -603,9 +608,11 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
 
-    ## TODO: return a list or special class and add the scoring matrices
-    ## to results if save.matrix
-    allsegs
+    ## TODO: introduce classes for segment results
+    if ( save.matrix ) 
+        list(allsegs=allsegs, SK=SK)
+    else    
+        allsegs
 }
 
 ## tags adjacent segments if they are from correlating (>\code{fuse.thresh})
