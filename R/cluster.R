@@ -502,9 +502,9 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                  ncpu=1, verb=1, save.matrix=FALSE,
                                  varySettings=list(E=1,
                                                    S="ccor",
-                                                   M=c(150,175),
+                                                   M=c(100),
                                                    Mn=c(20,100),
-                                                   a=-2, nui=1:4,
+                                                   a=-2, nui=1,
                                                    nextmax=TRUE,
                                                    multi="max",
                                                    multib="max"))
@@ -542,14 +542,23 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
         ## rm first typenm, since these should come formatted (X:id) already
         sgtype <- sub("^K:","", sgtype)
+
+        ## clustering input
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
-        S <- params[i,"S"]
-        E <-params[i,"E"]
-        M <- params[i,"M"]
-        Mn <- params[i,"Mn"]
-        nui <- params[i,"nui"]
-        a <- params[i,"a"]
+
+        ## scoring params
+        S <- as.character(params[i,"S"])
+        E <-  as.numeric(params[i,"E"])
+        M <-  as.numeric(params[i,"M"])
+        Mn <- as.numeric(params[i,"Mn"])
+        nui<- as.numeric(params[i,"nui"])
+        a <-  as.numeric(params[i,"a"])
+
+        ## back-tracing params
+        multi   <- as.character(params[i,"multi"])
+        multib  <- as.character(params[i,"multib"])
+        nextmax <- as.logical(params[i,"nextmax"])
 
         if ( S=="ccor" ) csim <- cset$Ccc[[K]]
         if ( S=="icor" ) csim <- cset$Pci[[K]]
