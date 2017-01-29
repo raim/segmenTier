@@ -264,6 +264,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     seg$segments[,1] <- remap[seg$segments[,1]]
 
     ## rm nuissance segments
+    cat(paste("NUI SEGS", sum(seg$segments[,1]!=0), "\n"))
     seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
     
     ## add matrices if requested!
