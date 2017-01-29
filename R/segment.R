@@ -244,6 +244,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     #SK<- calculateTotalScore_test(seq=seqr,C=C,SM=SM,
     #                              csim=csim,M=M,Mn=Mn,multi=multi)
+    cat(paste("CLUSTERS:", paste(unique(seqr),collapse=";"), sep="\n"))
     SK<- calculateScore(seq=seqr, C=C, score=score, csim=csim,
                         M=M, Mn=Mn, multi=multi)
 
