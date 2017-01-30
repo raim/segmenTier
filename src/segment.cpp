@@ -257,7 +257,7 @@ List calculateScore(NumericVector seq, NumericVector C,
     //TODO: is nuissance used? it seems that Mn has
     // no effect and the passed cluster sequence starts at 1!?
     for ( int i=0; i<N; i++ ) 
-      S1(i,c) = scoref(0, i, c, seq, m, csim);
+      S1(i,c) = scoref(0, i, c, seq, m, csim); // s(1, i, C)
 
     // initialization (basis case) 
     // S(1,C) = s(1, 1, C) = −M + ∆(x1 , C) for C = C and S(1,C0) = 0. 
@@ -306,6 +306,7 @@ List calculateScore(NumericVector seq, NumericVector C,
       }
     }
   }
-  return Rcpp::List::create(Rcpp::Named("S") = S,
-			    Rcpp::Named("K") = K);
+  return Rcpp::List::create(Rcpp::Named("S1") = S1, /* scoring fnc s(0,i,c)*/
+			    Rcpp::Named("S") = S,   /* scoring mat S(i,c) */
+			    Rcpp::Named("K") = K);  /* back-tracing matrix */
 }
