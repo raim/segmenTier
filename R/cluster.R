@@ -574,6 +574,12 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                               score=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.matrix=save.matrix,verb=verb)
+
+        ## retrieve algo-internal vectors and matrices
+        ## S1: s(1,i,C) - scoring function from j=1 to i
+        ## S: S(i,C) - score matrix
+        ## K: K(i,C) - backtracing
+        ## all can be plotted via dedicated functions
         if ( save.matrix ) 
             SK[[i]] <- seg$SK
 
