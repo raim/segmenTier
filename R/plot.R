@@ -237,22 +237,22 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, yl
 
 #' converts the vector form of the triangular scoring matrix
 #' into a matrix
-#' @param SV vector form of the triangular scoring matrix as returned
+#' @param S1 vector form of the triangular scoring matrix as returned
 #' by \code{\link{calculateScoringMatrix}}
 #'@export
-fillScoringMatrix <- function(SV) {
+fillScoringMatrix <- function(S1) {
     ## L <- (N+1)*N/2
-    L <- length(SV)
+    L <- length(S1)
     N <- -.5 + sqrt(.25 + 2*L)
     SM <- matrix(NA,nrow=N, ncol= N)
     getIdx <- function(i,k) ((i + 1) * i / 2 + k)
     for ( i in 0:(N-1) ) {
         idx <- getIdx(i,i)
-        SM[i+1,i+1] <- SV[idx+1] 
+        SM[i+1,i+1] <- S1[idx+1] 
         for ( k in (i-1):0 ) {
             if ( k<0 ) next
             idx <- getIdx(i,k)
-            SM[k+1,i+1] <- SV[idx+1] 
+            SM[k+1,i+1] <- S1[idx+1] 
         }
     }
     SM
