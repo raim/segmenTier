@@ -75,54 +75,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// scoreicor_c
-double scoreicor_c(int k, int i, int c, NumericVector seq, int M, NumericMatrix csim);
-RcppExport SEXP segmenTier_scoreicor_c(SEXP kSEXP, SEXP iSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type i(iSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(scoreicor_c(k, i, c, seq, M, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
-// scorecor_c
-double scorecor_c(int k, int i, int c, NumericVector seq, int M, NumericMatrix csim);
-RcppExport SEXP segmenTier_scorecor_c(SEXP kSEXP, SEXP iSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type i(iSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type csim(csimSEXP);
-    rcpp_result_gen = Rcpp::wrap(scorecor_c(k, i, c, seq, M, csim));
-    return rcpp_result_gen;
-END_RCPP
-}
-// scorecls_c
-double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a);
-RcppExport SEXP segmenTier_scorecls_c(SEXP kSEXP, SEXP iSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP aSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< int >::type i(iSEXP);
-    Rcpp::traits::input_parameter< int >::type c(cSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< int >::type a(aSEXP);
-    rcpp_result_gen = Rcpp::wrap(scorecls_c(k, i, c, seq, M, a));
-    return rcpp_result_gen;
-END_RCPP
-}
 // calculateScore
 List calculateScore(NumericVector seq, NumericVector C, std::string score, NumericMatrix csim, int M, int Mn, String multi);
 RcppExport SEXP segmenTier_calculateScore(SEXP seqSEXP, SEXP CSEXP, SEXP scoreSEXP, SEXP csimSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP multiSEXP) {

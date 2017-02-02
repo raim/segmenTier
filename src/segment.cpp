@@ -23,6 +23,9 @@ double icor(int k, int j, int c, NumericVector seq,
 }
 
 // s(i, j, C) = -M + sum_{k=i}^j( \Delta(C_k, C)  )
+// note that the simplest scoring function `ccls' is reflected by
+// a similarity matrix `csim' where only the diagonal is 1 and the
+// rest is 0
 // [[Rcpp::export]]
 double ccor(int k, int j, int c, NumericVector seq,
 	    int M, NumericMatrix csim) {
@@ -46,122 +49,6 @@ XPtr<scorefun> getScorefun(std::string fstr) {
         return XPtr<scorefun>(R_NilValue); // runtime error as NULL no XPtr
 }
 
-
-
-//' Scoring Function "icor" - Test
-//' @details  Scoring function "icor" calculates the sum of similarities of
-//' positions k:i to cluster c.
-//' The similarities are calculated e.g., as a (Pearson) correlation between
-//' the individual positions and the tested cluster c center. 
-//' This function is for testing only, the dynamic programming algorithm 
-//' uses function ccSMicor.
-//' NOTE: individual scoring functions are only used for testing
-//' the algorithm uses the matrix-filling functions below
-//' @param k start position for score calculation
-//' @param i end position for score calculation
-//' @param c the cluster to which similarities are to be calculated
-//' @param seq the cluster sequence (where positions k:i are considered);
-//' notably this is not required here, but used as an argument for
-//' consistency with other scoring functions.
-//' @param M minimal sequence length; Note, that this is not a strict
-//' cut-off but defined as a penalty that must be "overcome" by good score;
-//' set to \code{Mn} if you want to calculate the nuissance cluster score.
-//' @param csim position-cluster similarity matrix, where the rows
-//' are the positions in the sequence \code{seq} and columns are the
-//' the clusters
-//' @return Returns the score \code{s(k,i,c)} for cluster \code{c} between
-//' the positions \code{k} to \code{i} in the cluster sequence \code{seq},
-//' as used in the for scoring function "icor". 
-//' @export
-// [[Rcpp::export]]
-double scoreicor_c(int k, int i, int c, NumericVector seq,
-		   int M, NumericMatrix csim) {
-  
-  // NOTE: this function is not actually used in ccSMicor
-
-  if ( c == 0 ) return 0; // nuissance cluster 
-
-  // sum of similarities of positions k:i to cluster c
-  double scr = -M;
-  for ( ; k<= i; k++ ) 
-    scr += csim( k-1, c-1 ); 
-  return scr;
-}
-
-
-
-//' Scoring Function "cor" - Test
-//' @details  Scoring function "cor" calculates the sum of similarities
-//' between the clusters at positions k:i to cluster c. Note the difference
-//' to "icor" where real data from positions are comapred to clusters, while
-//' here two clusters are compared.
-//' NOTE: This function is for testing only, the dynamic programming algorithm 
-//' uses function ccSMcor.
-//' @param k start position for score calculation
-//' @param i end position for score calculation
-//' @param c the cluster to which similarities are to be calculated
-//' @param seq the cluster sequence (where clusters at positions k:i are
-//' considered)
-//' @param M minimal sequence length; Note, that this is not a strict
-//' cut-off but defined as a penalty that must be "overcome" by good score;
-//' set to \code{Mn} if you want to calculate the nuissance cluster score.
-//' @param csim cluster-cluster similarity matrix
-//' @return Returns the score \code{s(k,i,c)} for cluster \code{c} between
-//' the positions \code{k} to \code{i} in the cluster sequence \code{seq},
-//' as used in the for scoring function "ccor". 
-//' @export
-// [[Rcpp::export]]
-double scorecor_c(int k, int i, int c, NumericVector seq,
-		  int M, NumericMatrix csim) {
-
-  // NOTE: this function is not actually used in ccSMccor
-
-  // TODO: add +1 to c to allow direct use from R, where cluster index is 
-  // +1 compared to c++ code.?
-  if ( c == 0 ) return 0; // nuissance cluster in R 
-
-  // sum of similarities of clusters at positions k:i to cluster c
-  double scr = -M;
-  for ( ; k<= i; k++ ) 
-    if ( seq[k-1]>0 ) 
-      scr += csim( seq[k-1]-1, c-1 ); 
-  return scr;
-}
-
-
-//' Scoring Function "cls"
-//' @details  Scoring function "cls" merely counts the number of
-//' of clusters in sequence k:i that are identical to the tested
-//' cluster \code{c}, and sub-tracts a minimal size penality
-//' and a penalty the for the count of non-identical clusters.
-//' NOTE: This function is used in the matrix function ccSMcls.
-//' @param k start position for score calculation
-//' @param i end position for score calculation
-//' @param c the cluster to which similarities are to be calculated
-//' @param seq the cluster sequence (where clusters at positions k:i are
-//' considered). Note that \code{seq} is defined differently here than
-//' in the wrapper interfaces and MUST be a sequence of positive integers >0.
-//' @param M minimal sequence length; Note, that this is not a strict
-//' cut-off but defined as a penalty that must be "overcome" by good score.
-//' @param a the penalty for non-matching clusters
-//' @return Returns the score \code{s(k,i,c)} for cluster \code{c} between
-//' the positions \code{k} to \code{i} in the cluster sequence \code{seq}.
-//' This is used in the for scoring function "cls".
-//' @export
-// [[Rcpp::export]]
-double scorecls_c(int k, int i, int c, NumericVector seq, int M, int a) {
-
-  // NOTE: this function is used in ccSMcls!!
-  if ( c == 0 ) return 0; // nuissance cluster 
-  
-  int k0=k;
-  LogicalVector isC(i-k+1);
-  for ( ; k<= i; k++ ) 
-    isC[k-k0] = seq[k-1] == c;
-  
-  double scr = -M + sum(isC) - a*sum(!isC); // counting c and c'
-  return scr;
-}
 
 
 
