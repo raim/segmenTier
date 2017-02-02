@@ -49,6 +49,12 @@ ci95 <- function(data,na.rm=FALSE) {
     return(error)
 }
 
+## cluster/segment colors; function derived from scale_colour_hue in ggplot2
+color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
 ## PLOT UTILITIES
 #' Switch between plot devices
 #' @param file.name file name without suffix (.png, etc)
@@ -354,7 +360,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
 #' center; if below the data point will be added to nuissance cluster 0
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #'@export
-clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thresh=-Inf, verb=1) {
+clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
+                              nui.thresh=-Inf, verb=1) {
 
 
     ## TODO:
@@ -463,6 +470,68 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100, nui.thres
     tmp <- cset
 }
 
+#' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
+#' assigns colors to each cluster in each clustering along
+#' the "hue" color wheel; if \code{cset} contains a sorting (see
+#' \code{clusterSort}), this sorting will be used to assing colors along
+#' the color wheel;
+#' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
+#' @param verb level of verbosity, 0: no output, 1: progress messages
+#'@export
+colorClusters <- function(cset, verb=1) {
+    cset$cls.col <- rep(list(NA), ncol(cset$clusters))
+
+    ## sort if no sorting is present
+    if ( !"cls.srt" %in% names(cset) ) 
+        cset <- sortClusters(cset)
+    for ( k in 1:ncol(cset$clusters) ) {
+        cols <- color_hue(ncol(cset$Ccc[[k]]))
+        names(cols) <- cset$cls.srt[[k]]
+        cset$cls.col[[k]] <- cols
+    }
+    cset
+}
+
+#' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
+#' uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
+#' clusters by their similarity, starting with the first cluster; the
+#' sorting is added as \code{cls.srt} to \code{cset} and the annotated
+#' \code{cset} is returned.
+#' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
+#' @param verb level of verbosity, 0: no output, 1: progress messages
+#'@export
+sortClusters <- function(cset, verb=1) {
+
+    cset$cls.srt <- rep(list(NA), ncol(cset$clusters))
+    
+    for ( k in 1:ncol(cset$clusters) ) {
+        Ccc <- cset$Ccc[[k]]
+        cls.srt <- colnames(Ccc)
+        remaining <- cls.srt
+        cl <- remaining[1]
+        remaining <- remaining[remaining!=cl]
+        cln.srt <- cl
+        ## start at first cluster
+        while ( length(remaining) > 1 ) {
+            clcor <- Ccc[cl,remaining,drop=FALSE]
+            ## get first cluster with highest correlation
+            new <- colnames(clcor)[which.max(clcor)] 
+            if ( verb>0 ) cat(paste("\t", cl, ">", new,
+                                  round(max(clcor),2), "\n"))
+            cl <- new
+            remaining <- remaining[remaining!=cl]
+            cln.srt <- c(cln.srt, new)
+        }
+        ## add last
+        cln.srt <- c(cln.srt, remaining)
+        cset$cls.srt[[k]] <- cln.srt
+    }
+    names(cset$cls.srt) <- colnames(cset$clusters)
+    
+    cset
+}
+
+
 #' A high-level wrapper for multiple runs of segmentation by
 #' \code{\link{segmentClusters}} for multiple clusterings and
 #' multiple segmentation parameters. It additionally allows to
@@ -507,11 +576,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                                    a=-2, nui=1,
                                                    nextmax=TRUE,
                                                    multi="max",
-                                                   multib="max"))
-                                        #    csim.scale=1, score="ccor",
-#M=175, Mn=20, a=-2, nui=1,
-# nextmax=TRUE, multi="max", multib="max",
-{
+                                                   multib="max")) {
     
     nk <- length(cset$K)
     vS <- append(list(K=colnames(cset$clusters)), varySettings)
@@ -523,7 +588,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     ## fill parameter matrix
     for ( j in 1:ncol(params) ) 
         params[,j] <- rep(rep(vS[[j]],prod(rL[1:(j)])),
-                        each=prod(rL[(j+2):length(rL)]))
+                          each=prod(rL[(j+2):length(rL)]))
 
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
@@ -535,9 +600,14 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
     allsegs <- sgtypes <- NULL
-    SK <- rep(list(NA), nrow(params))
-    ## TODO: convert this loop to lapply and try parallel!
-    ## redirect messages to msgfile or store in results
+    if ( save.matrix )
+      SK <- rep(list(NA), nrow(params))
+    else
+      SK <- NULL
+    seg.col <- rep(list(NA), nrow(params))
+    
+    ## TODO: convert this loop to lapply and try parallel use!
+    ## TODO: redirect messages to msgfile or store in results
     for ( i in 1:nrow(params) ) {
 
         sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
@@ -548,6 +618,10 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         ## clustering input
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
+
+        ## pass on cluster coloring as segment coloring
+        if ( "cls.col" %in% names(cset) )
+          seg.col[[i]] <- cset$cls.col[[K]]
 
         ## scoring params
         S <- as.character(params[i,"S"])
@@ -614,11 +688,10 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
 
-    ## TODO: introduce classes for segment results
-    if ( save.matrix ) 
-        list(allsegs=allsegs, SK=SK)
-    else    
-        allsegs
+    ## TODO: introduce and use classes for segment results
+    sset <- list(segments=allsegs, SK=SK, colors=seg.col)
+    class(sset) <- "segments"
+    return(sset)
 }
 
 ## tags adjacent segments if they are from correlating (>\code{fuse.thresh})
