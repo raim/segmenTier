@@ -5,18 +5,16 @@
 \title{plot segmentation data based on data returned by
 high-level wrappers, incl. S(c,i), K(c,i) and segments}
 \usage{
-plotSegments(scrR, seq, ts, tot, out.file, use.log = FALSE, add.plots = 0,
+plotSegments(cset, ts, scrR, tot, out.file, use.log = FALSE, add.plots = 0,
   verb = 2)
 }
 \arguments{
+\item{ts}{an optional time-series from for which the clustering was
+calculated}
+
 \item{scrR}{a list containing multiple segmentations for (1) different
 scoring functions, (2) different parameters of the forward-step (dyn.prog.)
 and (3) different parameters of the back-tracing step.}
-
-\item{seq}{the sequence of clusters to be segments}
-
-\item{ts}{an optional time-series from for which the clustering was
-calculated}
 
 \item{tot}{an optional total signal from the timeseries in \code{ts}}
 
@@ -29,6 +27,8 @@ png will be plotted}
 external plots}
 
 \item{verb}{level of verbosity; 0: no output, 1: progress messages}
+
+\item{seq}{the sequence of clusters to be segments}
 }
 \value{
 Returns the file.name if out.file was specified.

@@ -13,9 +13,7 @@ from a sequential clustering
 \section{Dependencies}{
  The package strictly depends only on
 \code{\link[Rcpp:Rcpp]{Rcpp}}.
-Package \code{\link[parallel:parallel]{parallel}} allows to
-speed up scoring function matrix calculations when more then 1 cores
-(CPUs) are available. All other dependencies are usually present in a
+All other dependencies are usually present in a
 basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 }
 \author{

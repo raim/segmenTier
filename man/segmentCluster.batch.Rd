@@ -8,50 +8,24 @@ multiple segmentation parameters. It additionally allows to
 tag adjacent segments to be potentially fused due to similarity
 of their clusters.}
 \usage{
-segmentCluster.batch(cset, csim.scale = 1, score = "ccor", M = 175,
-  Mn = 20, a = -2, nui = 1, fuse.threshold = 0.2, nextmax = TRUE,
-  multi = "max", multib = "max", short.name = TRUE, id, ncpu = 1,
-  verb = 1, save.matrix = FALSE)
+segmentCluster.batch(cset, fuse.threshold = 0.2, short.name = TRUE, id,
+  ncpu = 1, verb = 1, save.matrix = FALSE, varySettings = list(E = 1, S
+  = "ccor", M = c(100), Mn = c(20, 100), a = -2, nui = 1, nextmax = TRUE, multi
+  = "max", multib = "max"))
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
-
-\item{csim.scale}{exponent to scale similarity matrices, must be odd
-to maintain negative correlations!}
-
-\item{score}{the scoring function to be used: "ccor", "icor" or "cls"}
-
-\item{M}{minimal sequence length; Note, that this is not a strict
-cut-off but defined as a penalty that must be "overcome" by good score.}
-
-\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
-shorter distances between segments; only used in scoring functions
-"ccor" and "icor"}
-
-\item{a}{an additional penalty only used for pure cluster-based
-scoring w/o cluster similarity measures in scoring function "cls"}
-
-\item{nui}{the similarity score to be used for nuissance clusters in the
-cluster similarity matrices}
 
 \item{fuse.threshold}{if adjacent segments are associated with clusters
 the centers of which have a Pearson correlation \code{>fuse.threshold}
 the field "fuse" will be set to 1 for the second segments (top-to-bottom
 as reported)}
 
-\item{nextmax}{go backwards while score is increasing before openening a
-new segment, default is TRUE}
-
-\item{multi}{handling of multiple k with max. score in forward phase,
-either "min" (default) or "max"}
-
-\item{multib}{handling of multiple k with max. score in back-trace phase,
-either "min" (default), "max" or "skip"}
-
 \item{short.name}{if TRUE (default) parameters that are not varied
 will not be part of the segment type and ID}
 
-\item{id}{if set, the default segment IDs are replaced by this}
+\item{id}{if set, the default segment IDs, constructed from numbered
+segment types, are replaced by this}
 
 \item{ncpu}{number of available cores (CPUs), passed to
 \code{\link[parallel:mclapply]{parallel::mclapply}} by
@@ -64,6 +38,12 @@ backtracing matrix \code{K(i,c)}; useful in testing stage or for
 debugging or illustration of the algorithm; see \code{\link{plotScoring}}
 TODO: save.matrix is currently not implemented, since batch function
 returns a matrix only}
+
+\item{varySettings}{list of settings where each entry can be a vector;
+the function will construct a matrix of all possible combinations of
+parameter values in this list, call \code{\link{segmentClusters}} for
+each, and report a matrix of segments where the segment `type' is
+constructed from the varied parameters; see option \code{short.name}}
 }
 \description{
 A high-level wrapper for multiple runs of segmentation by

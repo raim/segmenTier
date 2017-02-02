@@ -7,7 +7,7 @@ clustering sequence.}
 \usage{
 segmentClusters(seq, csim, csim.scale = 1, cset, k = 1, score = "ccor",
   M = 175, Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
-  multib = "max", ncpu = 1, verb = 1, save.matrix = FALSE)
+  multib = "max", verb = 1, save.matrix = FALSE)
 }
 \arguments{
 \item{seq}{a clustering sequence. The only strict requirement is that
@@ -51,15 +51,11 @@ either "min" (default) or "max"}
 \item{multib}{handling of multiple k with max. score in back-trace phase,
 either "min" (default), "max" or "skip"}
 
-\item{ncpu}{number of available cores (CPUs), passed to
-\code{\link[parallel:mclapply]{parallel::mclapply}} by
-\code{\link{calculateScoringMatrix}}}
-
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 
 \item{save.matrix}{store the total score matrix \code{S(i,c)} and the
 backtracing matrix \code{K(i,c)}; useful in testing stage or for
-debugging or illustration of the algorithm; see \code{\link{plotScoring}}}
+debugging or illustration of the algorithm;}
 }
 \value{
 Returns a list containing the main result ("segments"), "warnings"
