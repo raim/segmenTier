@@ -341,6 +341,9 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
                   bic=bic, icl=icl)
     class(fcset) <- "clustering" 
 
+    ## add cluster colors
+    cset <- colorClusters(cset)
+
     if ( ncpu>1 )
         options(cores=1)
     ## silent return
@@ -466,6 +469,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
                  K=K, usedk=usedk, warn=warn)
     class(cset) <- "clustering"
 
+    ## add cluster colors
+    cset <- colorClusters(cset)
+    
     ## silent return
     tmp <- cset
 }
@@ -476,38 +482,38 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 #' \code{clusterSort}), this sorting will be used to assing colors along
 #' the color wheel;
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
-#' @param verb level of verbosity, 0: no output, 1: progress messages
 #'@export
-colorClusters <- function(cset, verb=1) {
-    cset$cls.col <- rep(list(NA), ncol(cset$clusters))
+colorClusters <- function(cset) {
+    cset$colors <- rep(list(NA), ncol(cset$clusters))
 
     ## sort if no sorting is present
-    if ( !"cls.srt" %in% names(cset) ) 
+    if ( !"sorting" %in% names(cset) ) 
         cset <- sortClusters(cset)
     for ( k in 1:ncol(cset$clusters) ) {
         cols <- color_hue(ncol(cset$Ccc[[k]]))
-        names(cols) <- cset$cls.srt[[k]]
-        cset$cls.col[[k]] <- cols
+        names(cols) <- cset$sorting[[k]]
+        cset$colors[[k]] <- cols
     }
+    names(cset$colors) <- colnames(cset$clusters)
     cset
 }
 
 #' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 #' uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
 #' clusters by their similarity, starting with the first cluster; the
-#' sorting is added as \code{cls.srt} to \code{cset} and the annotated
+#' sorting is added as \code{sorting} to \code{cset} and the annotated
 #' \code{cset} is returned.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #'@export
-sortClusters <- function(cset, verb=1) {
+sortClusters <- function(cset, verb=0) {
 
-    cset$cls.srt <- rep(list(NA), ncol(cset$clusters))
+    cset$sorting <- rep(list(NA), ncol(cset$clusters))
     
     for ( k in 1:ncol(cset$clusters) ) {
         Ccc <- cset$Ccc[[k]]
-        cls.srt <- colnames(Ccc)
-        remaining <- cls.srt
+        sorting <- colnames(Ccc)
+        remaining <- sorting
         cl <- remaining[1]
         remaining <- remaining[remaining!=cl]
         cln.srt <- cl
@@ -524,9 +530,9 @@ sortClusters <- function(cset, verb=1) {
         }
         ## add last
         cln.srt <- c(cln.srt, remaining)
-        cset$cls.srt[[k]] <- cln.srt
+        cset$sorting[[k]] <- cln.srt
     }
-    names(cset$cls.srt) <- colnames(cset$clusters)
+    names(cset$sorting) <- colnames(cset$clusters)
     
     cset
 }
@@ -590,6 +596,9 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         params[,j] <- rep(rep(vS[[j]],prod(rL[1:(j)])),
                           each=prod(rL[(j+2):length(rL)]))
 
+    ## TODO: store actual parameters
+    ##       store previous processing IDs explicitly, to be used in plots
+    
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
     ## UNLESS there is no variation
@@ -620,8 +629,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         seq <- cset$clusters[,K]
 
         ## pass on cluster coloring as segment coloring
-        if ( "cls.col" %in% names(cset) )
-          seg.col[[i]] <- cset$cls.col[[K]]
+        if ( "colors" %in% names(cset) )
+          seg.col[[i]] <- cset$colors[[K]]
 
         ## scoring params
         S <- as.character(params[i,"S"])
