@@ -235,72 +235,7 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, yl
 
 ### PLOTTING SEGMENTATION INTERNAL STRUCTURES 
 
-#' converts the vector form of the triangular scoring matrix
-#' into a matrix
-#' @param S1 vector form of the triangular scoring matrix as returned
-#' by \code{\link{calculateScoringMatrix}}
-#'@export
-fillScoringMatrix <- function(S1) {
-    ## L <- (N+1)*N/2
-    L <- length(S1)
-    N <- -.5 + sqrt(.25 + 2*L)
-    SM <- matrix(NA,nrow=N, ncol= N)
-    getIdx <- function(i,k) ((i + 1) * i / 2 + k)
-    for ( i in 0:(N-1) ) {
-        idx <- getIdx(i,i)
-        SM[i+1,i+1] <- S1[idx+1] 
-        for ( k in (i-1):0 ) {
-            if ( k<0 ) next
-            idx <- getIdx(i,k)
-            SM[k+1,i+1] <- S1[idx+1] 
-        }
-    }
-    SM
-}
 
-#' plot the scoring function matrices as a heatmap
-#' @param SML a list with scoring function matrices for each cluster,
-#' as provided by \code{\link{calculateScoringMatrix}}
-#' @param seq the original cluster sequence, optional for axis labeling
-#' @param score name of the used scoring function
-#' @param out.file if supplied the scoring matrices will be plotted to
-#' individual png files named <out.file>_<number>.png
-#' @param verb level of verbosity; 0: no output, 1: progress messages
-#' @export
-plotScoring <- function(SML, seq, score, out.file, verb=2) {
-    files <- NULL
-    for ( c in 1:length(SML) ) {
-        if ( !missing(out.file) ) {
-            file.name <- paste(out.file,"_",c,".png",sep="")
-            files <- c(files, file.name)
-            png(file.name,width=5,height=5,res=200,units="in")
-        }
-        ## expand scoring function vector to triangular matrix
-        SM <- fillScoringMatrix(SML[[c]])
-        image(x=1:nrow(SM),y=1:nrow(SM),z=SM,axes=FALSE,
-              main=paste("scoring function:",
-                         ifelse(missing(score),"",score)),
-              ylab=NA,xlab=NA)
-        if ( !missing(seq) ) {
-            axis(2,at=1:nrow(SM),labels=seq,cex.axis=.5,las=2)
-            axis(3,at=1:nrow(SM),labels=seq,cex.axis=.5,las=2)
-        }
-        legend("bottomright",paste("cluster", c),cex=2,bty="n")
-        
-        if ( !missing(out.file) )
-            dev.off()
-        else {
-            cat(paste("plotted cluster ", c,
-                      ". please enter to proceed to the next plot"))
-            scan()
-        }
-    }
-    if ( !missing(out.file) ) {
-        if ( verb>0 )
-            cat(paste("plotted", paste(files,collapse=" ; "), date(), "\n"))
-        res <- return(files)
-    }
-}
 
 #' plot segmentation data based on data returned by
 #' high-level wrappers, incl. S(c,i), K(c,i) and segments
@@ -322,7 +257,7 @@ plotScoring <- function(SML, seq, score, out.file, verb=2) {
 #' @param verb level of verbosity; 0: no output, 1: progress messages
 #' @return Returns the file.name if out.file was specified.
 #' @export
-plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
+plotSegments <- function(cset, ts, scrR,tot, out.file, use.log=FALSE,
                          add.plots=0, verb=2) {
   
     if ( verb>0 )
@@ -331,6 +266,7 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
 
     ## if nuissance cluster is present, increase
     ## coloring by 1
+    seq <- cset$clusters[,1]
     if ( 0 %in% seq ) {
         cols <- sort(unique(seq))
         names(cols) <- cols
@@ -432,3 +368,66 @@ plotSegments <- function(scrR, seq, ts, tot, out.file, use.log=FALSE,
     if ( verb>0 ) cat(paste("done\t", date(), "\n"))
 }
 
+### USING CLASSES
+plot.tset <- function(tset) {
+}
+plot.cset <- function(cset, k) {
+    
+  
+    ## cluster sorting via Ccc (cluster-cluster correlation)
+    if ( !"cls.srt" %in% names(cset) )
+      cset <- sortClusters(cset, verb=1)
+    ## cluster colors
+    if ( !"cls.col" %in% names(cset) )
+      cset <- colorClusters(cset, verb=1)
+
+    ## plotting all: layout or mfcol must be set from outside;
+    ## or a specific k chosen to only plot the k'th clustering
+    if ( missing(k) )
+      k <- 1:ncol(cset$clusters)
+    for ( i in k ) {
+        seq <- as.character(cset$clusters[,i])
+        cls.srt <- cset$cls.srt[[i]]
+        x <- 1:length(seq)
+        y <- 1:length(cls.srt)
+        names(y) <- cls.srt
+        cols <- cset$cls.col[[i]]
+        ## plot original clustering
+        plot(x,y[seq],axes=FALSE,xlab="",ylab="cluster",
+             col=cols[seq],cex=1,pch=16)
+        axis(2, at=y, labels=names(y))
+    }
+}
+plot.sset <- function(sset, k, x) {
+
+    if ( "SK" %in% names(sset) ) {
+        for ( j in 1:length(SK) ) {
+
+            ## TODO: plot by segment; highlight winning segment!!
+            S <- SK[[j]]$S
+            dS <- apply(S,2,function(x) c(0,diff(x)))
+
+            ## x-axis: x can be passed to use real coordinates
+            if ( missing(x) )
+              x <- 1:nrow(S)
+            xlim <- range(x) 
+            
+            ## only show clusters that actually produced a segment
+            sgcols <- sgcolors
+            sgcols <- paste(sgcols,"EE",sep="") ## scale down
+            tp <- allsegs[,"type"]%in%names(SK)[j]
+            sgcols[! (1:length(sgcols)%in%(allsegs[tp,"CL"]+1))] <- NA
+
+            ##cat(paste(paste(range(ash(dS)),collapse="-"),"\n"))
+            xrng <- stats::quantile(x,c(.05,.95))
+            xidx <- which(x>xrng[1]&x<xrng[2]) #x%in%xrng[1]:xrng[2]
+            ylim <- stats::quantile(ash(dS[xidx,]),c(0,1))
+            plot(1,ylim=ylim,xlim=xlim,ylab=expression(ash(Delta~S["i,C"])))
+            lines(x,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND GRAY
+            lines(x,ash(dS[,1]),lwd=1,lty=3,col="#00000099") # NUI: BACKGROUND GRAY
+            matplot(x,ash(dS), type="l", lty=1, lwd=1, add=TRUE,
+                    col=sgcols)
+            graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
+        }
+    }
+}
