@@ -5,15 +5,12 @@
 #'@name segmenTier
 #'@section Dependencies: The package strictly depends only on
 #' \code{\link[Rcpp:Rcpp]{Rcpp}}.
-#' Package \code{\link[parallel:parallel]{parallel}} allows to
-#' speed up scoring function matrix calculations when more then 1 cores
-#' (CPUs) are available. All other dependencies are usually present in a
+#' All other dependencies are usually present in a
 #' basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 #' @references
 #'   @bibliography segmenTier.bib
 #'@importFrom Rcpp evalCpp
 #'@importFrom stats qt sd
-#'@importFrom parallel mclapply
 #'@importFrom graphics image axis par plot matplot points lines legend arrows strheight strwidth text
 #'@importFrom grDevices png dev.off rainbow gray xy.coords
 #'@useDynLib segmenTier
@@ -55,8 +52,6 @@ NULL # this just ends the global package documentation
 ##   c <- c'
 
 
-
-
 ### FUNCTIONS
 
 ### MESSAGE UTILS
@@ -71,7 +66,7 @@ warn <- function(w, warnings,verb=FALSE) {
   c(warnings,w)
 }
 
-### HIGH-LEVEL WRAPPERS
+### HIGH-LEVEL WRAPPERS - TODO
 
 ## TODO: high-level wrapper that takes a time-series as input
 ## and clusters the time-series  calling segmentClusters
@@ -85,6 +80,10 @@ segmentData <- function() {}
 ## of the data and a dynamic programming algo; ....
 clusterSegments <- function() {}
 
+
+### SEGMENTATION BY DYNAMIC PROGRAMMING - MAIN FUNCTIONS
+## NOTE that most of the work is done in segment.cpp
+## using the Rcpp interface to C++
 
 #' segmenTier's main wrapper interface, calculates segments from a
 #' clustering sequence.
@@ -116,13 +115,10 @@ clusterSegments <- function() {}
 #' either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace phase,
 #' either "min" (default), "max" or "skip"
-#' @param ncpu number of available cores (CPUs), passed to
-#' \code{\link[parallel:mclapply]{parallel::mclapply}} by
-#' \code{\link{calculateScoringMatrix}}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.matrix store the total score matrix \code{S(i,c)} and the
 #' backtracing matrix \code{K(i,c)}; useful in testing stage or for
-#' debugging or illustration of the algorithm; see \code{\link{plotScoring}}
+#' debugging or illustration of the algorithm;
 #' @details This is the main R wrapper function for the segmentation algorithm.
 #' It takes a sequence of clusterings and returns segments of
 #' consistent clusters. It runs the dynamic programing algorithm for
@@ -143,7 +139,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
                             score="ccor",
                             M=175, Mn=20, a=-2, nui=1,
                             nextmax=TRUE, multi="max",multib="max", 
-                            ncpu=1, verb=1, save.matrix=FALSE) {
+                            verb=1, save.matrix=FALSE) {
 
     stime <- as.numeric(Sys.time()) 
     
@@ -161,7 +157,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## 1a: map to internal 1:K clustering:
     ## TODO: allow character clusters!?
     map <- sort(unique(seqr)) # clusters
-    map <- map[map!=0] ##  nuissance cluster
+    map <- map[map!=0]        #  nuissance cluster
     names(map) <- map
     map[] <- 1:length(map)
   
@@ -176,7 +172,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
         L <- length(unique(seqr))
         csim <- matrix(a, nrow=L, ncol=L) # Delta(C,D!=C) = a
         diag(csim) <- 1 # Delta(C,C) = 1
-        nui <- -a
+        nui <- -a # csim will be expanded to contain nuissance below
     }
     
     ## 1b: add nuissance cluster if present:
@@ -217,7 +213,6 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     ## get clusters
     C <- sort(unique(seqr))
-    ##C <- C[C!=0] # rm nuissance - should only be there for "cls"
 
     ## scale similarity matrix!
     sgn <- sign(csim) # store sign
@@ -228,9 +223,6 @@ segmentClusters <- function(seq, csim, csim.scale=1,
       csim <- sgn*csim # restore sign
            #warning("csim.scale should be odd: ", csim.scale)
  
-    #SM <- calculateScoringMatrix(seqr, C=C, score=score, M=M, Mn=Mn,
-    #                             csim=csim, ncpu=ncpu)
-
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 ) {
         cat(paste("Scoring matrix\t", time(), "\n",sep=""))
@@ -241,38 +233,32 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     }
     ## TODO: handle Mn in scoring functions
     ## add official nuissance cluster
-
-    #SK<- calculateTotalScore_test(seq=seqr,C=C,SM=SM,
-    #                              csim=csim,M=M,Mn=Mn,multi=multi)
-    ##cat(paste("CLUSTERS:", paste(unique(seqr),collapse=";"), sep="\n"))
     SK<- calculateScore(seq=seqr, C=C, score=score, csim=csim,
                         M=M, Mn=Mn, multi=multi)
 
-    ## 4: back-tracing to generate segments
+    ## 3: back-tracing to generate segments
     if ( verb>0 ) {
         cat(paste("Backtracing\t", time(), "\n",sep=""))
         cat(paste("parameters\t", paste("multib:",multib,sep=""), "\n",sep=""))
     }
     seg <- backtrace(S=SK$S, K=SK$K, multib=multib, nextmax=nextmax, verb=verb)
 
+    ## 4: post-processing
     ## remap: map back to original cluster names
     remap <- as.numeric(names(map))
-    ## re-name to original clusters if stored
-    #if ( "SM" %in% save.mat )
-    #    names(SM) <- remap[as.numeric(names(SM))]
-    ## map back segments to original
     seg$segments[,1] <- remap[seg$segments[,1]]
 
     ## rm nuissance segments
-    ##cat(paste("NUI SEGS", sum(seg$segments[,1]!=0), "\n"))
     seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
-    #if ( "SM" %in% save.mat ) seg$SM <- SM
     if ( save.matrix ) seg$SK <- SK
 
+    ## add cluster similarity matrix
     seg$csim <- csim
+
+    ## assign S3 class
     class(seg) <- "segments"
     
     if ( verb>0 ) 
@@ -285,22 +271,6 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     return(seg)
     
 }
-
-
-### SEGMENTATION BY DYNAMIC PROGRAMMING - MAIN FUNCTIONS
-## NOTE that most of the work is done in segment.cpp
-## using the Rcpp interface to C++
-
-## SCORING MATRIX GENERATION
-## TODO: instead generate a list of length seq, each
-## containing a vector or kmin:i
-## TODO: choose a reasonable kmin, and fill up rest only
-## if requested
-## NOTE: in parallel mode preschedule FALSE will take longer
-## to collect data from forked processes, but this avoids
-## the error "long vectors not supported yet: fork.c:378"
-
-
 
 ## TODO: move this to .cpp as well, then the whole algo is available in C++
 #' back-tracing : collect clustered segments from the scoring function matrix
