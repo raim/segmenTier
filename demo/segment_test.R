@@ -2,6 +2,7 @@
 library("segmenTier")
 library("Rcpp")
 source("~/programs/segmenTier/R/plot.R")
+source("~/programs/segmenTier/R/cluster.R")
 source("~/programs/segmenTier/R/segment.R")
 sourceCpp("~/programs/segmenTier/src/segment.cpp")
 
@@ -32,6 +33,7 @@ a <- -2 # penalty for non-matching clusters in scoring function "ccls"
 ## scoring function "ccor":
 ## cluster X cluster correlation matrix csim for "ccor"
 Ccc <- matrix(0,ncol=length(C),nrow=length(C))
+colnames(Ccc) <- rownames(Ccc) <- as.character(C)
 diag(Ccc)<- 1 # set diagonal to 1
 Ccc[1,2] <- Ccc[2,1] <- -.6 # just enough to avoid merging of 2 with 1
 Ccc[2,4] <- Ccc[4,2] <- -.4 # just enought to avoid merging of 2 with 4
@@ -50,6 +52,17 @@ for ( i in 1:length(seq) ) {
     }
 }
 
+## construct cset
+cset <- list()
+class(cset) <- "clustering"
+cset$clusters <- matrix(seq,ncol=1)
+colnames(cset$clusters) <- paste("K",length(C),sep="")
+cset$Ccc <- cset$Pci <- list()
+cset$Ccc[[1]] <- Ccc
+cset$Pci[[1]] <- Pci
+
+## cluster sorting & coloring
+cset <- colorClusters(cset)
 
 ## TOTAL SCORING MATRIX S(i,c)
 ## handling of multiple max. score k 
