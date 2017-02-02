@@ -27,10 +27,10 @@ nstart <- 100   # number of initial configurations tested in kmeans
 ### SEGMENTATION PARAMETERS
 vary <- list(
     ## SCORING
-    E=c(1,3), # scale exponent of similarity matrices csim
+    E=2, #c(1,3), # scale exponent of similarity matrices csim
     S=c("ccor","icor","ccls"), # SCORING FUNCTIONS
-    M=c(30,175), # scoring function minimal length penalty
-    Mn=15, # for nuissance clusters: allow smaller segments!?
+    M=100, #c(30,175), # scoring function minimal length penalty
+    Mn=100, ## for nuissance clusters: allow smaller segments!?
     a=-2, 
     nui=2, #-/+ correlation of nuissance cluster with others and itself
     ## BACKTRACING
@@ -52,9 +52,9 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
-allsegs <- segmentCluster.batch(cset, varySettings=vary, 
-                                ncpu=1, verb=1, save.mat=FALSE)
-
+sset <- segmentCluster.batch(cset, varySettings=vary, 
+                             ncpu=1, verb=1, save.matrix=FALSE)
+allsegs <- sset$segments
 ## PLOT RESULTS
 
 
