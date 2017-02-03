@@ -379,7 +379,7 @@ plot.cset <- function(cset, k) {
       cset <- sortClusters(cset, verb=1)
     ## cluster colors
     if ( !"cls.col" %in% names(cset) )
-      cset <- colorClusters(cset, verb=1)
+      cset <- colorClusters(cset)
 
     ## plotting all: layout or mfcol must be set from outside;
     ## or a specific k chosen to only plot the k'th clustering
