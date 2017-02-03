@@ -5,10 +5,10 @@
 \title{takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
 clusters by their similarity, starting with the first cluster; the
-sorting is added as \code{cls.srt} to \code{cset} and the annotated
+sorting is added as \code{sorting} to \code{cset} and the annotated
 \code{cset} is returned.}
 \usage{
-sortClusters(cset, verb = 1)
+sortClusters(cset, verb = 0)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
@@ -19,7 +19,7 @@ sortClusters(cset, verb = 1)
 takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
 clusters by their similarity, starting with the first cluster; the
-sorting is added as \code{cls.srt} to \code{cset} and the annotated
+sorting is added as \code{sorting} to \code{cset} and the annotated
 \code{cset} is returned.
 }
 

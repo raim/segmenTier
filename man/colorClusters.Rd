@@ -8,12 +8,10 @@ the "hue" color wheel; if \code{cset} contains a sorting (see
 \code{clusterSort}), this sorting will be used to assing colors along
 the color wheel;}
 \usage{
-colorClusters(cset, verb = 1)
+colorClusters(cset)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
-
-\item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \description{
 takes a clustering set as returned by \code{\link{clusterTimeseries}} and

@@ -9,9 +9,9 @@ tag adjacent segments to be potentially fused due to similarity
 of their clusters.}
 \usage{
 segmentCluster.batch(cset, fuse.threshold = 0.2, short.name = TRUE, id,
-  ncpu = 1, verb = 1, save.matrix = FALSE, varySettings = list(E = 1, S
-  = "ccor", M = c(100), Mn = c(20, 100), a = -2, nui = 1, nextmax = TRUE, multi
-  = "max", multib = "max"))
+  save.matrix = FALSE, verb = 1, varySettings = list(E = 1, S = "ccor", M
+  = c(100), Mn = c(20, 100), a = -2, nui = 1, nextmax = TRUE, multi = "max",
+  multib = "max"))
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
@@ -27,17 +27,13 @@ will not be part of the segment type and ID}
 \item{id}{if set, the default segment IDs, constructed from numbered
 segment types, are replaced by this}
 
-\item{ncpu}{number of available cores (CPUs), passed to
-\code{\link[parallel:mclapply]{parallel::mclapply}} by
-\code{\link{calculateScoringMatrix}}}
-
-\item{verb}{level of verbosity, 0: no output, 1: progress messages}
-
 \item{save.matrix}{store the total score matrix \code{S(i,c)} and the
 backtracing matrix \code{K(i,c)}; useful in testing stage or for
 debugging or illustration of the algorithm; see \code{\link{plotScoring}}
 TODO: save.matrix is currently not implemented, since batch function
 returns a matrix only}
+
+\item{verb}{level of verbosity, 0: no output, 1: progress messages}
 
 \item{varySettings}{list of settings where each entry can be a vector;
 the function will construct a matrix of all possible combinations of

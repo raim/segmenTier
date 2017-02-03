@@ -59,7 +59,7 @@ compared to cluster centers, while here two cluster centers are compared.
 Scoring function "ccls" is a special case of "ccor" and is NOT handled
 here, but is reflected in the cluster similarity matrix \code{csim}. It
 is handled and automatically constructed in the R wrapper 
-\code{\link{clusterSegments}}, and merely counts the 
+\code{\link{segmentClusters}}, and merely counts the 
 number of clusters in sequence k:i, over all k and i, that are identical
 to the tested cluster \code{c}, and sub-tracts a minimal size penality
 and a penalty the for the count of non-identical clusters.
