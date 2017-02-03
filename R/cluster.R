@@ -583,7 +583,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                                    nextmax=TRUE,
                                                    multi="max",
                                                    multib="max")) {
-    
+
+    ## TODO: allow defaults; getSettings to get full list!
     nk <- length(cset$K)
     vS <- append(list(K=colnames(cset$clusters)), varySettings)
     vL <- sapply(vS,length)
@@ -696,10 +697,11 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
+    rownames(params) <- sgtypes
 
     ## TODO: introduce and use classes for segment results
-    sset <- list(segments=allsegs, SK=SK, colors=seg.col)
-    class(sset) <- "segments"
+    sset <- list(segments=allsegs, SK=SK, colors=seg.col, settings=params)
+    class(sset) <- "segmentset"
     return(sset)
 }
 

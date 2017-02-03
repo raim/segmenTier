@@ -258,6 +258,9 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## add cluster similarity matrix
     seg$csim <- csim
 
+    ## TODO: add parameters; aligned with .batch and
+    ## and class segmentsets
+    
     ## assign S3 class
     class(seg) <- "segments"
     
