@@ -258,6 +258,9 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param nu.est 0: no, 1: non-specific, 2: cluster-specific estimation of nu
 #' @param trans 0: no, 1: non-specific, 2: cluster-specific estim. of lambda
 #' @param ... further parameter to \code{\link[flowClust]{flowClust}}
+#'@importFrom flowClust flowClust Map
+#'@importFrom flowMerge flowMerge flowObj fitPiecewiseLinreg
+#'@importFrom flowCore flowFrame
 #' @export
 flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
                                 nu=4, nu.est=0, trans=1, ...) {
