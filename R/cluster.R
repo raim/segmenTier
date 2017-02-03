@@ -243,13 +243,13 @@ processTimeseries <- function(ts, trafo="raw",
 
 ## TODO: adapt to be used in segmentation as well, is fcls@mu
 ## equal/similar to kmeans' 'centers'? Are Ccc and Pci calculated correctly?
-#' wrapper for \pkg{\link{flowClust}}, currently only used for
+#' wrapper for \pkg{flowClust}, currently only used for
 #' clustering of final segment time-series; it could in principle also
 #' be used for segmentation, but that has not been tested.
 #' @param tset processed time-series as provided by
 #' \code{\link{processTimeseries}}
 #' @param ncpu number of cores available for parallel mode of
-#' \pkg{\link{flowClust}}
+#' \pkg{flowClust}
 #' @param K the requested cluster numbers (vector of integers)
 #' @param B max. num. of EM iterations 
 #' @param tol tolerance for EM convergence
@@ -257,7 +257,7 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param nu initial Box-Cox trafo, Inf for pure Gaussian
 #' @param nu.est 0: no, 1: non-specific, 2: cluster-specific estimation of nu
 #' @param trans 0: no, 1: non-specific, 2: cluster-specific estim. of lambda
-#' @param ... further parameter to \code{\link[flowClust]{flowClust}}
+#' @param ... further parameter to \code{flowClust}
 #' @export
 flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
                                 nu=4, nu.est=0, trans=1, ...) {
