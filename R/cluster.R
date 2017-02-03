@@ -262,11 +262,15 @@ processTimeseries <- function(ts, trafo="raw",
 flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
                                 nu=4, nu.est=0, trans=1, ...) {
 
+    if ( !requireNamespace("flowMerge", quietly = TRUE) )
+      stop("`flowclusterTimeseries' requires the bioconductor package `flowMerge' (incl. its dependencies  `flowCore' and `flowClust'")
+    
     dat <- tset$dat
     rm.vals <- tset$rm.vals
     clsDat <- dat[!rm.vals,]
 
     ##if ( ncpu>1 ) # TODO: how to avoid parallel mode?
+    oldcpu <- unlist(options("cores"))
     options(cores=ncpu)
 
     fcls <- flowClust::flowClust(clsDat, K=K, B=B, tol=tol, lambda=lambda,
@@ -345,7 +349,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     cset <- colorClusters(cset)
 
     if ( ncpu>1 )
-        options(cores=1)
+      options(cores=oldcpu)
+    
     ## silent return
     tmp <- fcset
 }
@@ -553,9 +558,6 @@ sortClusters <- function(cset, verb=0) {
 #' the centers of which have a Pearson correlation \code{>fuse.threshold}
 #' the field "fuse" will be set to 1 for the second segments (top-to-bottom
 #' as reported)
-#' @param ncpu number of available cores (CPUs), passed to
-#' \code{\link[parallel:mclapply]{parallel::mclapply}} by
-#' \code{\link{calculateScoringMatrix}}
 #' @param short.name if TRUE (default) parameters that are not varied
 #' will not be part of the segment type and ID
 #' @param id if set, the default segment IDs, constructed from numbered
@@ -574,7 +576,7 @@ sortClusters <- function(cset, verb=0) {
 #'@export
 segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                  short.name=TRUE, id,
-                                 ncpu=1, verb=1, save.matrix=FALSE,
+                                 save.matrix=FALSE, verb=1, 
                                  varySettings=list(E=1,
                                                    S="ccor",
                                                    M=c(100),
