@@ -346,7 +346,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     class(fcset) <- "clustering" 
 
     ## add cluster colors
-    cset <- colorClusters(cset)
+    fcset <- colorClusters(fcset)
 
     if ( ncpu>1 )
       options(cores=oldcpu)
@@ -612,11 +612,10 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
     allsegs <- sgtypes <- NULL
-    if ( save.matrix )
+    if ( save.matrix ) 
       SK <- rep(list(NA), nrow(params))
     else
       SK <- NULL
-    seg.col <- rep(list(NA), nrow(params))
     
     ## TODO: convert this loop to lapply and try parallel use!
     ## TODO: redirect messages to msgfile or store in results
@@ -631,9 +630,6 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         K <- as.character(params[i,"K"])
         seq <- cset$clusters[,K]
 
-        ## pass on cluster coloring as segment coloring
-        if ( "colors" %in% names(cset) )
-          seg.col[[i]] <- cset$colors[[K]]
 
         ## scoring params
         S <- as.character(params[i,"S"])
@@ -667,7 +663,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         ## K: K(i,C) - backtracing
         ## all can be plotted via dedicated functions
         if ( save.matrix ) 
-            SK[[i]] <- seg$SK
+            SK[[i]] <- seg$SK[[1]]
 
         ## tag adjacent segments from correlating clusters
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
@@ -677,12 +673,19 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
 
         ## collect results
         if ( nrow(seg$segments) > 0 ) {
+
+            ## add colors as column
+            colors <- seg$segments[,"CL"]
+            if ( "colors" %in% names(cset) )
+                colors <- cset$colors[[K]][as.character(seg$segments[,"CL"])]
+
             ##close <- rep(FALSE, nrow(seg$segments))
             sgids <- paste(sgtype, 1:nrow(seg$segments),sep="_")
             segs <- data.frame(ID=sgids,
                                type=rep(sgtype,length(sgids)),
                                seg$segments,
-                               fuse=close)
+                               fuse=close,
+                               color=colors)
             allsegs <- rbind(allsegs,segs)
             
         } 
@@ -702,7 +705,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     rownames(params) <- sgtypes
 
     ## TODO: introduce and use classes for segment results
-    sset <- list(segments=allsegs, SK=SK, colors=seg.col, settings=params)
+    sset <- list(segments=allsegs, SK=SK, settings=params)
     class(sset) <- "segmentset"
     return(sset)
 }
