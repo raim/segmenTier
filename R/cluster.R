@@ -612,10 +612,13 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
     allsegs <- sgtypes <- NULL
+    ## internal matrices (S, K, S1)
     if ( save.matrix ) 
       SK <- rep(list(NA), nrow(params))
     else
       SK <- NULL
+    ## colors
+    seg.col <- rep(list(NA), nrow(params))
     
     ## TODO: convert this loop to lapply and try parallel use!
     ## TODO: redirect messages to msgfile or store in results
@@ -665,6 +668,10 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         if ( save.matrix ) 
             SK[[i]] <- seg$SK[[1]]
 
+        ## pass on cluster coloring as segment coloring
+        if ( "colors" %in% names(cset) )
+          seg.col[[i]] <- cset$colors[[K]]
+
         ## tag adjacent segments from correlating clusters
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
                                  fuse.threshold=fuse.threshold)
@@ -675,6 +682,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         if ( nrow(seg$segments) > 0 ) {
 
             ## add colors as column
+            ## TODO: redundant with cluster colors; but both are used
             colors <- seg$segments[,"CL"]
             if ( "colors" %in% names(cset) )
                 colors <- cset$colors[[K]][as.character(seg$segments[,"CL"])]
@@ -705,7 +713,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     rownames(params) <- sgtypes
 
     ## TODO: introduce and use classes for segment results
-    sset <- list(segments=allsegs, SK=SK, settings=params)
+    sset <- list(segments=allsegs, SK=SK, colors=seg.col, settings=params)
     class(sset) <- "segmentset"
     return(sset)
 }
