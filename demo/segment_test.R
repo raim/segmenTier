@@ -110,7 +110,7 @@ for ( score in scores ) {
                                    multi=multi, multib=multib,nextmax=nextmax,
                                    save.mat=TRUE)
             ##multS$SM <- seg$SM # TODO: test whether they are the same?
-            multS[[multi]]$SK <- seg$SK
+            multS[[multi]]$SK <- seg$SK[[1]]
             ## store segments!
             multS[[multi]][[multib]] <- seg$segments
         }
