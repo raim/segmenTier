@@ -53,7 +53,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
 sset <- segmentCluster.batch(cset, varySettings=vary, 
-                             ncpu=1, verb=1, save.matrix=TRUE)
+                             verb=1, save.matrix=TRUE)
 allsegs <- sset$segments
 ## PLOT RESULTS
 
@@ -85,7 +85,7 @@ axis(2,at=1:ncol(ts))
 axis(1)
 mtext("time points", 2, 2)
 ## TODO: plot clustering
-columns <- c(name="ID", type="type", start="start", end="end")
+columns <- c(name="ID", type="type", start="start", end="end", color="color")
 ypos <- segment.plotFeatures(allsegs, coors=coors,
                              typord=TRUE,cuttypes=TRUE,
                              ylab="", names=FALSE,columns=columns,tcx=.5)
