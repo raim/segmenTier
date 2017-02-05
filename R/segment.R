@@ -253,10 +253,10 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
-    if ( save.matrix ) seg$SK <- SK
+    if ( save.matrix ) seg$SK <- list(SK)
 
     ## add cluster similarity matrix
-    seg$csim <- csim
+    seg$csim <- list(csim)
 
     ## TODO: add parameters; aligned with .batch and
     ## and class segmentsets
