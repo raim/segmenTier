@@ -383,25 +383,32 @@ plot.cset <- function(cset, k) {
 
     ## plotting all: layout or mfcol must be set from outside;
     ## or a specific k chosen to only plot the k'th clustering
-    if ( missing(k) )
-      k <- 1:ncol(cset$clusters)
+    if ( missing(k) ) 
+        k <- 1:ncol(cset$clusters)
+    if ( length(k)>1 )
+        par(mfcol=c(k,1))
     for ( i in k ) {
         seq <- as.character(cset$clusters[,i])
-        cls.srt <- cset$cls.srt[[i]]
+        cls.srt <- cset$sorting[[i]]
         x <- 1:length(seq)
         y <- 1:length(cls.srt)
         names(y) <- cls.srt
-        cols <- cset$cls.col[[i]]
+        cols <- cset$colors[[i]]
         ## plot original clustering
         plot(x,y[seq],axes=FALSE,xlab="",ylab="cluster",
              col=cols[seq],cex=1,pch=16)
-        axis(2, at=y, labels=names(y))
+        axis(2, at=y, labels=names(y), las=2)
     }
 }
 plot.sset <- function(sset, k, x) {
 
     if ( "SK" %in% names(sset) ) {
-        for ( j in 1:length(SK) ) {
+        SK <- sset$SK
+        if ( missing(k) ) 
+            k <- 1:length(SK)
+        if ( length(k)>1 )
+            par(mfcol=c(k,1))
+        for ( j in k ) {
 
             ## TODO: plot by segment; highlight winning segment!!
             S <- SK[[j]]$S
@@ -412,10 +419,10 @@ plot.sset <- function(sset, k, x) {
               x <- 1:nrow(S)
             xlim <- range(x) 
             
-            ## only show clusters that actually produced a segment
-            sgcols <- sgcolors
+            sgcols <- sset$colors[[j]]
             sgcols <- paste(sgcols,"EE",sep="") ## scale down
             tp <- allsegs[,"type"]%in%names(SK)[j]
+            ## only show clusters that actually produced a segment
             sgcols[! (1:length(sgcols)%in%(allsegs[tp,"CL"]+1))] <- NA
 
             ##cat(paste(paste(range(ash(dS)),collapse="-"),"\n"))
@@ -428,6 +435,18 @@ plot.sset <- function(sset, k, x) {
             matplot(x,ash(dS), type="l", lty=1, lwd=1, add=TRUE,
                     col=sgcols)
             graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
+        }
+    }
+
+    ## plot S1 as heatmap
+    if ( "SK" %in% names(sset) ) {
+        SK <- sset$SK
+        if ( missing(k) ) 
+            k <- 1:length(SK)
+        if ( length(k)>1 )
+            par(mfcol=c(k,1))
+        for ( j in k ) {
+            image_matrix(t(SK[[j]]$S1)/apply(SK[[j]]$S1,2,mean))
         }
     }
 }
