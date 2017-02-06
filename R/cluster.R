@@ -190,21 +190,23 @@ processTimeseries <- function(ts, trafo="raw",
           fft <- snr
         }
         
-        ## DC scaling
-        if ( 1 %in% dft.range & dc.trafo!="raw" )
-            fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) # ash, log_1, etc
-
         ## PREPARE DATA FOR CLUSTERING
         ## get low expression filter!
         tot <- Re(fft[,1]) # NOTE: DC component = rowSums(tsd)
         low <- tot < low.thresh
+
+        ## DC scaling
+        if ( dc.trafo!="raw" )
+            fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) # ash, log_1, etc
 
         ## filter selected components
         dat <- fft[,dft.range]
          
         ## get Real and Imaginary pars
         re <- Re(dat)
+        colnames(re) <- paste("Re_",colnames(re),sep="")
         im <- Im(dat)
+        colnames(im) <- paste("Im_",colnames(im),sep="")
         if ( 1 %in% dft.range ) # rm 0 DC component from Im
             im <- im[,-1]
         dat <- cbind(re,im)
