@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{flowclusterTimeseries}
 \alias{flowclusterTimeseries}
-\title{wrapper for \code{\link[flowClust]{flowClust}}, currently only used for
+\title{wrapper for \pkg{flowClust}, currently only used for
 clustering of final segment time-series; it could in principle also
 be used for segmentation, but that has not been tested.}
 \usage{
@@ -14,7 +14,7 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
 \code{\link{processTimeseries}}}
 
 \item{ncpu}{number of cores available for parallel mode of
-\code{\link[flowClust]{flowClust}}}
+\pkg{flowClust}}
 
 \item{K}{the requested cluster numbers (vector of integers)}
 
@@ -30,10 +30,10 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
 
 \item{trans}{0: no, 1: non-specific, 2: cluster-specific estim. of lambda}
 
-\item{...}{further parameter to \code{\link[flowClust]{flowClust}}}
+\item{...}{further parameter to \code{flowClust}}
 }
 \description{
-wrapper for \code{\link[flowClust]{flowClust}}, currently only used for
+wrapper for \pkg{flowClust}, currently only used for
 clustering of final segment time-series; it could in principle also
 be used for segmentation, but that has not been tested.
 }

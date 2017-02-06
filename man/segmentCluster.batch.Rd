@@ -29,7 +29,7 @@ segment types, are replaced by this}
 
 \item{save.matrix}{store the total score matrix \code{S(i,c)} and the
 backtracing matrix \code{K(i,c)}; useful in testing stage or for
-debugging or illustration of the algorithm; see \code{\link{plotScoring}}
+debugging or illustration of the algorithm
 TODO: save.matrix is currently not implemented, since batch function
 returns a matrix only}
 
