@@ -11,7 +11,7 @@
 #'   @bibliography segmenTier.bib
 #'@importFrom Rcpp evalCpp
 #'@importFrom stats qt sd
-#'@importFrom graphics image axis par plot matplot points lines legend arrows strheight strwidth text
+#'@importFrom graphics image axis par plot matplot points lines legend arrows strheight strwidth text mtext abline polygon
 #'@importFrom grDevices png dev.off rainbow gray xy.coords
 #'@useDynLib segmenTier
 NULL # this just ends the global package documentation
