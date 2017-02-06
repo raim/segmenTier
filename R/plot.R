@@ -309,11 +309,13 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
     colors0 <- rev(grDevices::gray.colors(100)) 
     colors0[1] <- "#FFFFFF" ## replace minimal by white
 
-    ##totlog <- tset$settings$trafo!="raw" | tset$settings$dc.trafo!="raw"
+    ## settings
     low.thresh <- tset$settings$low.thresh
+    logged <- tset$settings$trafo != "raw" # plot with log if not already done
     
     if ( "total" %in% plot ) {
-        plot(1:N,tot,log="",type="l",lwd=2,axes=FALSE,ylab=NA,xlab=NA)
+        plot(1:N,tot,log=ifelse(logged,"","y"),
+             type="l",lwd=2,axes=FALSE,ylab=NA,xlab=NA)
         graphics::polygon(x=c(1,1,N,N),
                           y=c(min(tot,na.rm=TRUE),rep(low.thresh,2),
                               min(tot,na.rm=TRUE)),col="#00000055",border=NA)
