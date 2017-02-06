@@ -311,19 +311,20 @@ plot.tset <- function(tset, plot=c("total","timeseries")) {
     
     if ( "total" %in% plot ) {
         plot(1:N,tot,log="",type="l",lwd=2,axes=FALSE,ylab=NA,xlab=NA)
-        polygon(x=c(1,1,N,N),y=c(min(tot,na.rm=TRUE),rep(low.thresh,2),
-                               min(tot,na.rm=TRUE)),col="#00000055",border=NA)
-        abline(h=low.thresh,col="#000000BB")
+        graphics::polygon(x=c(1,1,N,N),
+                          y=c(min(tot,na.rm=TRUE),rep(low.thresh,2),
+                              min(tot,na.rm=TRUE)),col="#00000055",border=NA)
+        graphics::abline(h=low.thresh,col="#000000BB")
         lines(1:N,tot)
         axis(2);
         axis(1)
-        mtext("total signal", 2, 2)
+        graphics::mtext("total signal", 2, 2)
     }
     if ( "timeseries" %in% plot ) {
         segment.plotHeat(ts,coors=coors,chrS=0,colors=colors0, colnorm=TRUE)
         axis(2,at=1:ncol(ts))
         axis(1)
-        mtext("time points", 2, 2)
+        graphics::mtext("time points", 2, 2)
     }
 }
 
@@ -486,7 +487,7 @@ plot.segmentation <- function(tset,cset,sset) {
     ## each clustering can have multiple segmentations; plot each
     ## 2 for time-series; and for each clustering 2 (clustering and all segments),
     ## plus S1 & S 
-    nplots <- 2 + length(K) * (2 + 2*spk)
+    nplots <- 2 + nk * (2 + 2*spk)
     par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
