@@ -12,7 +12,7 @@ from a sequential clustering
 }
 \section{Dependencies}{
  The package strictly depends only on
-\code{\link[Rcpp]{Rcpp}}.
+\code{Rcpp}.
 All other dependencies are usually present in a
 basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 }
