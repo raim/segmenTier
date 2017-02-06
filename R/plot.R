@@ -289,6 +289,7 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
 #' in \code{\link{processTimeseries}}; `timeseries': plot the complete
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
+#' @param ... currently unused additional arguments to plot
 #'@export
 plot.tset <- function(x, plot=c("total","timeseries"), ...) {
 
@@ -340,6 +341,7 @@ plot.tset <- function(x, plot=c("total","timeseries"), ...) {
 #' or \code{layout} for the plot
 #' @param coors optinally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
+#' @param ... currently unused additional arguments to plot
 #'@export
 plot.cset <- function(x, k, coors, ...) {
 
@@ -385,6 +387,7 @@ plot.cset <- function(x, k, coors, ...) {
 #' `segments': plot segments as arrows; `S1' plot the scoring vectors
 #' \code{s(i,j,c} for all \code{c}; `S' plot the derivative of
 #' matrix \code{S(i,c)} for all \code{c}
+#' @param ... currently unused additional arguments to plot
 #'@export
 plot.sset <- function(x, types, coors, plot=c("segments", "S", "S1"), ...) {
 
