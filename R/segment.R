@@ -4,7 +4,7 @@
 #'@docType package
 #'@name segmenTier
 #'@section Dependencies: The package strictly depends only on
-#' \code{\link[Rcpp:Rcpp]{Rcpp}}.
+#' \code{\link[Rcpp]{Rcpp}}.
 #' All other dependencies are usually present in a
 #' basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 #' @references
