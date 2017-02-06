@@ -67,34 +67,8 @@ head(sset$segments)
 if ( !interactive() )
     png("segment_data.png",res=300,units="in", width=10,height=5)
 
-nsg <- length(sset$ids)
-nk <- length(cset$ids)
-## number of plots
-## two for time-series (total and heatmap)
-## for each clustering: 1xclustering, 1x all segments, S/S1 for each segmentation type
-nplots <- 2 + length(K) * (2 + 2*nsg/nk)
-par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
+plot.segmentation(tset,cset,sset)
 
-## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
-## for threshold) and a heatmap of the time-series
-plot.tset(tset, plot=c("total","timeseries"))
-## CLUSTERING PLOT UTILITY: 
-## each clustering can have multiple segmentations; plot each
-## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)
-## and colored along a color-wheel
-for ( k in 1:ncol(cset$clusters) ) {
-    plot.cset(cset, k)
-    ## TODO:
-    ## plot.sset(sset, c("segments")) - 1x
-    ## plot.sset(sset, c("SV","SK")) -  2x each type for k 
-    ## for each clustering, plot SV, SK and segments
-    ##plot.sset(sset, c("segments"), types=tps) 
-    ## plot S/S1
-    kid <- cset$ids[k]
-    types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
-    plot.sset(sset, plot=c("segments","S","S1"), types=types) 
-    
-}
 
 if ( !interactive() )
     dev.off()

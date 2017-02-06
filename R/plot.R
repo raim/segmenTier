@@ -17,8 +17,8 @@ shadowtext <- function(x, y=NULL, labels, col='white', bg='black',
   text(xy$x, xy$y, labels, col=col, ... )
 }
 
-#' plot features as arrows
-#'@export
+## plot features as arrows; kept private since official version
+## of this function is maintained in package genomeBrowser
 segment.plotFeatures <- function(data, coors, types, strand,
                          typord=FALSE, cuttypes=FALSE,
                          names=FALSE, legend=FALSE, axis1=FALSE, ylab=NA,
@@ -149,10 +149,8 @@ segment.plotFeatures <- function(data, coors, types, strand,
   features <- typey #rownames(feat[feat[,columns["type"]] %in% types,])
 }
 
-#' plot 3D genomeData as a heatmap
-## NOTE: fast indexing via chrS (cumulative chrosome lengths)
-## is possible only for fully expanded 'data')
-#'@export
+## plot 3D genomeData as a heatmap; kept private since official version
+## of this function is maintained in package genomeBrowser
 segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, ylab="", axes=FALSE, axis2=FALSE, colnorm=FALSE, chrS, coor, args) {
   
   ## parse arguments, which will also override other 
@@ -368,17 +366,59 @@ plotSegments <- function(cset, ts, scrR,tot, out.file, use.log=FALSE,
     if ( verb>0 ) cat(paste("done\t", date(), "\n"))
 }
 
-### USING CLASSES
+## plot a matrix as seen in R; kept private since official version
+## of this function is maintained in package segmenTools
+image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ...) {
+
+    ## reverse columns and transpose
+    if ( nrow(dat)>1 )
+        imgdat <- t(apply(dat, 2, rev))
+    else
+        imgdat <- t(dat)
+    image(x=1:ncol(dat), y=1:nrow(dat), z=imgdat, axes=FALSE, ...)
+
+    ## add text
+    if ( !missing(text) ) {
+        if ( missing(text.col) )
+            text.col <- rep(1, length(c(text)))
+        text(x=rep(1:ncol(dat),nrow(dat)), y=rep(nrow(dat):1,each=ncol(dat)),
+             paste(t(text)),col=t(text.col))
+    }
+    
+    ## add axes
+    ## TODO : handle axes=FALSE
+    if ( !missing(axis) ) {
+        if ( 1 %in% axis ) 
+            if ( !missing(axis1.col) ) # colored ticks
+                for ( i in 1:ncol(dat) )
+                    axis(1, at=i,colnames(dat)[i],
+                         col.axis=axis1.col[i], col=axis1.col[i],
+                         las=2, cex.axis=1.5, lwd=2)
+            else
+                axis(1, at=1:ncol(dat), labels=colnames(dat), las=2)
+        if ( 2 %in% axis )
+            if ( !missing(axis2.col) ) # colored ticks
+                for ( i in 1:nrow(dat) )
+                        axis(2, at=nrow(dat)-i+1, rownames(dat)[i],
+                             col.axis=axis2.col[i], col=axis2.col[i],
+                             las=2, cex.axis=1.5, lwd=2)
+            else
+                axis(2, at=nrow(dat):1, rownames(dat),las=2)        
+    }
+} 
+
+
 #' plot the processed time-series object returned from
 #' \code{\link{processTimeseries}}.
 #' @param tset the time-series object returned by
 #' \code{\link{processTimeseries}
 #' @param plot a string vector indicating the values to be plotted;
-#' that is: `total' for a plot of the total signal, summed over
+#' `total': plot of the total signal, summed over
 #' the time-points, and indicating the applied threshold \code{low.thresh};
 #' note that the total levels may have been transformed (e.g. by \code{log_1}
 #' or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
-#' in \code{\link{processTimeseries}
+#' in \code{\link{processTimeseries}; `timeseries': plot the complete
+#' time-series as a heatmap, where time is plotted bottom-up on the y-axis
 #'@export
 plot.tset <- function(tset, plot=c("total","timeseries")) {
 
@@ -417,21 +457,19 @@ plot.tset <- function(tset, plot=c("total","timeseries")) {
     }
 }
 
-#' plot the clustering of each time-series; clusters will be sorted
-#' and then colored by their similarity (see \code{\link{sortClusters}}
-#' and \code\link{colorClusters}}
+#' plot the clustering object returned by \code{\link{clusterTimeseries}}
 #' @param cset a set of clusterings as returned by
 #' \code{\link{clusterTimeseries}}
-#' @param k a numeric vector indicating the clusterings to be plotted;
-#' specifically the column number in the matrix of clusterings
+#' @param k a numeric or string vector indicating the clusterings to be plotted;
+#' specifically the column numbers or names in the matrix of clusterings
 #' in \code{cset$clusters}; if missing all columns will be plotted
 #' and the calling code must take care of properly assigning \code{par(mfcol)}
 #' or \code{layout} for the plot
-#' @param x optinally x-values can be passed here to use real (chromosomal)
-#' coordinates for the x-axis
+#' @param x optinally x-values to use as x-axis (e.g. to reflect absolute
+#' chromosomal coordinates)
+#'@export
 plot.cset <- function(cset, k, x) {
-    
-  
+      
     ## cluster sorting via Ccc (cluster-cluster correlation)
     if ( !"sorting" %in% names(cset) )
       cset <- sortClusters(cset, verb=1)
@@ -460,13 +498,31 @@ plot.cset <- function(cset, k, x) {
     }
 }
 
+#' plot the final segmentation objects returned by
+#' \code{\link{segmentClusters}} and \code{\link{segmentClusters.batch}}
+#' @param tset a set of segmentations as returned by
+#' \code{\link{segmentClusters}} and \code{\link{segmentClusters.batch}}
+#' @param types a string vector indicating segment types to plot (a subset of
+#' \code{sset$ids}; defaults to all in \code{sset$ids})
+#' @param x optional x-values to use as x-axis (e.g. to reflect absolute
+#' chromosomal coordinates)
+#' @param plot string list indicating which data should be plotted;
+#' `segments': plot segments as arrows; `S1' plot the scoring vectors
+#' \code{s(i,j,c} for all \code{c}; `S' plot the derivative of
+#' matrix \code{S(i,c)} for all \code{c}
+#'@export
 plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
 
-    if ( missing(types) ) {
+    if ( missing(types) ) 
         types <- rownames(sset$settings)
-    }
-      
+
+    ## one plot for all segments 
     if ( "segments" %in% plot ) {
+
+        ## mock "chromosome" coordinates
+        N <- sset$N
+        coors <- c(chr=1,start=1,end=N) 
+
         segs <- sset$segments
         columns <- c(name="ID", type="type", start="start", end="end",
                      color="color")
@@ -481,33 +537,35 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
         points(fuse[,"start"], ypos[fuse[,"type"]], col="black",
                pch=4, lwd=1, cex=1.5)
     }
-    
+
+    ## colors for S1 heatmap
     colors0 <- rev(grDevices::gray.colors(100)) 
     colors0[1] <- "#FFFFFF" ## replace minimal by white
 
     if ( any(c("S","S1") %in% plot) ) {
+
+        ## get matrices, cluster sorting and colors
         SK <- sset$SK[types]
         sk.srt <- sset$sorting[types]
         sk.col <- sset$colors[types]
-        #if ( missing(k) ) 
-            k <- 1:length(SK)
-        #if ( length(k)>1 )
-        #    par(mfcol=c(length(k),1))
-        for ( j in k ) {
 
-            ## sorting
+        ## one plot for each segmentation!
+        for ( j in 1:length(SK) ) {
+
+            ## cluster sorting
             srt <- as.character(sk.srt[[j]])
-            ## coloring; add black for nuissance
+            ## cluster coloring; add black for nuissance
             sgcols <- c("#000000", sk.col[[j]][srt])
             srt <- c("0",srt)
 
             ## plot S1 as heatmap
             if ( "S1" %in% plot ) {
-
-                S1 <- t(SK[[j]]$S1[,rev(srt)])
+                S1 <- t(SK[[j]]$S1[,rev(srt)]) # sort by cluster sorting!
                 S1 <- S1/apply(S1,1,mean)
+                ## TODO: add from segmenTools
                 image_matrix(S1,axis=2, col=colors0, ylab="cluster")
             }
+            if ( !"S" %in% plot ) next
             
             ## add alpha
             sgcols <- paste(sgcols,"EE",sep="") 
@@ -524,20 +582,57 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
             ## x-axis: x can be passed to use real coordinates
             if ( missing(x) )
               x <- 1:nrow(S)
-            xlim <- range(x) 
-            
+            xlim <- range(x)             
 
-            ##cat(paste(paste(range(ash(dS)),collapse="-"),"\n"))
             xrng <- stats::quantile(x,c(.05,.95))
             xidx <- which(x>xrng[1]&x<xrng[2]) #x%in%xrng[1]:xrng[2]
             ylim <- stats::quantile(ash(dS[xidx,]),c(0,1))
             plot(1,ylim=ylim,xlim=xlim,ylab=expression(ash(Delta~S["i,C"])))
-            lines(x,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND GRAY
-            lines(x,ash(dS[,1]),lwd=1,lty=3,col="#00000099") # NUI: BACKGROUND GRAY
-            matplot(x, ash(dS), type="l", lty=1, lwd=1, add=TRUE, col=sgcols)
+            lines(x,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND 
+            lines(x,ash(dS[,1]),lwd=1,lty=3,col="#00000099") # NUI: BACKGROUND 
+            graphics::matplot(x, ash(dS), type="l",
+                              lty=1, lwd=1, add=TRUE, col=sgcols)
             graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
-
-            
         }
+    }
+}
+
+#' plot all objects from the segmentation pipeline, i.e. the processed
+#' time-series, the clustering, the internal scoring matrices and
+#' the final segments
+#' @param tset the time-series object returned by
+#' \code{\link{processTimeseries}
+#' @param cset a set of clusterings as returned by
+#' \code{\link{clusterTimeseries}}
+#' @param tset a set of segmentations as returned by
+#' \code{\link{segmentClusters}} and \code{\link{segmentClusters.batch}}
+#'@export
+plot.segmentation <- function(tset,cset,sset) {
+
+    nsg <- length(sset$ids)# total number of segmentations
+    nk <- length(cset$ids) # number of clusterings
+    spk <- nsg/nk # segmentations per clustering
+    ## number of plots
+    ## each clustering can have multiple segmentations; plot each
+    ## 2 for time-series; and for each clustering 2 (clustering and all segments),
+    ## plus S1 & S 
+    nplots <- 2 + length(K) * (2 + 2*spk)
+    par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
+
+    ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
+    ## for threshold) and a heatmap of the time-series
+    plot.tset(tset, plot=c("total","timeseries"))
+    
+    ## CLUSTERING PLOT UTILITY: 
+    ## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)
+    ## and colored along a color-wheel
+    for ( k in 1:ncol(cset$clusters) ) {
+        ## plot clustering
+        plot.cset(cset, k)
+        ## SEGMENTATION PLOT UTILITY
+        ## plot all segments, S1(i,c), S(i,c) for this clustering
+        kid <- cset$ids[k]
+        types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
+        plot.sset(sset, plot=c("segments","S","S1"), types=types) 
     }
 }
