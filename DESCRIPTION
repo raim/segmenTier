@@ -11,8 +11,6 @@ License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.12.7)
 Suggests:
-    flowMerge
-    flowClust
-    flowCore
+    flowMerge, flowClust, flowCore
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
