@@ -118,7 +118,7 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 processTimeseries <- function(ts, trafo="raw", 
                               use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
                               perm=0, use.snr=TRUE, low.thresh=-Inf, 
-                              smooth.space, smooth.time, verb=0) {
+                              smooth.space=1, smooth.time=1, verb=0) {
 
     if ( typeof(ts)=="list" )
         ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
@@ -140,22 +140,18 @@ processTimeseries <- function(ts, trafo="raw",
 
     ## smooth time-points between adjacent positions
     ## currently not used, doesn't help to avoid fragmentation!
-    if ( !missing(smooth.space) ) {
-        if ( smooth.space>1 ) {
-            tsm <- apply(tsd[!zs,], 2 ,ma, smooth.space,FALSE)
-            tsd[!zs,] <- tsm
-        }
+    if ( smooth.space>1 ) {
+        tsm <- apply(tsd[!zs,], 2 ,ma, smooth.space,FALSE)
+        tsd[!zs,] <- tsm
     }
     ## smooth time-series
-    if ( !missing(smooth.time) ) {
-        ## currently used only in clustering final segment time series
-        ## NOTE/TODO: smooth.time must be ODD for smoothEnds
-        if ( smooth.time>1 ) {
-            tsm <- t(apply(tsd[!zs,], 1, ma, n=smooth.time, circular=FALSE))
-            ends <- stats::smoothEnds(tsd[!zs,], k=smooth.time)
-            tsd[!zs,] <- tsm
-            tsd[!zs,c(1,ncol(tsd))] <- ends[,c(1,ncol(tsd))]
-        }
+    ## currently used only in clustering final segment time series
+    ## NOTE/TODO: smooth.time must be ODD for smoothEnds
+    if ( smooth.time>1 ) {
+        tsm <- t(apply(tsd[!zs,], 1, ma, n=smooth.time, circular=FALSE))
+        ends <- stats::smoothEnds(tsd[!zs,], k=smooth.time)
+        tsd[!zs,] <- tsm
+        tsd[!zs,c(1,ncol(tsd))] <- ends[,c(1,ncol(tsd))]
     }
 
         
@@ -231,10 +227,20 @@ processTimeseries <- function(ts, trafo="raw",
     ## remove data rows: NA or low
     rm.vals <- na.rows | low
 
+    settings <- list(trafo=trafo, 
+                     use.fft=use.fft,
+                     dc.trafo=dc.trafo,
+                     dft.range=dft.range,
+                     perm=perm,
+                     use.snr=use.snr,
+                     low.thresh=low.thresh, 
+                     smooth.space=smooth.space,
+                     smooth.time=smooth.time)
+    
     ## time-series data set for clustering in clusterTimeseries
     tset <- list(dat=dat, ts=tsd, dft=fft, pvalues=pvl, tot=tot,
                  zero.vals=zs, rm.vals=rm.vals, low.vals=low,
-                 id=processing)
+                 settings=settings, id=processing)
     class(tset) <- "timeseries"
     
     ## silent return
@@ -471,7 +477,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
-                 K=K, usedk=usedk, warn=warn)
+                 K=K, usedk=usedk, warn=warn, ids=colnames(clusters))
     class(cset) <- "clustering"
 
     ## add cluster colors
@@ -483,17 +489,22 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 
 #' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 #' assigns colors to each cluster in each clustering along
-#' the "hue" color wheel; if \code{cset} contains a sorting (see
+#' the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
+#' if \code{cset} contains a sorting (see
 #' \code{clusterSort}), this sorting will be used to assing colors along
-#' the color wheel;
+#' the color wheel, otherwise a sorting will be calculated first;
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #'@export
 colorClusters <- function(cset) {
+
+    ## each column in the clustering matrix is one clustering
     cset$colors <- rep(list(NA), ncol(cset$clusters))
 
     ## sort if no sorting is present
+    ## this requires the cluster-cluster similarity matrix Ccc
     if ( !"sorting" %in% names(cset) ) 
         cset <- sortClusters(cset)
+
     for ( k in 1:ncol(cset$clusters) ) {
         cols <- color_hue(ncol(cset$Ccc[[k]]))
         names(cols) <- cset$sorting[[k]]
@@ -504,17 +515,26 @@ colorClusters <- function(cset) {
 }
 
 #' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
-#' uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
-#' clusters by their similarity, starting with the first cluster; the
-#' sorting is added as \code{sorting} to \code{cset} and the annotated
-#' \code{cset} is returned.
+#' uses the cluster-cluster similarity matrix \code{Ccc} to sort
+#' clusters by their similarity, starting with the first cluster `1'; the next
+#' cluster is the first cluster (lowest cluster number) with the highest
+#' similarity to cluster `1', and procedding from there. The final sorting is
+#' added as \code{sorting} to \code{cset} and the annotated
+#' \code{cset} is returned. This sorting is subsequently used to select
+#' cluster colors.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #'@export
 sortClusters <- function(cset, verb=0) {
 
+    ## each column in the clustering matrix is one clustering
     cset$sorting <- rep(list(NA), ncol(cset$clusters))
-    
+
+    ## each clustering in \code{cset} comes with a cluster-cluster
+    ## similarity matrix (used for scoring function \code{ccor});
+    ## here we use it to get a rough sorting, simply starting with
+    ## cluster '1'; the first cluster with the highest similarity
+    ## to cluster '1' is taken as the next cluster
     for ( k in 1:ncol(cset$clusters) ) {
         Ccc <- cset$Ccc[[k]]
         sorting <- colnames(Ccc)
@@ -542,6 +562,20 @@ sortClusters <- function(cset, verb=0) {
     cset
 }
 
+#' generate the parameter list (\code{varySettings}) for
+#' \code{\link{segmentCluster.batch}}, using defaults
+#' for all parameters not passed.
+setVarySettings <- function(E=1,
+                            S="ccor",
+                            M=c(100),
+                            Mn=c(20,100),
+                            a=-2, nui=1,
+                            nextmax=TRUE,
+                            multi="max",
+                            multib="max") {
+    list(E=E, S=S, M=M, Mn=Mn, a=a, nui=nui, # scoring
+         nextmax=nextmax, multi=multi, multib=multib) # backtracing
+}
 
 #' A high-level wrapper for multiple runs of segmentation by
 #' \code{\link{segmentClusters}} for multiple clusterings and
@@ -553,7 +587,9 @@ sortClusters <- function(cset, verb=0) {
 #' the function will construct a matrix of all possible combinations of
 #' parameter values in this list, call \code{\link{segmentClusters}} for
 #' each, and report a matrix of segments where the segment `type' is
-#' constructed from the varied parameters; see option \code{short.name}
+#' constructed from the varied parameters; see option \code{short.name}.
+#' A varySettings list with all required (default) parameters can be
+#' obtained via function \code{\link{setVarySettings}}.
 #' @param fuse.threshold if adjacent segments are associated with clusters
 #' the centers of which have a Pearson correlation \code{>fuse.threshold}
 #' the field "fuse" will be set to 1 for the second segments (top-to-bottom
@@ -571,8 +607,9 @@ sortClusters <- function(cset, verb=0) {
 #' @details This is a high-level wrapper for \code{\link{segmentClusters}}
 #' which allows segmentation over multiple clusterings as provided by the
 #' function \code{\link{clusterTimeseries}} and over multiple segmentation
-#' paramers. Specifially, parameters \code{csim.scale}, \code{score},
-#' \code{M} and \code{Mn} can all be vectors.
+#' parameters. Each parameter in the list \code{varySettings} can be
+#' a vector and ALL combinations of the passed parameter values will
+#' be used for one run of \code{\link{segmentCluster}}.
 #'@export
 segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                  short.name=TRUE, id,
@@ -617,8 +654,9 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
       SK <- rep(list(NA), nrow(params))
     else
       SK <- NULL
-    ## colors
+    ## colors & sorting
     seg.col <- rep(list(NA), nrow(params))
+    seg.srt <- rep(list(NA), nrow(params))
     
     ## TODO: convert this loop to lapply and try parallel use!
     ## TODO: redirect messages to msgfile or store in results
@@ -671,6 +709,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         ## pass on cluster coloring as segment coloring
         if ( "colors" %in% names(cset) )
           seg.col[[i]] <- cset$colors[[K]]
+        if ( "sorting" %in% names(cset) )
+          seg.srt[[i]] <- cset$sorting[[K]]
 
         ## tag adjacent segments from correlating clusters
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
@@ -713,7 +753,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     rownames(params) <- sgtypes
 
     ## TODO: introduce and use classes for segment results
-    sset <- list(segments=allsegs, SK=SK, colors=seg.col, settings=params)
+    sset <- list(segments=allsegs, SK=SK, colors=seg.col, sorting=seg.srt,
+                 settings=params, ids=sgtypes)
     class(sset) <- "segmentset"
     return(sset)
 }

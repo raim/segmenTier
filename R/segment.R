@@ -253,8 +253,11 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
-    if ( save.matrix ) seg$SK <- list(SK)
-
+    if ( save.matrix ) {
+        colnames(SK$S) <- colnames(SK$K) <- colnames(SK$S1) <- 0:(ncol(SK$S)-1)
+        seg$SK <- list(SK)
+    }
+    
     ## add cluster similarity matrix
     seg$csim <- list(csim)
 

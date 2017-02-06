@@ -25,19 +25,19 @@ iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
 
 ### SEGMENTATION PARAMETERS
-vary <- list(
-    ## SCORING
-    E=2, #c(1,3), # scale exponent of similarity matrices csim
-    S=c("ccor","icor","ccls"), # SCORING FUNCTIONS
-    M=100, #c(30,175), # scoring function minimal length penalty
-    Mn=100, ## for nuissance clusters: allow smaller segments!?
-    a=-2, 
-    nui=2, #-/+ correlation of nuissance cluster with others and itself
+vary <- setVarySettings(
+  ## SCORING
+  E=2, #c(1,3), # scale exponent of similarity matrices csim
+  S=c("ccor","icor","ccls"), # SCORING FUNCTIONS
+  M=100, #c(30,175), # scoring function minimal length penalty
+  Mn=100, ## for nuissance clusters: allow smaller segments!?
+  a=-2, 
+  nui=2, #-/+ correlation of nuissance cluster with others and itself
     ## BACKTRACING
-    nextmax=TRUE, # in back-tracing, search for the next non-decreasing S(i,c)
-    multi="max", # "min" # handling of multiple max. score k in scoring
-    multib="max" # "min" # multiple max. score clusters in back-tracing
-)
+  nextmax=TRUE, # in back-tracing, search for the next non-decreasing S(i,c)
+  multi="max", # "min" # handling of multiple max. score k in scoring
+  multib="max" # "min" # multiple max. score clusters in back-tracing
+  )
 
 
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
@@ -59,40 +59,49 @@ allsegs <- sset$segments
 
 
 ## get time-series data
-ts <- tset$ts # incl. all trafos and zeros set to NA
-ts[tset$zero.vals,] <- NA
-tot <- tset$tot # total of the time-series
-
-N <- nrow(ts)
-coors <- c(chr=1,start=1,end=N) # "chromosome" coordinates
-
-colors0 <- rev(gray.colors(100)) ## heatmap colors for the timeseries 
-colors0[1] <- "#FFFFFF" ## replace minimal by white
 
 if ( !interactive() )
     png("segment_data.png",res=300,units="in", width=10,height=5)
 
-par(mfcol=c(3,1),mai=c(.3,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
-plot(1:N,tot,log=ifelse(trafo!="","","y"),type="l",lwd=2,axes=FALSE,ylab=NA)
-polygon(x=c(1,1,N,N),y=c(min(tot,na.rm=TRUE),rep(low.thresh,2),min(tot,na.rm=TRUE)),col="#00000055",border=NA)
-abline(h=low.thresh,col="#000000BB")
-lines(1:N,tot)
-axis(2);
-axis(1)
-mtext("total signal", 2, 2)
-segment.plotHeat(ts,coors=coors,chrS=0,colors=colors0, colnorm=TRUE)
-axis(2,at=1:ncol(ts))
-axis(1)
-mtext("time points", 2, 2)
-## TODO: plot clustering
-columns <- c(name="ID", type="type", start="start", end="end", color="color")
-ypos <- segment.plotFeatures(allsegs, coors=coors,
-                             typord=TRUE,cuttypes=TRUE,
-                             ylab="", names=FALSE,columns=columns,tcx=.5)
-axis(1)
-## plot fuse tag
-fuse <- allsegs[allsegs[,"fuse"],]
-points(fuse[,"start"],ypos[fuse[,"type"]],col="red",pch=3, lwd=2,cex=2)
+
+nsg <- length(sset$ids)
+nk <- length(cset$ids)
+## number of plots
+## two for time-series (total and heatmap)
+## for each clustering: 1xclustering, 1x all segments, S/S1 for each segmentation type
+nplots <- 2 + length(K) * (2 + 2*nsg/nk)
+par(mfcol=c(nplots,1),mai=c(.3,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
+
+## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
+## for threshold) and a heatmap of the time-series
+plot.tset(tset, plot=c("total","timeseries"))
+## CLUSTERING PLOT UTILITY: 
+## each clustering can have multiple segmentations; plot each
+## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)
+## and colored along a color-wheel
+for ( k in 1:ncol(cset$clusters) ) {
+    plot.cset(cset, k)
+    ## TODO:
+    ## plot.sset(sset, c("segments")) - 1x
+    ## plot.sset(sset, c("SV","SK")) -  2x each type for k 
+    ## for each clustering, plot SV, SK and segments
+    ##plot.sset(sset$SK[tps], c("segments")) 
+    columns <- c(name="ID", type="type", start="start", end="end",
+                 color="color")
+    ## filter allsegs by segments for the current clustering
+    kid <- cset$ids[k]
+    tps <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
+    ypos <- segment.plotFeatures(allsegs[allsegs[,"type"]%in%tps,],
+                                 coors=coors, typord=TRUE,cuttypes=TRUE,
+                                 ylab="", names=FALSE,columns=columns,tcx=.5)
+    axis(1)
+    ## plot fuse tag
+    fuse <- allsegs[allsegs[,"fuse"],]
+    points(fuse[,"start"],ypos[fuse[,"type"]],col="black",pch=4, lwd=1,cex=1.5)
+    ## plot S/S1
+    plot.SK(sset$SK[tps], c("S","S1")) 
+    
+}
 
 if ( !interactive() )
     dev.off()

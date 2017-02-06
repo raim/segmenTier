@@ -369,16 +369,74 @@ plotSegments <- function(cset, ts, scrR,tot, out.file, use.log=FALSE,
 }
 
 ### USING CLASSES
-plot.tset <- function(tset) {
+#' plot the processed time-series object returned from
+#' \code{\link{processTimeseries}}.
+#' @param tset the time-series object returned by
+#' \code{\link{processTimeseries}
+#' @param plot a string vector indicating the values to be plotted;
+#' that is: `total' for a plot of the total signal, summed over
+#' the time-points, and indicating the applied threshold \code{low.thresh};
+#' note that the total levels may have been transformed (e.g. by \code{log_1}
+#' or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
+#' in \code{\link{processTimeseries}
+#'@export
+plot.tset <- function(tset, plot=c("total","timeseries")) {
+
+    ## get time-series data
+    ts <- tset$ts # incl. all trafos and zeros set to NA
+    ts[tset$zero.vals,] <- NA
+    
+    tot <- tset$tot # total of the time-series
+
+    ## mock "chromosome" coordinates
+    N <- nrow(ts)
+    coors <- c(chr=1,start=1,end=N) 
+
+    ## timeseries heatmap colors
+    colors0 <- rev(grDevices::gray.colors(100)) 
+    colors0[1] <- "#FFFFFF" ## replace minimal by white
+
+    ##totlog <- tset$settings$trafo!="raw" | tset$settings$dc.trafo!="raw"
+    low.thresh <- tset$settings$low.thresh
+    
+    if ( "total" %in% plot ) {
+        plot(1:N,tot,log="",type="l",lwd=2,axes=FALSE,ylab=NA,xlab=NA)
+        polygon(x=c(1,1,N,N),y=c(min(tot,na.rm=TRUE),rep(low.thresh,2),
+                               min(tot,na.rm=TRUE)),col="#00000055",border=NA)
+        abline(h=low.thresh,col="#000000BB")
+        lines(1:N,tot)
+        axis(2);
+        axis(1)
+        mtext("total signal", 2, 2)
+    }
+    if ( "timeseries" %in% plot ) {
+        segment.plotHeat(ts,coors=coors,chrS=0,colors=colors0, colnorm=TRUE)
+        axis(2,at=1:ncol(ts))
+        axis(1)
+        mtext("time points", 2, 2)
+    }
 }
-plot.cset <- function(cset, k) {
+
+#' plot the clustering of each time-series; clusters will be sorted
+#' and then colored by their similarity (see \code{\link{sortClusters}}
+#' and \code\link{colorClusters}}
+#' @param cset a set of clusterings as returned by
+#' \code{\link{clusterTimeseries}}
+#' @param k a numeric vector indicating the clusterings to be plotted;
+#' specifically the column number in the matrix of clusterings
+#' in \code{cset$clusters}; if missing all columns will be plotted
+#' and the calling code must take care of properly assigning \code{par(mfcol)}
+#' or \code{layout} for the plot
+#' @param x optinally x-values can be passed here to use real (chromosomal)
+#' coordinates for the x-axis
+plot.cset <- function(cset, k, x) {
     
   
     ## cluster sorting via Ccc (cluster-cluster correlation)
-    if ( !"cls.srt" %in% names(cset) )
+    if ( !"sorting" %in% names(cset) )
       cset <- sortClusters(cset, verb=1)
     ## cluster colors
-    if ( !"cls.col" %in% names(cset) )
+    if ( !"colors" %in% names(cset) )
       cset <- colorClusters(cset)
 
     ## plotting all: layout or mfcol must be set from outside;
@@ -386,11 +444,12 @@ plot.cset <- function(cset, k) {
     if ( missing(k) ) 
         k <- 1:ncol(cset$clusters)
     if ( length(k)>1 )
-        par(mfcol=c(k,1))
+        par(mfcol=c(length(k),1))
     for ( i in k ) {
         seq <- as.character(cset$clusters[,i])
         cls.srt <- cset$sorting[[i]]
-        x <- 1:length(seq)
+        if ( missing(x) )
+          x <- 1:length(seq)
         y <- 1:length(cls.srt)
         names(y) <- cls.srt
         cols <- cset$colors[[i]]
@@ -400,18 +459,37 @@ plot.cset <- function(cset, k) {
         axis(2, at=y, labels=names(y), las=2)
     }
 }
-plot.sset <- function(sset, k, x) {
 
-    if ( "SK" %in% names(sset) ) {
+plot.sset <- function(sset, k, x, plot=c("segments", "S", "S1")) {
+
+    if ( "segments" %in% plot ) {
+    }
+    
+    if ( "S" %in% plot ) {
         SK <- sset$SK
         if ( missing(k) ) 
             k <- 1:length(SK)
         if ( length(k)>1 )
-            par(mfcol=c(k,1))
+            par(mfcol=c(length(k),1))
         for ( j in k ) {
 
+            ## sorting
+            srt <- as.character(sset$sorting[[j]])
+            ## coloring; add black for nuissance
+            sgcols <- c("#000000", sset$colors[[j]][srt])
+            srt <- c("0",srt)
+
+
+            ## scale down
+            sgcols <- paste(sgcols,"EE",sep="") 
+            names(sgcols) <- srt
+            ## only show clusters that actually produced a segment
+            tp <- allsegs[,"type"]%in%names(SK)[j]
+            sgcols[!names(sgcols)%in%as.character(allsegs[tp,"CL"])] <- NA
+
+            ## get matrix and sort according to cluster sorting
             ## TODO: plot by segment; highlight winning segment!!
-            S <- SK[[j]]$S
+            S <- SK[[j]]$S[,srt]
             dS <- apply(S,2,function(x) c(0,diff(x)))
 
             ## x-axis: x can be passed to use real coordinates
@@ -419,11 +497,6 @@ plot.sset <- function(sset, k, x) {
               x <- 1:nrow(S)
             xlim <- range(x) 
             
-            sgcols <- sset$colors[[j]]
-            sgcols <- paste(sgcols,"EE",sep="") ## scale down
-            tp <- allsegs[,"type"]%in%names(SK)[j]
-            ## only show clusters that actually produced a segment
-            sgcols[! (1:length(sgcols)%in%(allsegs[tp,"CL"]+1))] <- NA
 
             ##cat(paste(paste(range(ash(dS)),collapse="-"),"\n"))
             xrng <- stats::quantile(x,c(.05,.95))
@@ -432,21 +505,25 @@ plot.sset <- function(sset, k, x) {
             plot(1,ylim=ylim,xlim=xlim,ylab=expression(ash(Delta~S["i,C"])))
             lines(x,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND GRAY
             lines(x,ash(dS[,1]),lwd=1,lty=3,col="#00000099") # NUI: BACKGROUND GRAY
-            matplot(x,ash(dS), type="l", lty=1, lwd=1, add=TRUE,
-                    col=sgcols)
+            matplot(x, ash(dS), type="l", lty=1, lwd=1, add=TRUE, col=sgcols)
             graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
         }
     }
 
     ## plot S1 as heatmap
-    if ( "SK" %in% names(sset) ) {
+    if ( "S1" %in% plot ) {
+        colors0 <- rev(grDevices::gray.colors(100)) 
+        colors0[1] <- "#FFFFFF" ## replace minimal by white
         SK <- sset$SK
         if ( missing(k) ) 
             k <- 1:length(SK)
         if ( length(k)>1 )
-            par(mfcol=c(k,1))
+            par(mfcol=c(length(k),1))
         for ( j in k ) {
-            image_matrix(t(SK[[j]]$S1)/apply(SK[[j]]$S1,2,mean))
+            srt <- c("0",as.character(sset$sorting[[j]]))
+            S1 <- t(SK[[j]]$S1[,rev(srt)])
+            S1 <- S1/apply(S1,1,mean)
+            image_matrix(S1,axis=2, col=colors0, ylab="cluster")
         }
     }
 }
