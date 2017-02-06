@@ -779,7 +779,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     ## TODO: introduce and use classes for segment results
     sset <- list(segments=allsegs, N=N, colors=seg.col, sorting=seg.srt,
                  SK=SK, settings=params, ids=sgtypes)
-    class(sset) <- "segmentset"
+    class(sset) <- "segments"
     return(sset)
 }
 

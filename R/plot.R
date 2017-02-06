@@ -291,8 +291,8 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.tset <- function(x, plot=c("total","timeseries"), ...) {
-
+plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
+    
     tset <- x
     
     ## get time-series data
@@ -343,7 +343,7 @@ plot.tset <- function(x, plot=c("total","timeseries"), ...) {
 #' chromosomal coordinates)
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.cset <- function(x, k, coors, ...) {
+plot.clustering <- function(x, k, coors, ...) {
 
     cset <- x
     
@@ -389,7 +389,7 @@ plot.cset <- function(x, k, coors, ...) {
 #' matrix \code{S(i,c)} for all \code{c}
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.sset <- function(x, types, coors, plot=c("segments", "S", "S1"), ...) {
+plot.segments <- function(x, types, coors, plot=c("segments", "S", "S1"), ...) {
 
     sset <- x
     
