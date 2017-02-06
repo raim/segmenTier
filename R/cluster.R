@@ -748,6 +748,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
+
+    ## name all stored data!
     if ( save.matrix )
       names(SK) <- sgtypes
     names(seg.col) <- names(seg.srt) <- sgtypes

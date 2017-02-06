@@ -477,11 +477,14 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
                                      tcx=.5)
         axis(1)
         ## plot fuse tag
-        fuse <- allsegs[allsegs[,"fuse"],]
+        fuse <- segs[segs[,"fuse"],]
         points(fuse[,"start"], ypos[fuse[,"type"]], col="black",
                pch=4, lwd=1, cex=1.5)
     }
     
+    colors0 <- rev(grDevices::gray.colors(100)) 
+    colors0[1] <- "#FFFFFF" ## replace minimal by white
+
     if ( any(c("S","S1") %in% plot) ) {
         SK <- sset$SK[types]
         sk.srt <- sset$sorting[types]
@@ -500,8 +503,6 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
 
             ## plot S1 as heatmap
             if ( "S1" %in% plot ) {
-                colors0 <- rev(grDevices::gray.colors(100)) 
-                colors0[1] <- "#FFFFFF" ## replace minimal by white
 
                 S1 <- t(SK[[j]]$S1[,rev(srt)])
                 S1 <- S1/apply(S1,1,mean)
@@ -512,8 +513,8 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
             sgcols <- paste(sgcols,"EE",sep="") 
             names(sgcols) <- srt
             ## only show clusters that actually produced a segment
-            tp <- allsegs[,"type"]%in%names(SK)[j]
-            sgcols[!names(sgcols)%in%as.character(allsegs[tp,"CL"])] <- NA
+            tp <- sset$segments[,"type"]%in%names(SK)[j]
+            sgcols[!names(sgcols)%in%as.character(sset$segments[tp,"CL"])] <- NA
 
             ## get matrix and sort according to cluster sorting
             ## TODO: plot by segment; highlight winning segment!!

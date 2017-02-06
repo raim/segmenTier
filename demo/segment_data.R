@@ -23,16 +23,17 @@ dft.range <- 2:7 # range of DFT to use for clustering
 K <- c(16) # cluster number K
 iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100   # number of initial configurations tested in kmeans
+nui.thresh <- 0.6
 
 ### SEGMENTATION PARAMETERS
 vary <- setVarySettings(
   ## SCORING
-  E=2, #c(1,3), # scale exponent of similarity matrices csim
-  S=c("ccor","icor","ccls"), # SCORING FUNCTIONS
+  E=1:3, #c(1,3), # scale exponent of similarity matrices csim
+  S="icor", #c("ccor","icor","ccls"), # SCORING FUNCTIONS
   M=100, #c(30,175), # scoring function minimal length penalty
   Mn=100, ## for nuissance clusters: allow smaller segments!?
   a=-2, 
-  nui=2, #-/+ correlation of nuissance cluster with others and itself
+  nui=c(1,3), #-/+ correlation of nuissance cluster with others and itself
     ## BACKTRACING
   nextmax=TRUE, # in back-tracing, search for the next non-decreasing S(i,c)
   multi="max", # "min" # handling of multiple max. score k in scoring
@@ -48,21 +49,23 @@ tset <- processTimeseries(ts=tsd, trafo=trafo, dc.trafo=dc.trafo,
                           use.snr=use.snr, low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
-cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart)
+cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
+                          nui.thresh=nui.thresh)
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
 sset <- segmentCluster.batch(cset, varySettings=vary, 
                              verb=1, save.matrix=TRUE)
-allsegs <- sset$segments
+
+## NOTE: segments are in sset$segments
+head(sset$segments)
+
+
 ## PLOT RESULTS
 
-
 ## get time-series data
-
 if ( !interactive() )
     png("segment_data.png",res=300,units="in", width=10,height=5)
-
 
 nsg <- length(sset$ids)
 nk <- length(cset$ids)
@@ -70,7 +73,7 @@ nk <- length(cset$ids)
 ## two for time-series (total and heatmap)
 ## for each clustering: 1xclustering, 1x all segments, S/S1 for each segmentation type
 nplots <- 2 + length(K) * (2 + 2*nsg/nk)
-par(mfcol=c(nplots,1),mai=c(.3,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
+par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
 
 ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
 ## for threshold) and a heatmap of the time-series
