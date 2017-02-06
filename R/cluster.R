@@ -609,7 +609,7 @@ setVarySettings <- function(E=1,
 #' function \code{\link{clusterTimeseries}} and over multiple segmentation
 #' parameters. Each parameter in the list \code{varySettings} can be
 #' a vector and ALL combinations of the passed parameter values will
-#' be used for one run of \code{\link{segmentCluster}}.
+#' be used for one run of \code{\link{segmentClusters}}.
 #'@export
 segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                  short.name=TRUE, id,

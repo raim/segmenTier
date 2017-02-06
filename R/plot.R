@@ -235,136 +235,6 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, yl
 
 
 
-#' plot segmentation data based on data returned by
-#' high-level wrappers, incl. S(c,i), K(c,i) and segments
-#' @details This is mostly used for testing, where a small data set
-#' is segmented by a high-level wrapper for multiple scoring functions
-#' and parameters.
-#' @param scrR a list containing multiple segmentations for (1) different
-#' scoring functions, (2) different parameters of the forward-step (dyn.prog.)
-#' and (3) different parameters of the back-tracing step.
-#' @param seq the sequence of clusters to be segments
-#' @param ts an optional time-series from for which the clustering was
-#' calculated
-#' @param tot an optional total signal from the timeseries in \code{ts}
-#' @param out.file optional out.file name (w/o file extension) to which a
-#' png will be plotted
-#' @param use.log plot the total data (\code{tot}) with logged y-axis
-#' @param add.plots in the plot layout, leave these rows for additional
-#' external plots
-#' @param verb level of verbosity; 0: no output, 1: progress messages
-#' @return Returns the file.name if out.file was specified.
-#' @export
-plotSegments <- function(cset, ts, scrR,tot, out.file, use.log=FALSE,
-                         add.plots=0, verb=2) {
-  
-    if ( verb>0 )
-        cat(paste("plotting",
-                  ifelse(missing(out.file),"results",out.file),"\t",date(),"\n"))
-
-    ## if nuissance cluster is present, increase
-    ## coloring by 1
-    seq <- cset$clusters[,1]
-    if ( 0 %in% seq ) {
-        cols <- sort(unique(seq))
-        names(cols) <- cols
-        cols <- cols+1
-    }
-    
-    ## how many rows?
-    ## time-series and clustering
-    rws <- as.numeric(!missing(tot)) + as.numeric(!missing(ts)) + 1 + add.plots
-    scores <- names(scrR)
-    scores <- scores[scores!="SM"]
-    for ( scor in scores ) {
-        multis <- names(scrR[[scor]])
-        multis <- multis[multis!="SM"]
-        rws <- rws + 1 + 2*(length(multis)) # one for each S(c,i) 
-    }
-    x <- 1:length(seq)
-    xlim <- c(min(x)-1,max(x)+1)
-    ## plot results
-    if ( !missing(out.file) ) {
-        file.name <- paste(out.file, ".png",sep="")
-        png(file.name, width=6,height=rws*.8,res=200,units="in")
-    }
-    orig.par <- par(c("mfcol","mai","mgp"))
-    par(mfcol=c(rws,1),mai=c(.01,.5,.01,.01),mgp=c(1.7,.5,0),xaxs="i")
-    
-    ## plot original data
-    if( !missing(tot) ) {
-        plot(x,tot,log=ifelse(use.log,"","y"),type="l",lwd=2,axes=FALSE,xlim=xlim)
-        axis(1);axis(2);
-    }
-    if( !missing(ts) ) {
-        #require("colorRamps")
-        colors0 <- rainbow(100) #matlab.like(100)  ## read count
-        colors0[1] <- "#FFFFFF" ## replace minimal by white
-        ts.nrm <- t(apply(ts,1,function(x) {
-            if ( sum(is.na(x))==length(x) ) return(x)
-            mx <- max(x,na.rm=TRUE)
-            mn <- min(x,na.rm=TRUE)
-            if ( mx==mn ) rep(NA,length(x)) else ((x-mn)/(mx-mn))}))
-        image(ts.nrm,col=colors0,axes=FALSE,xlim=xlim)
-    }
-    
-    ## plot original clustering
-    plot(x,seq,axes=FALSE,xlab="i",ylab="cluster",
-         col=cols[as.character(seq)],cex=1,pch=16,xlim=xlim)
-    axis(2)
-    points(which(seq==0),seq[seq==0],pch=16,cex=1)
-    
-    ## plot dyn.prog results
-    for ( scor in scores ) {
-        multS <- scrR[[scor]]
-        multi <- names(multS)
-        multi <- multi[multi!="SM"]
-        ## Scoring Matrix S(c,i) - should be the same over multi
-        S <- multS[[multi[1]]]$SK$S # total score S(c,i)
-        matplot(S,axes=FALSE,xlab="i",ylab="score S(i,c)",type="l",lty=1,lwd=1,
-                col=cols[1:ncol(S)],xlim=xlim)
-        axis(1)#,at=x,labels=seq,cex.axis=.6);axis(2)
-        ##axis(3,at=x,cex.axis=.6,tcl=.05,mgp=c(0,-.75,0))
-        legend("left",legend=scor,bty="n")
-        
-        for ( mult in multi ) {
-            ## back-tracing matrix K(c,i) - should be the same over multib
-            K <- multS[[mult]]$SK$K
-            matplot(K,axes=FALSE,xlab="i",ylab=paste(multS[[mult]]$SK$mink,"k"),
-                    type="l",lty=1,lwd=1, col=cols[1:ncol(K)],xlim=xlim)
-            legend("left",legend=paste("scoring:",mult),bty="n")
-            axis(1)#,at=x,labels=seq,cex.axis=.6);axis(2)
-            
-            ## plot segments
-            multib <- names(multS[[mult]])
-            multib <- multib[!multib%in% c("SK")]
-            
-            yl <- length(multS[[mult]])-1
-            par(mgp=c(2,.5,0))
-            plot(NA,ylim=c(0,yl+1),axes=FALSE,
-                 ylab="back-tracing",xlab=NA,xlim=xlim)
-            
-            for ( k in 1:length(multib) ) {
-                multb <- multib[k]
-                segments <- multS[[mult]][[multb]]
-                if ( nrow(segments)>0 )
-                    arrows(x0=segments[,2],y0=0+k,x1=segments[,3],
-                           col=cols[as.character(segments[,1])],
-                           length=0.075,code=3,angle=90,lwd=2)
-            }    
-            axis(1)#,at=x,labels=seq,cex.axis=.6)
-            axis(2,at=1:length(multib),labels=multib,las=2)
-        }
-    }
-    par(orig.par)
-    if ( !missing(out.file) )  {
-        dev.off()
-        if ( verb>0 )
-            cat(paste("plotted\t", file.name, date(), "\n"))
-        return(file.name)
-    }
-    if ( verb>0 ) cat(paste("done\t", date(), "\n"))
-}
 
 ## plot a matrix as seen in R; kept private since official version
 ## of this function is maintained in package segmenTools
@@ -499,9 +369,9 @@ plot.cset <- function(cset, k, x) {
 }
 
 #' plot the final segmentation objects returned by
-#' \code{\link{segmentClusters}} and \code{\link{segmentClusters.batch}}
-#' @param tset a set of segmentations as returned by
-#' \code{\link{segmentClusters}} and \code{\link{segmentClusters.batch}}
+#' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
+#' @param sset a set of segmentations as returned by
+#' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param types a string vector indicating segment types to plot (a subset of
 #' \code{sset$ids}; defaults to all in \code{sset$ids})
 #' @param x optional x-values to use as x-axis (e.g. to reflect absolute
@@ -604,8 +474,8 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
 #' \code{\link{processTimeseries}}
 #' @param cset a set of clusterings as returned by
 #' \code{\link{clusterTimeseries}}
-#' @param tset a set of segmentations as returned by
-#' \code{\link{segmentClusters}} and \code{\link{segmentClusters.batch}}
+#' @param sset a set of segmentations as returned by
+#' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #'@export
 plot.segmentation <- function(tset,cset,sset) {
 
