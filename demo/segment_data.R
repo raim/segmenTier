@@ -17,7 +17,7 @@ data(primseg436)
 use.fft <- TRUE # cluster discrete Fourier transform of data?
 use.snr <- TRUE # take SNR of DFT
 trafo <- "raw" # "ash" # "log_1" #
-dc.trafo <- "raw" # "ash" # NOTE: add component 1 (DC) to DFT range to use
+dc.trafo <- "ash" # "ash" # NOTE: add component 1 (DC) to DFT range to use
 low.thresh <- -Inf # -Inf/0 # minimal mean value (DC component of DFT if use.fft)
 dft.range <- 2:7 # range of DFT to use for clustering
 K <- c(16) # cluster number K
@@ -63,11 +63,12 @@ head(sset$segments)
 
 ## PLOT RESULTS
 
-## get time-series data
+## plot segmentation
 if ( !interactive() )
     png("segment_data.png",res=300,units="in", width=10,height=5)
 
-plotSegmentation(tset,cset,sset)
+# plot.matrix=TRUE will additionally plot the internal scoring matrices
+plotSegmentation(tset,cset,sset, plot.matrix = FALSE) 
 
 
 if ( !interactive() )

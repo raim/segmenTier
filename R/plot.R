@@ -485,9 +485,10 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
 #' @param cset a set of clusterings as returned by
 #' \code{\link{clusterTimeseries}}
 #' @param sset a set of segmentations as returned by
+#' @param plot.matrix include the internal scoring matrices in the plot
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #'@export
-plotSegmentation <- function(tset,cset,sset) {
+plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE) {
 
     nsg <- length(sset$ids)# total number of segmentations
     nk <- length(cset$ids) # number of clusterings
@@ -496,7 +497,7 @@ plotSegmentation <- function(tset,cset,sset) {
     ## each clustering can have multiple segmentations; plot each
     ## 2 for time-series; and for each clustering 2 (clustering and all segments),
     ## plus S1 & S 
-    nplots <- 2 + nk * (2 + 2*spk)
+    nplots <- 2 + nk * (2 + ifelse(plot.matrix, 2*spk, 0))
     par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
@@ -513,6 +514,8 @@ plotSegmentation <- function(tset,cset,sset) {
         ## plot all segments, S1(i,c), S(i,c) for this clustering
         kid <- cset$ids[k]
         types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
-        plot(sset, plot=c("segments","S","S1"), types=types) 
+        plot <- "segments"
+        if ( plot.matrix ) plot <- c("segments","S","S1")
+        plot(sset, plot=plot, types=types) 
     }
 }
