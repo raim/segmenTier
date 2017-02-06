@@ -411,13 +411,13 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' plot the processed time-series object returned from
 #' \code{\link{processTimeseries}}.
 #' @param tset the time-series object returned by
-#' \code{\link{processTimeseries}
+#' \code{\link{processTimeseries}}
 #' @param plot a string vector indicating the values to be plotted;
 #' `total': plot of the total signal, summed over
 #' the time-points, and indicating the applied threshold \code{low.thresh};
 #' note that the total levels may have been transformed (e.g. by \code{log_1}
 #' or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
-#' in \code{\link{processTimeseries}; `timeseries': plot the complete
+#' in \code{\link{processTimeseries}}; `timeseries': plot the complete
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
 #'@export
 plot.tset <- function(tset, plot=c("total","timeseries")) {
@@ -601,7 +601,7 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
 #' time-series, the clustering, the internal scoring matrices and
 #' the final segments
 #' @param tset the time-series object returned by
-#' \code{\link{processTimeseries}
+#' \code{\link{processTimeseries}}
 #' @param cset a set of clusterings as returned by
 #' \code{\link{clusterTimeseries}}
 #' @param tset a set of segmentations as returned by
