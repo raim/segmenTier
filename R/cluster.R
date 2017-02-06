@@ -744,12 +744,13 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         cat(paste("Total segments\t0\n",sep=""))
     else {
         cat(paste("Total segments\t",nrow(allsegs),"\n",sep=""))
-        if ( save.matrix )
-            names(SK) <- sgtypes
         ## OVERRIDE ID
         if ( !missing(id) ) 
             allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
     }
+    if ( save.matrix )
+      names(SK) <- sgtypes
+    names(seg.col) <- names(seg.srt) <- sgtypes
     rownames(params) <- sgtypes
 
     ## TODO: introduce and use classes for segment results

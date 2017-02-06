@@ -463,8 +463,7 @@ plot.cset <- function(cset, k, x) {
 plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
 
     if ( missing(types) ) {
-        kid <- cset$ids[k]
-        types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
+        types <- rownames(sset$settings)
     }
       
     if ( "segments" %in% plot ) {
@@ -483,8 +482,10 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
                pch=4, lwd=1, cex=1.5)
     }
     
-    if ( "S" %in% plot ) {
+    if ( any(c("S","S1") %in% plot) ) {
         SK <- sset$SK[types]
+        sk.srt <- sset$sorting[types]
+        sk.col <- sset$colors[types]
         #if ( missing(k) ) 
             k <- 1:length(SK)
         #if ( length(k)>1 )
@@ -492,7 +493,10 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
         for ( j in k ) {
 
             ## sorting
-            srt <- as.character(sset$sorting[[j]])
+            srt <- as.character(sk.srt[[j]])
+            ## coloring; add black for nuissance
+            sgcols <- c("#000000", sk.col[[j]][srt])
+            srt <- c("0",srt)
 
             ## plot S1 as heatmap
             if ( "S1" %in% plot ) {
@@ -504,9 +508,6 @@ plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
                 image_matrix(S1,axis=2, col=colors0, ylab="cluster")
             }
             
-            ## coloring; add black for nuissance
-            sgcols <- c("#000000", sset$colors[[j]][srt])
-            srt <- c("0",srt)
             ## add alpha
             sgcols <- paste(sgcols,"EE",sep="") 
             names(sgcols) <- srt
