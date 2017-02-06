@@ -369,9 +369,10 @@ plot.clustering <- function(x, k, xaxis, ...) {
         names(y) <- cls.srt
         cols <- cset$colors[[i]]
         ## plot original clustering
-        plot(xaxis,y[seq],axes=FALSE,xlab="",ylab="cluster",
+        plot(xaxis,y[seq],axes=FALSE,xlab="",ylab=NA,
              col=cols[seq],cex=1,pch=16)
         axis(2, at=y, labels=names(y), las=2)
+        graphics::mtext("cluster", 2, 2)
     }
 }
 
@@ -498,7 +499,7 @@ plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE) {
     ## 2 for time-series; and for each clustering 2 (clustering and all segments),
     ## plus S1 & S 
     nplots <- 2 + nk * (2 + ifelse(plot.matrix, 2*spk, 0))
-    par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.5,0),xaxs="i")
+    par(mfcol=c(nplots,1),mai=c(.01,1.5,.01,.01),mgp=c(1.3,.25,0),xaxs="i")
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
     ## for threshold) and a heatmap of the time-series
