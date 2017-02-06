@@ -92,14 +92,14 @@ clusterSegments <- function() {}
 #' character "0" (zero).
 #' @param csim cluster-cluster or position-cluster similarity
 #' matrix, for scoring functions "ccor" and "icor", respectively
-#' @param csim.scale exponent to scale similarity matrices, must be odd
+#' @param E exponent to scale similarity matrices, must be odd
 #' to maintain negative correlations!
 #' @param cset alternatively to arguments \code{seq} and \code{csim}, a
 #' set of clusterings as returned by \code{\link{clusterTimeseries}} can
 #' be provided; this requires the additional argument \code{k} to select
 #' the kth clustering from the set
 #' @param k the kth clustering of argument \code{cset} will be used
-#' @param score the scoring function to be used: "ccor", "icor" or "cls"
+#' @param S the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.
 #' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
@@ -134,9 +134,9 @@ clusterSegments <- function() {}
 #' is the cluster assignment and colums 2 and 3 are start and end position
 #' of the segments.
 #' @export
-segmentClusters <- function(seq, csim, csim.scale=1,
+segmentClusters <- function(seq, csim, E=1,
                             cset, k=1,
-                            score="ccor",
+                            S="ccor",
                             M=175, Mn=20, a=-2, nui=1,
                             nextmax=TRUE, multi="max",multib="max", 
                             verb=1, save.matrix=FALSE) {
@@ -146,8 +146,8 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## cluster set from clusterTimeseries
     if ( !missing(cset) ) {
         seq <- cset$clusters[,k]
-        if ( score=="ccor" ) csim <- cset$Ccc[[k]]
-        if ( score=="icor" ) csim <- cset$Pci[[k]]
+        if ( S=="ccor" ) csim <- cset$Ccc[[k]]
+        if ( S=="icor" ) csim <- cset$Pci[[k]]
     }
     
     ## 1: set up sequence and data
@@ -168,7 +168,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
     ## set-up similarity matrix for ccls
     ## internally 'ccor' is used, and we set up the
     ## cluster-cluster similarity function (matrix) here
-    if ( score=="ccls" ) {
+    if ( S=="ccls" ) {
         L <- length(unique(seqr))
         csim <- matrix(a, nrow=L, ncol=L) # Delta(C,D!=C) = a
         diag(csim) <- 1 # Delta(C,C) = 1
@@ -189,7 +189,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
         ## nuissance cluster will be cluster 1 
         seqr <- seqr + 1 ## TODO: get rid of this, avoid correction in .cpp
         
-        if ( score=="icor" ) {
+        if ( S=="icor" ) {
             ## cor(i,c) - similarity of position i to cluster medians
             ## reduce passed matrix to actually present clusters
             csim <- csim[,as.numeric(names(map))]
@@ -198,7 +198,7 @@ segmentClusters <- function(seq, csim, csim.scale=1,
             csim[seqr==1,] <- -nui
             csim[seqr==1,1] <- nui
         }
-        if ( score %in% c("ccor") ) {
+        if ( S %in% c("ccor") ) {
             ## cor(c,c) - similarity of cluster medians
             ## reduce passed matrix to actually present clusters
             csim <- csim[as.numeric(names(map)),as.numeric(names(map)),
@@ -216,24 +216,24 @@ segmentClusters <- function(seq, csim, csim.scale=1,
 
     ## scale similarity matrix!
     sgn <- sign(csim) # store sign
-    csim <- csim^csim.scale # scale matrix
+    csim <- csim^E # scale matrix
     ## if exponent is even (checking within machine tolerance)
     ## the sign is re-added
-    if ( csim.scale %% 2 < .Machine$double.eps^0.5 )
+    if ( E %% 2 < .Machine$double.eps^0.5 )
       csim <- sgn*csim # restore sign
-           #warning("csim.scale should be odd: ", csim.scale)
+           #warning("E should be odd: ", E)
  
     ## 2: calculate total scoring S(i,c) and backtracing K(i,c)
     if ( verb>0 ) {
         cat(paste("Scoring matrix\t", time(), "\n",sep=""))
-        cat(paste("parameters\t",paste("function:", score,
-                                        "; scale:", csim.scale,
+        cat(paste("parameters\t",paste("function:", S,
+                                        "; scale:", E,
                                         "; max/min:", multi,sep=""),
                   "\n",sep=""))
     }
     ## TODO: handle Mn in scoring functions
     ## add official nuissance cluster
-    SK<- calculateScore(seq=seqr, C=C, score=score, csim=csim,
+    SK<- calculateScore(seq=seqr, C=C, score=S, csim=csim,
                         M=M, Mn=Mn, multi=multi)
 
     ## 3: back-tracing to generate segments

@@ -565,6 +565,30 @@ sortClusters <- function(cset, verb=0) {
 #' generate the parameter list (\code{varySettings}) for
 #' \code{\link{segmentCluster.batch}}, using defaults
 #' for all parameters not passed.
+#' @param E exponent to scale similarity matrices, must be odd
+#' to maintain negative correlations!
+#' @param cset alternatively to arguments \code{seq} and \code{csim}, a
+#' set of clusterings as returned by \code{\link{clusterTimeseries}} can
+#' be provided; this requires the additional argument \code{k} to select
+#' the kth clustering from the set
+#' @param k the kth clustering of argument \code{cset} will be used
+#' @param S the scoring function to be used: "ccor", "icor" or "cls"
+#' @param M minimal sequence length; Note, that this is not a strict
+#' cut-off but defined as a penalty that must be "overcome" by good score.
+#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+#' shorter distances between segments; only used in scoring functions
+#' "ccor" and "icor" 
+#' @param a an additional penalty only used for pure cluster-based
+#' scoring w/o cluster similarity measures in scoring function "cls"
+#' @param nui the similarity score to be used for nuissance clusters in the
+#' cluster similarity matrices
+#' @param nextmax go backwards while score is increasing before openening a
+#' new segment, default is TRUE
+#' @param multi handling of multiple k with max. score in forward phase,
+#' either "min" (default) or "max"
+#' @param multib handling of multiple k with max. score in back-trace phase,
+#' either "min" (default), "max" or "skip"
+#'@export
 setVarySettings <- function(E=1,
                             S="ccor",
                             M=c(100),
@@ -693,8 +717,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
             cat(paste("SEGMENT TYPE\t",sgtype,
                       "\t", i,"of",nrow(params),"\n",sep=""))
         
-        seg <-segmentClusters(seq=seq,csim=csim,csim.scale=E,
-                              score=S,M=M,Mn=Mn,nui=nui,a=a,
+        seg <-segmentClusters(seq=seq,csim=csim,E=E,
+                              S=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
                               save.matrix=save.matrix,verb=verb)
 
