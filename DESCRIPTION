@@ -10,5 +10,7 @@ Description: segmenTier is a dynamic programing algorithm to define segments of
 License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.12.7)
+Suggests:
+    flowMerge
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
