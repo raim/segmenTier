@@ -1,12 +1,5 @@
 
 library("segmenTier")
-library("Rcpp")
-source("~/programs/segmenTier/R/plot.R")
-source("~/programs/segmenTier/R/segment.R")
-sourceCpp("~/programs/segmenTier/src/segment.cpp")
-source("~/programs/segmenTier/R/cluster.R")
-sourceCpp("~/programs/segmenTier/src/cluster.cpp")
-load("~/programs/segmenTier/data/primseg436.rda")
 
 ## load time-series data
 ## contains tsd from primseg436 for
