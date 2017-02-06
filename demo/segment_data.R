@@ -85,7 +85,7 @@ for ( k in 1:ncol(cset$clusters) ) {
     ## plot.sset(sset, c("segments")) - 1x
     ## plot.sset(sset, c("SV","SK")) -  2x each type for k 
     ## for each clustering, plot SV, SK and segments
-    ##plot.sset(sset$SK[tps], c("segments")) 
+    ##plot.sset(sset, c("segments"), types=tps) 
     columns <- c(name="ID", type="type", start="start", end="end",
                  color="color")
     ## filter allsegs by segments for the current clustering
@@ -99,7 +99,7 @@ for ( k in 1:ncol(cset$clusters) ) {
     fuse <- allsegs[allsegs[,"fuse"],]
     points(fuse[,"start"],ypos[fuse[,"type"]],col="black",pch=4, lwd=1,cex=1.5)
     ## plot S/S1
-    plot.SK(sset$SK[tps], c("S","S1")) 
+    plot.sset(sset, c("S","S1"), types=tps) 
     
 }
 

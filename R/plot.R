@@ -460,27 +460,54 @@ plot.cset <- function(cset, k, x) {
     }
 }
 
-plot.sset <- function(sset, k, x, plot=c("segments", "S", "S1")) {
+plot.sset <- function(sset, types, x, plot=c("segments", "S", "S1")) {
 
+    if ( missing(types) ) {
+        kid <- cset$ids[k]
+        types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
+    }
+      
     if ( "segments" %in% plot ) {
+        segs <- sset$segments
+        columns <- c(name="ID", type="type", start="start", end="end",
+                     color="color")
+        ## filter allsegs by segments for the current clustering
+        ypos <- segment.plotFeatures(segs, types=types,
+                                     coors=coors, typord=TRUE,cuttypes=TRUE,
+                                     ylab="", names=FALSE,columns=columns,
+                                     tcx=.5)
+        axis(1)
+        ## plot fuse tag
+        fuse <- allsegs[allsegs[,"fuse"],]
+        points(fuse[,"start"], ypos[fuse[,"type"]], col="black",
+               pch=4, lwd=1, cex=1.5)
     }
     
     if ( "S" %in% plot ) {
-        SK <- sset$SK
-        if ( missing(k) ) 
+        SK <- sset$SK[types]
+        #if ( missing(k) ) 
             k <- 1:length(SK)
-        if ( length(k)>1 )
-            par(mfcol=c(length(k),1))
+        #if ( length(k)>1 )
+        #    par(mfcol=c(length(k),1))
         for ( j in k ) {
 
             ## sorting
             srt <- as.character(sset$sorting[[j]])
+
+            ## plot S1 as heatmap
+            if ( "S1" %in% plot ) {
+                colors0 <- rev(grDevices::gray.colors(100)) 
+                colors0[1] <- "#FFFFFF" ## replace minimal by white
+
+                S1 <- t(SK[[j]]$S1[,rev(srt)])
+                S1 <- S1/apply(S1,1,mean)
+                image_matrix(S1,axis=2, col=colors0, ylab="cluster")
+            }
+            
             ## coloring; add black for nuissance
             sgcols <- c("#000000", sset$colors[[j]][srt])
             srt <- c("0",srt)
-
-
-            ## scale down
+            ## add alpha
             sgcols <- paste(sgcols,"EE",sep="") 
             names(sgcols) <- srt
             ## only show clusters that actually produced a segment
@@ -507,23 +534,8 @@ plot.sset <- function(sset, k, x, plot=c("segments", "S", "S1")) {
             lines(x,ash(dS[,1]),lwd=1,lty=3,col="#00000099") # NUI: BACKGROUND GRAY
             matplot(x, ash(dS), type="l", lty=1, lwd=1, add=TRUE, col=sgcols)
             graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
-        }
-    }
 
-    ## plot S1 as heatmap
-    if ( "S1" %in% plot ) {
-        colors0 <- rev(grDevices::gray.colors(100)) 
-        colors0[1] <- "#FFFFFF" ## replace minimal by white
-        SK <- sset$SK
-        if ( missing(k) ) 
-            k <- 1:length(SK)
-        if ( length(k)>1 )
-            par(mfcol=c(length(k),1))
-        for ( j in k ) {
-            srt <- c("0",as.character(sset$sorting[[j]]))
-            S1 <- t(SK[[j]]$S1[,rev(srt)])
-            S1 <- S1/apply(S1,1,mean)
-            image_matrix(S1,axis=2, col=colors0, ylab="cluster")
+            
         }
     }
 }
