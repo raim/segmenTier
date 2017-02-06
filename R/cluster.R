@@ -752,8 +752,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     ## name all stored data!
     if ( save.matrix )
       names(SK) <- sgtypes
-    names(seg.col) <- names(seg.srt) <- sgtypes
-    rownames(params) <- sgtypes
+    rownames(params) <- names(seg.col) <- names(seg.srt) <- sgtypes
 
     ## TODO: introduce and use classes for segment results
     sset <- list(segments=allsegs, SK=SK, colors=seg.col, sorting=seg.srt,
