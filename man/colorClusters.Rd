@@ -4,9 +4,10 @@
 \alias{colorClusters}
 \title{takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 assigns colors to each cluster in each clustering along
-the "hue" color wheel; if \code{cset} contains a sorting (see
+the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
+if \code{cset} contains a sorting (see
 \code{clusterSort}), this sorting will be used to assing colors along
-the color wheel;}
+the color wheel, otherwise a sorting will be calculated first;}
 \usage{
 colorClusters(cset)
 }
@@ -16,8 +17,9 @@ colorClusters(cset)
 \description{
 takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 assigns colors to each cluster in each clustering along
-the "hue" color wheel; if \code{cset} contains a sorting (see
+the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
+if \code{cset} contains a sorting (see
 \code{clusterSort}), this sorting will be used to assing colors along
-the color wheel;
+the color wheel, otherwise a sorting will be calculated first;
 }
 

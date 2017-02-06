@@ -39,7 +39,9 @@ returns a matrix only}
 the function will construct a matrix of all possible combinations of
 parameter values in this list, call \code{\link{segmentClusters}} for
 each, and report a matrix of segments where the segment `type' is
-constructed from the varied parameters; see option \code{short.name}}
+constructed from the varied parameters; see option \code{short.name}.
+A varySettings list with all required (default) parameters can be
+obtained via function \code{\link{setVarySettings}}.}
 }
 \description{
 A high-level wrapper for multiple runs of segmentation by
@@ -52,7 +54,8 @@ of their clusters.
 This is a high-level wrapper for \code{\link{segmentClusters}}
 which allows segmentation over multiple clusterings as provided by the
 function \code{\link{clusterTimeseries}} and over multiple segmentation
-paramers. Specifially, parameters \code{csim.scale}, \code{score},
-\code{M} and \code{Mn} can all be vectors.
+parameters. Each parameter in the list \code{varySettings} can be
+a vector and ALL combinations of the passed parameter values will
+be used for one run of \code{\link{segmentClusters}}.
 }
 

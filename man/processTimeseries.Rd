@@ -7,7 +7,7 @@ clustering wrapper \code{\link{clusterTimeseries}}}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
   dft.range = 2:7, perm = 0, use.snr = TRUE, low.thresh = -Inf,
-  smooth.space, smooth.time, verb = 0)
+  smooth.space = 1, smooth.time = 1, verb = 0)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the timepoints

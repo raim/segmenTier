@@ -3,10 +3,13 @@
 \name{sortClusters}
 \alias{sortClusters}
 \title{takes a clustering set as returned by \code{\link{clusterTimeseries}} and
-uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
-clusters by their similarity, starting with the first cluster; the
-sorting is added as \code{sorting} to \code{cset} and the annotated
-\code{cset} is returned.}
+uses the cluster-cluster similarity matrix \code{Ccc} to sort
+clusters by their similarity, starting with the first cluster `1'; the next
+cluster is the first cluster (lowest cluster number) with the highest
+similarity to cluster `1', and procedding from there. The final sorting is
+added as \code{sorting} to \code{cset} and the annotated
+\code{cset} is returned. This sorting is subsequently used to select
+cluster colors.}
 \usage{
 sortClusters(cset, verb = 0)
 }
@@ -17,9 +20,12 @@ sortClusters(cset, verb = 0)
 }
 \description{
 takes a clustering set as returned by \code{\link{clusterTimeseries}} and
-uses the cluster-cluster similarity matrix \code{Ccc} to re-sort
-clusters by their similarity, starting with the first cluster; the
-sorting is added as \code{sorting} to \code{cset} and the annotated
-\code{cset} is returned.
+uses the cluster-cluster similarity matrix \code{Ccc} to sort
+clusters by their similarity, starting with the first cluster `1'; the next
+cluster is the first cluster (lowest cluster number) with the highest
+similarity to cluster `1', and procedding from there. The final sorting is
+added as \code{sorting} to \code{cset} and the annotated
+\code{cset} is returned. This sorting is subsequently used to select
+cluster colors.
 }
 
