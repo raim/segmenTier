@@ -498,7 +498,7 @@ plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
     spk <- nsg/nk # segmentations per clustering
     ## number of plots
     ## each clustering can have multiple segmentations; plot each
-    ## 2 for time-series; and for each clustering 2 (clustering and all segments),
+    ## 2 for time-series; and for each clustering 2 (clustering and segments),
     ## plus S1 & S 
     nplots <- 2 + nk * (2 + ifelse(plot.matrix, 2*spk, 0))
     par(mfcol=c(nplots,1), xaxs="i", mai=mai)
