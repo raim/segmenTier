@@ -89,7 +89,7 @@ for ( k in 1:ncol(cset$clusters) ) {
     ## plot S/S1
     kid <- cset$ids[k]
     types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
-    plot.sset(sset, c("segments","S","S1"), types=types) 
+    plot.sset(sset, plot=c("segments","S","S1"), types=types) 
     
 }
 
