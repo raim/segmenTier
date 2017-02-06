@@ -339,11 +339,11 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
 #' in \code{cset$clusters}; if missing all columns will be plotted
 #' and the calling code must take care of properly assigning \code{par(mfcol)}
 #' or \code{layout} for the plot
-#' @param coors optinally x-values to use as x-axis (e.g. to reflect absolute
+#' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.clustering <- function(x, k, coors, ...) {
+plot.clustering <- function(x, k, xaxis, ...) {
 
     cset <- x
     
@@ -363,13 +363,13 @@ plot.clustering <- function(x, k, coors, ...) {
     for ( i in k ) {
         seq <- as.character(cset$clusters[,i])
         cls.srt <- cset$sorting[[i]]
-        if ( missing(coors) )
-          coors <- 1:length(seq)
+        if ( missing(xaxis) )
+          xaxis <- 1:length(seq)
         y <- 1:length(cls.srt)
         names(y) <- cls.srt
         cols <- cset$colors[[i]]
         ## plot original clustering
-        plot(coors,y[seq],axes=FALSE,xlab="",ylab="cluster",
+        plot(xaxis,y[seq],axes=FALSE,xlab="",ylab="cluster",
              col=cols[seq],cex=1,pch=16)
         axis(2, at=y, labels=names(y), las=2)
     }
@@ -381,7 +381,7 @@ plot.clustering <- function(x, k, coors, ...) {
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param types a string vector indicating segment types to plot (a subset of
 #' \code{sset$ids}; defaults to all in \code{sset$ids})
-#' @param coors optional x-values to use as x-axis (e.g. to reflect absolute
+#' @param xaxis optional x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
 #' @param plot string list indicating which data should be plotted;
 #' `segments': plot segments as arrows; `S1' plot the scoring vectors
@@ -389,7 +389,7 @@ plot.clustering <- function(x, k, coors, ...) {
 #' matrix \code{S(i,c)} for all \code{c}
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.segments <- function(x, types, coors, plot=c("segments", "S", "S1"), ...) {
+plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
 
     sset <- x
     
@@ -460,17 +460,17 @@ plot.segments <- function(x, types, coors, plot=c("segments", "S", "S1"), ...) {
             dS <- apply(S,2,function(x) c(0,diff(x)))
 
             ## x-axis: x can be passed to use real coordinates
-            if ( missing(coors) )
-              coors <- 1:nrow(S)
-            xlim <- range(coors)             
+            if ( missing(xaxis) )
+              xaxis <- 1:nrow(S)
+            xlim <- range(xaxis)             
 
-            xrng <- stats::quantile(coors,c(.05,.95))
-            xidx <- which(coors>xrng[1]&coors<xrng[2]) #x%in%xrng[1]:xrng[2]
+            xrng <- stats::quantile(xaxis,c(.05,.95))
+            xidx <- which(xaxis>xrng[1]&xaxis<xrng[2]) #x%in%xrng[1]:xrng[2]
             ylim <- stats::quantile(ash(dS[xidx,]),c(0,1))
             plot(1,ylim=ylim,xlim=xlim,ylab=expression(ash(Delta~S["i,C"])))
-            lines(coors,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND 
-            lines(coors,ash(dS[,1]),lwd=1,lty=3,col="#00000099") 
-            graphics::matplot(coors, ash(dS), type="l",
+            lines(xaxis,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND 
+            lines(xaxis,ash(dS[,1]),lwd=1,lty=3,col="#00000099") 
+            graphics::matplot(xaxis, ash(dS), type="l",
                               lty=1, lwd=1, add=TRUE, col=sgcols)
             graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
         }
