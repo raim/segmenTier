@@ -6,7 +6,7 @@
 time-series, the clustering, the internal scoring matrices and
 the final segments}
 \usage{
-plotSegmentation(tset, cset, sset)
+plotSegmentation(tset, cset, sset, plot.matrix = FALSE)
 }
 \arguments{
 \item{tset}{the time-series object returned by
@@ -15,7 +15,9 @@ plotSegmentation(tset, cset, sset)
 \item{cset}{a set of clusterings as returned by
 \code{\link{clusterTimeseries}}}
 
-\item{sset}{a set of segmentations as returned by
+\item{sset}{a set of segmentations as returned by}
+
+\item{plot.matrix}{include the internal scoring matrices in the plot
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
 }
 \description{

@@ -4,7 +4,7 @@
 \alias{plot.clustering}
 \title{plot the clustering object returned by \code{\link{clusterTimeseries}}}
 \usage{
-\method{plot}{clustering}(x, k, coors, ...)
+\method{plot}{clustering}(x, k, xaxis, ...)
 }
 \arguments{
 \item{x}{a set of clusterings as returned by
@@ -16,7 +16,7 @@ in \code{cset$clusters}; if missing all columns will be plotted
 and the calling code must take care of properly assigning \code{par(mfcol)}
 or \code{layout} for the plot}
 
-\item{coors}{optinally x-values to use as x-axis (e.g. to reflect absolute
+\item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
 
 \item{...}{currently unused additional arguments to plot}
