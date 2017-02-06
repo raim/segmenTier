@@ -280,7 +280,7 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 
 #' plot the processed time-series object returned from
 #' \code{\link{processTimeseries}}.
-#' @param tset the time-series object returned by
+#' @param x the time-series object returned by
 #' \code{\link{processTimeseries}}
 #' @param plot a string vector indicating the values to be plotted;
 #' `total': plot of the total signal, summed over
@@ -290,8 +290,10 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' in \code{\link{processTimeseries}}; `timeseries': plot the complete
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
 #'@export
-plot.tset <- function(tset, plot=c("total","timeseries")) {
+plot.tset <- function(x, plot=c("total","timeseries"), ...) {
 
+    tset <- x
+    
     ## get time-series data
     ts <- tset$ts # incl. all trafos and zeros set to NA
     ts[tset$zero.vals,] <- NA
