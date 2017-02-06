@@ -487,9 +487,11 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
 #' \code{\link{clusterTimeseries}}
 #' @param sset a set of segmentations as returned by
 #' @param plot.matrix include the internal scoring matrices in the plot
+#' @param mai margins of invidual plots, see \code{par}
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #'@export
-plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE) {
+plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
+                             mai=c(.01,1.5,.01,.01)) {
 
     nsg <- length(sset$ids)# total number of segmentations
     nk <- length(cset$ids) # number of clusterings
@@ -499,8 +501,7 @@ plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE) {
     ## 2 for time-series; and for each clustering 2 (clustering and all segments),
     ## plus S1 & S 
     nplots <- 2 + nk * (2 + ifelse(plot.matrix, 2*spk, 0))
-    par(mfcol=c(nplots,1), xaxs="i",
-        mai=c(.01,1.5,.01,.01), mgp=c(1.3,.3,0), tcl=-.3)
+    par(mfcol=c(nplots,1), xaxs="i", mai=mai)
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
     ## for threshold) and a heatmap of the time-series
