@@ -331,7 +331,7 @@ plot.tset <- function(x, plot=c("total","timeseries"), ...) {
 }
 
 #' plot the clustering object returned by \code{\link{clusterTimeseries}}
-#' @param cset a set of clusterings as returned by
+#' @param x a set of clusterings as returned by
 #' \code{\link{clusterTimeseries}}
 #' @param k a numeric or string vector indicating the clusterings to be plotted;
 #' specifically the column numbers or names in the matrix of clusterings
@@ -344,6 +344,7 @@ plot.tset <- function(x, plot=c("total","timeseries"), ...) {
 plot.cset <- function(x, k, coors, ...) {
 
     cset <- x
+    
     ## cluster sorting via Ccc (cluster-cluster correlation)
     if ( !"sorting" %in% names(cset) )
       cset <- sortClusters(cset, verb=1)
@@ -374,7 +375,7 @@ plot.cset <- function(x, k, coors, ...) {
 
 #' plot the final segmentation objects returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
-#' @param sset a set of segmentations as returned by
+#' @param x a set of segmentations as returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param types a string vector indicating segment types to plot (a subset of
 #' \code{sset$ids}; defaults to all in \code{sset$ids})
@@ -385,7 +386,7 @@ plot.cset <- function(x, k, coors, ...) {
 #' \code{s(i,j,c} for all \code{c}; `S' plot the derivative of
 #' matrix \code{S(i,c)} for all \code{c}
 #'@export
-plot.sset <- function(x, types, coors, plot=c("segments", "S", "S1")) {
+plot.sset <- function(x, types, coors, plot=c("segments", "S", "S1"), ...) {
 
     sset <- x
     
@@ -483,7 +484,7 @@ plot.sset <- function(x, types, coors, plot=c("segments", "S", "S1")) {
 #' @param sset a set of segmentations as returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #'@export
-plot.segmentation <- function(tset,cset,sset) {
+plotSegmentation <- function(tset,cset,sset) {
 
     nsg <- length(sset$ids)# total number of segmentations
     nk <- length(cset$ids) # number of clusterings

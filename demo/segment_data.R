@@ -67,7 +67,7 @@ head(sset$segments)
 if ( !interactive() )
     png("segment_data.png",res=300,units="in", width=10,height=5)
 
-plot.segmentation(tset,cset,sset)
+plotSegmentation(tset,cset,sset)
 
 
 if ( !interactive() )
