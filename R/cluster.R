@@ -754,9 +754,12 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
       names(SK) <- sgtypes
     rownames(params) <- names(seg.col) <- names(seg.srt) <- sgtypes
 
+    ## store length of sequence
+    N <- nrow(cset$clusters)
+    
     ## TODO: introduce and use classes for segment results
-    sset <- list(segments=allsegs, SK=SK, colors=seg.col, sorting=seg.srt,
-                 settings=params, ids=sgtypes)
+    sset <- list(segments=allsegs, N=N, colors=seg.col, sorting=seg.srt,
+                 SK=SK, settings=params, ids=sgtypes)
     class(sset) <- "segmentset"
     return(sset)
 }
