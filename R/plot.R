@@ -501,18 +501,18 @@ plotSegmentation <- function(tset,cset,sset) {
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
     ## for threshold) and a heatmap of the time-series
-    plot.tset(tset, plot=c("total","timeseries"))
+    plot(tset, plot=c("total","timeseries"))
     
     ## CLUSTERING PLOT UTILITY: 
     ## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)
     ## and colored along a color-wheel
     for ( k in 1:ncol(cset$clusters) ) {
         ## plot clustering
-        plot.cset(cset, k)
+        plot(cset, k)
         ## SEGMENTATION PLOT UTILITY
         ## plot all segments, S1(i,c), S(i,c) for this clustering
         kid <- cset$ids[k]
         types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
-        plot.sset(sset, plot=c("segments","S","S1"), types=types) 
+        plot(sset, plot=c("segments","S","S1"), types=types) 
     }
 }
