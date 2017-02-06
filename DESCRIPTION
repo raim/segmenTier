@@ -12,5 +12,7 @@ Imports:
     Rcpp (>= 0.12.7)
 Suggests:
     flowMerge
+    flowClust
+    flowCore
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
