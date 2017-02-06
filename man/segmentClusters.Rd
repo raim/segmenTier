@@ -5,8 +5,8 @@
 \title{segmenTier's main wrapper interface, calculates segments from a
 clustering sequence.}
 \usage{
-segmentClusters(seq, csim, csim.scale = 1, cset, k = 1, score = "ccor",
-  M = 175, Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
+segmentClusters(seq, csim, E = 1, cset, k = 1, S = "ccor", M = 175,
+  Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
   multib = "max", verb = 1, save.matrix = FALSE)
 }
 \arguments{
@@ -17,7 +17,7 @@ character "0" (zero).}
 \item{csim}{cluster-cluster or position-cluster similarity
 matrix, for scoring functions "ccor" and "icor", respectively}
 
-\item{csim.scale}{exponent to scale similarity matrices, must be odd
+\item{E}{exponent to scale similarity matrices, must be odd
 to maintain negative correlations!}
 
 \item{cset}{alternatively to arguments \code{seq} and \code{csim}, a
@@ -27,7 +27,7 @@ the kth clustering from the set}
 
 \item{k}{the kth clustering of argument \code{cset} will be used}
 
-\item{score}{the scoring function to be used: "ccor", "icor" or "cls"}
+\item{S}{the scoring function to be used: "ccor", "icor" or "cls"}
 
 \item{M}{minimal sequence length; Note, that this is not a strict
 cut-off but defined as a penalty that must be "overcome" by good score.}

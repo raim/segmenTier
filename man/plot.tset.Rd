@@ -5,10 +5,10 @@
 \title{plot the processed time-series object returned from
 \code{\link{processTimeseries}}.}
 \usage{
-\method{plot}{tset}(tset, plot = c("total", "timeseries"))
+\method{plot}{tset}(x, plot = c("total", "timeseries"), ...)
 }
 \arguments{
-\item{tset}{the time-series object returned by
+\item{x}{the time-series object returned by
 \code{\link{processTimeseries}}}
 
 \item{plot}{a string vector indicating the values to be plotted;
@@ -18,6 +18,8 @@ note that the total levels may have been transformed (e.g. by \code{log_1}
 or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
 in \code{\link{processTimeseries}}; `timeseries': plot the complete
 time-series as a heatmap, where time is plotted bottom-up on the y-axis}
+
+\item{...}{currently unused additional arguments to plot}
 }
 \description{
 plot the processed time-series object returned from

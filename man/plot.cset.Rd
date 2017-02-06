@@ -4,10 +4,10 @@
 \alias{plot.cset}
 \title{plot the clustering object returned by \code{\link{clusterTimeseries}}}
 \usage{
-\method{plot}{cset}(cset, k, x)
+\method{plot}{cset}(x, k, coors, ...)
 }
 \arguments{
-\item{cset}{a set of clusterings as returned by
+\item{x}{a set of clusterings as returned by
 \code{\link{clusterTimeseries}}}
 
 \item{k}{a numeric or string vector indicating the clusterings to be plotted;
@@ -16,8 +16,10 @@ in \code{cset$clusters}; if missing all columns will be plotted
 and the calling code must take care of properly assigning \code{par(mfcol)}
 or \code{layout} for the plot}
 
-\item{x}{optinally x-values to use as x-axis (e.g. to reflect absolute
+\item{coors}{optinally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
+
+\item{...}{currently unused additional arguments to plot}
 }
 \description{
 plot the clustering object returned by \code{\link{clusterTimeseries}}
