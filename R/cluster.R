@@ -713,7 +713,8 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         if ( verb>0 )
             cat(paste("SEGMENT TYPE\t",sgtype,
                       "\t", i,"of",nrow(params),"\n",sep=""))
-        
+
+        ## TODO: pass cset, inherit colors and set type ID there!
         seg <-segmentClusters(seq=seq,csim=csim,E=E,
                               S=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
