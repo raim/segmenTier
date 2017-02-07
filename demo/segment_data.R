@@ -26,7 +26,7 @@ vary <- setVarySettings(
   M=100, #c(30,175), # scoring function minimal length penalty
   Mn=100, ## for nuissance clusters: allow smaller segments!?
   a=-2, 
-  nui=c(1,3), #-/+ correlation of nuissance cluster with others and itself
+  nui=c(1:3), #-/+ correlation of nuissance cluster with others and itself
     ## BACKTRACING
   nextmax=TRUE, # in back-tracing, search for the next non-decreasing S(i,c)
   multi="max", # "min" # handling of multiple max. score k in scoring
