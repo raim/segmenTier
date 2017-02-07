@@ -86,19 +86,28 @@ clusterSegments <- function() {}
 ## using the Rcpp interface to C++
 
 #' segmenTier's main wrapper interface, calculates segments from a
-#' clustering sequence.
-#' @param seq a clustering sequence. The only strict requirement is that
-#' nuissance clusters (which will not be segmented) have to be numeric or
-#' character "0" (zero).
-#' @param csim cluster-cluster or position-cluster similarity
-#' matrix, for scoring functions "ccor" and "icor", respectively
+#' clustering sequence. This will run the segmentation algorithm once
+#' for the indicated parameters. In contrast, the function
+#' \code{\link{segmentClusters.batch}} allows for multiple runs over
+#' different parameters or input-clusterings.
+#' @param seq either a numeric or string vector providing a clustering
+#' sequence or a structure of class 'clustering' as returned by
+#' \code{\link{clusterTimeseries}}. The only strict requirement for the
+#' first option is that nuissance clusters (which will not be segmented)
+#' have to be numeric or character "0" (zero).
+#' @param k if argument \code{seq} is of class 'clustering' the kth
+#' clustering will be used; defaults to 1
+#' @param csim the cluster-cluster or position-cluster similarity
+#' matrix for scoring functions "ccor" and "icor" (option \code{S}),
+#' respectively; where \code{csim} MUST be provided if argument
+#' \code{seq} is a simple vector of clusters; if \code{seq} is of
+#' class 'clustering' \code{csim} will override the similarity matrix
+#' potentially present in \code{seq}. Finally, for scoring
+#' function "ccls" the argument \code{csim} will be ignored and the matrix
+#' instead automatically constructed from argument
+#' \code{a}, and using argument \code{nui} for the nuissance cluster.
 #' @param E exponent to scale similarity matrices, must be odd
 #' to maintain negative correlations!
-#' @param cset alternatively to arguments \code{seq} and \code{csim}, a
-#' set of clusterings as returned by \code{\link{clusterTimeseries}} can
-#' be provided; this requires the additional argument \code{k} to select
-#' the kth clustering from the set
-#' @param k the kth clustering of argument \code{cset} will be used
 #' @param S the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as a penalty that must be "overcome" by good score.
@@ -127,27 +136,31 @@ clusterSegments <- function() {}
 #' Some more details of the algorithm can be tuned, but these usually
 #' have little effect on real-life data sets.
 #' @return Returns a list containing the main result ("segments"), "warnings"
-#' from the dynamic programing and back-tracing phases, and optionally (see
-#' option \code{save.matrix}) (\code{results$SK}) the total score matrix
-#' \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+#' from the dynamic programing and back-tracing phases, the used similarity
+#' matrix \code{csim}, extended for nuissance clusters; ; and optionally (see
+#' option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the total
+#' score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+#' It will further contain additional parameters like cluster colors and
+#' sortings if argument \code{seq} was of class 'clustering'.
 #' The main result structure "segments" is a 3-column matrix, where column 1
 #' is the cluster assignment and colums 2 and 3 are start and end position
-#' of the segments.
+#' of the segments; if cluster colors were available a 4th column contains
+#' the colors assigned to those clusters for convenient quick plotting.
 #' @export
-segmentClusters <- function(seq, csim, E=1,
-                            cset, k=1,
-                            S="ccor",
-                            M=175, Mn=20, a=-2, nui=1,
+segmentClusters <- function(seq, k=1, csim, E=1,
+                            S="ccor", M=175, Mn=20, a=-2, nui=1,
                             nextmax=TRUE, multi="max",multib="max", 
                             verb=1, save.matrix=FALSE) {
 
     stime <- as.numeric(Sys.time()) 
     
     ## cluster set from clusterTimeseries
-    if ( !missing(cset) ) {
+    if ( class(seq)=="clustering" ) {
+        cset <- seq
         seq <- cset$clusters[,k]
-        if ( S=="ccor" ) csim <- cset$Ccc[[k]]
-        if ( S=="icor" ) csim <- cset$Pci[[k]]
+        if ( S=="ccor" & missing(csim) ) csim <- cset$Ccc[[k]]
+        if ( S=="icor" & missing(csim) ) csim <- cset$Pci[[k]]
+        ## TODO: copy colors etc. as in batch function
     }
     
     ## 1: set up sequence and data
@@ -185,8 +198,8 @@ segmentClusters <- function(seq, csim, E=1,
     if ( 0 %in% seqr ) {
         
         nui.present <- TRUE
-        ## increase clustering by +1
-        ## nuissance cluster will be cluster 1 
+        ## increase clustering by +1:
+        ## nuissance cluster will internally be cluster 1 !
         seqr <- seqr + 1 ## TODO: get rid of this, avoid correction in .cpp
         
         if ( S=="icor" ) {
@@ -250,19 +263,24 @@ segmentClusters <- function(seq, csim, E=1,
 
     ## rm nuissance segments
     seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
-    
+
+    ## add other data
+    ## TODO: further align result with .batch function
+    ## TODO: do something with warning list?
+    ## TODO: add type column and colors for plot to work?
+    ## TODO: add parameters 
+    seg$N <- N # sequence length
+
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
     if ( save.matrix ) {
         colnames(SK$S) <- colnames(SK$K) <- colnames(SK$S1) <- 0:(ncol(SK$S)-1)
+        ## scoring matrices, S1, S, K
         seg$SK <- list(SK)
-    }
+        ## add cluster similarity marix
+        seg$csim <- list(csim) # not present in batch!
+    }    
     
-    ## add cluster similarity matrix
-    seg$csim <- list(csim)
-
-    ## TODO: add parameters; aligned with .batch and
-    ## and class segmentsets
     
     ## assign S3 class
     class(seg) <- "segments"

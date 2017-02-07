@@ -396,9 +396,13 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
 
     sset <- x
     
-    if ( missing(types) ) 
-        types <- rownames(sset$settings)
-
+    if ( missing(types) ) {
+        if ( "settings" %in% names(sset) ) # only in batch function
+          types <- rownames(sset$settings)
+        else
+          types <- NA
+    }
+    
     ## one plot for all segments 
     if ( "segments" %in% plot ) {
 
@@ -409,16 +413,23 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
         segs <- sset$segments
         columns <- c(name="ID", type="type", start="start", end="end",
                      color="color")
+
+        ## color is only present in segments from batch function
+        if ( !"color" %in% colnames(segs) )
+          columns["color"] <- "CL"
+        
         ## filter allsegs by segments for the current clustering
         ypos <- segment.plotFeatures(segs, types=types,
                                      coors=coors, typord=TRUE,cuttypes=TRUE,
                                      ylab="", names=FALSE,columns=columns,
                                      tcx=.5)
         axis(1)
-        ## plot fuse tag
-        fuse <- segs[segs[,"fuse"],]
-        points(fuse[,"start"], ypos[fuse[,"type"]], col="black",
-               pch=4, lwd=1, cex=1.5)
+        ## plot fuse tag - only present in segments from batch function
+        if ( "fuse" %in% colnames(segs) ) {
+            fuse <- segs[segs[,"fuse"],]
+            points(fuse[,"start"], ypos[fuse[,"type"]], col="black",
+                   pch=4, lwd=1, cex=1.5)
+        }
     }
 
     ## colors for S1 heatmap
