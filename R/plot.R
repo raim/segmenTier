@@ -19,12 +19,13 @@ shadowtext <- function(x, y=NULL, labels, col='white', bg='black',
 
 ## plot features as arrows; kept private since official version
 ## of this function is maintained in package genomeBrowser
+## 20170207 : using ... to pass lwd on to arrow plots: useful!
 segment.plotFeatures <- function(data, coors, types, strand,
                          typord=FALSE, cuttypes=FALSE,
                          names=FALSE, legend=FALSE, axis1=FALSE, ylab=NA,
                          args,line=1,ycx=1,tcx=1,tpos=NULL,
                          columns=c(name="name",chr="chr",strand="strand",
-                           start="start",end="end",type="type",color="color")) {
+                           start="start",end="end",type="type",color="color"), ...) {
 
   ## parse arguments, which will also override other 
   if ( !missing(args) ) {    
@@ -123,8 +124,8 @@ segment.plotFeatures <- function(data, coors, types, strand,
     
     x <- coor[i,]
     if ( x[1]!=x[2] )
-      arrows(x0=x[1], y0=yt, col=col,y1=yt, x1=x[2], lwd=2, length=.075)
-    points(x=x[1], y=yt, col=col, pch=3, lwd=2)
+      arrows(x0=x[1], y0=yt, col=col,y1=yt, x1=x[2], length=.075, ...)
+    points(x=x[1], y=yt, col=col, pch=3, ...)
 
       ## plot names
       if ( names ) {
@@ -280,7 +281,7 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 
 #' plot the processed time-series object returned from
 #' \code{\link{processTimeseries}}.
-#' @param x the time-series object returned by
+#' @param x a time-series object as returned by
 #' \code{\link{processTimeseries}}
 #' @param plot a string vector indicating the values to be plotted;
 #' `total': plot of the total signal, summed over
@@ -333,8 +334,9 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
     }
 }
 
+
 #' plot the clustering object returned by \code{\link{clusterTimeseries}}
-#' @param x a set of clusterings as returned by
+#' @param x  a clusterings object as returned by
 #' \code{\link{clusterTimeseries}}
 #' @param k a numeric or string vector indicating the clusterings to be plotted;
 #' specifically the column numbers or names in the matrix of clusterings
@@ -380,10 +382,10 @@ plot.clustering <- function(x, k, xaxis, ...) {
 
 #' plot the final segmentation objects returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
-#' @param x a set of segmentations as returned by
+#' @param x a segmentation object as returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param types a string vector indicating segment types to plot (a subset of
-#' \code{sset$ids}; defaults to all in \code{sset$ids})
+#' \code{x$ids}; defaults to all in \code{x$ids})
 #' @param xaxis optional x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
 #' @param plot string list indicating which data should be plotted;
@@ -392,16 +394,26 @@ plot.clustering <- function(x, k, xaxis, ...) {
 #' matrix \code{S(i,c)} for all \code{c}
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
-
+plot.segments <- function(x, plot=c("S","segments"), types, xaxis, ...) {
+    for ( pl in plot ) 
+        plotSegments(x, pl, types, xaxis, ...)
+}
+## above public wrapper allows to sort the plots by the order in plots
+plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
     sset <- x
-    
+
+    ## sub-types to be plotted
     if ( missing(types) ) {
         if ( "settings" %in% names(sset) ) # only in batch function
-          types <- rownames(sset$settings)
+          types <- sset$ids # rownames(sset$settings)
         else
-          types <- NA
+          types <- "segments" # for direct function segmentClusters
     }
+    ## type column not present from direct function segmentClusters
+    if ( !"type"%in% colnames(sset$segments) ) 
+        sset$segments <- cbind(sset$segments,
+                               type=rep("segments",nrow(sset$segments)))
+    
     
     ## one plot for all segments 
     if ( "segments" %in% plot ) {
@@ -410,19 +422,23 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
         N <- sset$N
         coors <- c(chr=1,start=1,end=N) 
 
+        ## get & process segments
         segs <- sset$segments
-        columns <- c(name="ID", type="type", start="start", end="end",
-                     color="color")
+
+        ## column mapping required for segment.plotFeatures
+        columns <- c(type="type", start="start", end="end",
+                     color="color") # name="ID" would be required for names=T
 
         ## color is only present in segments from batch function
         if ( !"color" %in% colnames(segs) )
           columns["color"] <- "CL"
+
         
         ## filter allsegs by segments for the current clustering
         ypos <- segment.plotFeatures(segs, types=types,
                                      coors=coors, typord=TRUE,cuttypes=TRUE,
                                      ylab="", names=FALSE,columns=columns,
-                                     tcx=.5)
+                                     tcx=.5, ...)
         axis(1)
         ## plot fuse tag - only present in segments from batch function
         if ( "fuse" %in% colnames(segs) ) {
@@ -440,8 +456,17 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
 
         ## get matrices, cluster sorting and colors
         SK <- sset$SK[types]
-        sk.srt <- sset$sorting[types]
-        sk.col <- sset$colors[types]
+        if ( "sorting" %in% names(sset) )
+            sk.srt <- sset$sorting[types]
+        else
+            sk.srt <- lapply(SK, function(x) colnames(x$S))
+        if ( "colors" %in% names(sset) )
+            sk.col <- sset$colors[types]
+        else
+            sk.col <- lapply(sk.srt, function(x) {
+                cols <- color_hue(length(x))
+                names(cols) <- x
+                cols}) 
 
         ## one plot for each segmentation!
         for ( j in 1:length(SK) ) {
@@ -450,14 +475,16 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
             srt <- as.character(sk.srt[[j]])
             ## cluster coloring; add black for nuissance
             sgcols <- c("#000000", sk.col[[j]][srt])
-            srt <- c("0",srt)
+            if ( !"0" %in% srt ) # for generate sk.srt nuissance "0" is present
+                srt <- c("0",srt)
 
             ## plot S1 as heatmap
             if ( "S1" %in% plot ) {
                 S1 <- t(SK[[j]]$S1[,rev(srt)]) # sort by cluster sorting!
-                S1 <- S1/apply(S1,1,mean)
+                S1 <- S1/apply(S1,1,mean) # TODO: is colMeans most informative?
                 ## TODO: add from segmenTools
-                image_matrix(S1,axis=2, col=colors0, ylab="cluster")
+                image_matrix(S1,axis=2, col=colors0, ylab=expression(S[1](i,c)))
+                graphics::mtext(names(SK)[j], side=2 , line=4.5, las=2)
             }
             if ( !"S" %in% plot ) next
             
@@ -481,12 +508,13 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
             xrng <- stats::quantile(xaxis,c(.05,.95))
             xidx <- which(xaxis>xrng[1]&xaxis<xrng[2]) #x%in%xrng[1]:xrng[2]
             ylim <- stats::quantile(ash(dS[xidx,]),c(0,1))
-            plot(1,ylim=ylim,xlim=xlim,ylab=expression(ash(Delta~S["i,C"])))
+            plot(-1,col=NA,ylim=ylim,xlim=xlim,
+                 ylab=expression(ash(Delta~S(i,c))))
             lines(xaxis,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND 
             lines(xaxis,ash(dS[,1]),lwd=1,lty=3,col="#00000099") 
             graphics::matplot(xaxis, ash(dS), type="l",
-                              lty=1, lwd=1, add=TRUE, col=sgcols)
-            graphics::mtext(names(SK)[j], side=2 , line=4, las=2)
+                              add=TRUE, col=sgcols, lty=1, ...)
+            graphics::mtext(names(SK)[j], side=2 , line=4.5, las=2)
         }
     }
 }
@@ -494,14 +522,14 @@ plot.segments <- function(x, types, xaxis, plot=c("segments", "S", "S1"), ...) {
 #' plot all objects from the segmentation pipeline, i.e. the processed
 #' time-series, the clustering, the internal scoring matrices and
 #' the final segments
-#' @param tset the time-series object returned by
+#' @param tset a time-series object as returned by
 #' \code{\link{processTimeseries}}
-#' @param cset a set of clusterings as returned by
+#' @param cset a clusterings object as returned by
 #' \code{\link{clusterTimeseries}}
-#' @param sset a set of segmentations as returned by
+#' @param sset a segmentation object as returned by
+#' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param plot.matrix include the internal scoring matrices in the plot
 #' @param mai margins of invidual plots, see \code{par}
-#' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #'@export
 plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
                              mai=c(.01,1.5,.01,.01)) {
