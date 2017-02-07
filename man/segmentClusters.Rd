@@ -3,29 +3,37 @@
 \name{segmentClusters}
 \alias{segmentClusters}
 \title{segmenTier's main wrapper interface, calculates segments from a
-clustering sequence.}
+clustering sequence. This will run the segmentation algorithm once
+for the indicated parameters. In contrast, the function
+\code{\link{segmentClusters.batch}} allows for multiple runs over
+different parameters or input-clusterings.}
 \usage{
-segmentClusters(seq, csim, E = 1, cset, k = 1, S = "ccor", M = 175,
-  Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
-  multib = "max", verb = 1, save.matrix = FALSE)
+segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175, Mn = 20,
+  a = -2, nui = 1, nextmax = TRUE, multi = "max", multib = "max",
+  verb = 1, save.matrix = FALSE)
 }
 \arguments{
-\item{seq}{a clustering sequence. The only strict requirement is that
-nuissance clusters (which will not be segmented) have to be numeric or
-character "0" (zero).}
+\item{seq}{either a numeric or string vector providing a clustering
+sequence or a structure of class 'clustering' as returned by
+\code{\link{clusterTimeseries}}. The only strict requirement for the
+first option is that nuissance clusters (which will not be segmented)
+have to be numeric or character "0" (zero).}
 
-\item{csim}{cluster-cluster or position-cluster similarity
-matrix, for scoring functions "ccor" and "icor", respectively}
+\item{k}{if argument \code{seq} is of class 'clustering' the kth
+clustering will be used; defaults to 1}
+
+\item{csim}{the cluster-cluster or position-cluster similarity
+matrix for scoring functions "ccor" and "icor" (option \code{S}),
+respectively; where \code{csim} MUST be provided if argument
+\code{seq} is a simple vector of clusters; if \code{seq} is of
+class 'clustering' \code{csim} will override the similarity matrix
+potentially present in \code{seq}. Finally, for scoring
+function "ccls" the argument \code{csim} will be ignored and the matrix
+instead automatically constructed from argument
+\code{a}, and using argument \code{nui} for the nuissance cluster.}
 
 \item{E}{exponent to scale similarity matrices, must be odd
 to maintain negative correlations!}
-
-\item{cset}{alternatively to arguments \code{seq} and \code{csim}, a
-set of clusterings as returned by \code{\link{clusterTimeseries}} can
-be provided; this requires the additional argument \code{k} to select
-the kth clustering from the set}
-
-\item{k}{the kth clustering of argument \code{cset} will be used}
 
 \item{S}{the scoring function to be used: "ccor", "icor" or "cls"}
 
@@ -59,16 +67,23 @@ debugging or illustration of the algorithm;}
 }
 \value{
 Returns a list containing the main result ("segments"), "warnings"
-from the dynamic programing and back-tracing phases, and optionally (see
-option \code{save.matrix}) (\code{results$SK}) the total score matrix
-\code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+from the dynamic programing and back-tracing phases, the used similarity
+matrix \code{csim}, extended for nuissance clusters; ; and optionally (see
+option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the total
+score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
+It will further contain additional parameters like cluster colors and
+sortings if argument \code{seq} was of class 'clustering'.
 The main result structure "segments" is a 3-column matrix, where column 1
 is the cluster assignment and colums 2 and 3 are start and end position
-of the segments.
+of the segments; if cluster colors were available a 4th column contains
+the colors assigned to those clusters for convenient quick plotting.
 }
 \description{
 segmenTier's main wrapper interface, calculates segments from a
-clustering sequence.
+clustering sequence. This will run the segmentation algorithm once
+for the indicated parameters. In contrast, the function
+\code{\link{segmentClusters.batch}} allows for multiple runs over
+different parameters or input-clusterings.
 }
 \details{
 This is the main R wrapper function for the segmentation algorithm.
