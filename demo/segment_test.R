@@ -27,11 +27,33 @@ scores <- c("ccor","icor", "ccls") # ,"cls"
 ## SCORING FUNCTION PARAMETERS
 ## segment size and penalty parameters
 M <- 3 # minimal segment size; note: this is not a strict cutoff
+Mn <- 3 # minimal segment size for nuissance cluster "0"
 a <- -2 # penalty for non-matching clusters in scoring function "ccls"
 
+
+## SCORING FUNCTION "ccls": score only by cluster membership
+## this is all we need for a segmentation with the simplest
+## scoring function "ccls" which is defined by three parameters
+segments <- segmentClusters(seq = seq,
+                            S = "ccls", M = 3, Mn = 3, a = -2, 
+                            multi = "max", multib = "max" , nextmax = TRUE,
+                            save.matrix = TRUE)
+## the returned structure has class "segments"
+class(segments)
+
+## ... for which a plot method is defined that can plot the segments, and,
+## if option save.matrix was set to TRUE,
+## the internal scoring matrices `S1(i,c)` and `S(i,c)`
+par(mfcol=c(3,1),mai=c(0,1.5,0,0))
+plot(seg, plot=c("S1","S", "segments"), lwd=3)
+
+## the segment coordinates are found in:
+head(segments$segments)
+
+
 ## CLUSTER SIMILARITIES
-## scoring function "ccor":
-## cluster X cluster correlation matrix csim for "ccor"
+
+## SCORING FUNCTION "ccor": cluster-cluster similarity (correlation)
 Ccc <- matrix(0,ncol=length(C),nrow=length(C))
 colnames(Ccc) <- rownames(Ccc) <- as.character(C)
 diag(Ccc)<- 1 # set diagonal to 1
@@ -39,8 +61,7 @@ Ccc[1,2] <- Ccc[2,1] <- -.6 # just enough to avoid merging of 2 with 1
 Ccc[2,4] <- Ccc[4,2] <- -.4 # just enought to avoid merging of 2 with 4
 Ccc[1,3] <- Ccc[3,1] <- -.5
 
-## scoring function "icor":
-## position X cluster correlation matrix csim for "icor"
+## SCORING FUNCTION "icor": position-cluster similarity (correlation)
 Pci <- matrix(0,ncol=length(C),nrow=length(seq))
 for ( i in 1:length(seq) ) {
     for ( j in 1:ncol(Pci) )
@@ -52,22 +73,31 @@ for ( i in 1:length(seq) ) {
     }
 }
 
-## construct cset
+## construct "clustering" set manually:
 cset <- list()
 class(cset) <- "clustering"
-cset$clusters <- matrix(seq,ncol=1)
-colnames(cset$clusters) <- paste("K",length(C),sep="")
-cset$Ccc <- cset$Pci <- list()
-cset$Ccc[[1]] <- Ccc
-cset$Pci[[1]] <- Pci
+cset$clusters <- matrix(seq,ncol=1) # a matrix of one or more clusterings
+colnames(cset$clusters) <- paste("K",length(C),sep="") # an ID
 
-## cluster sorting (via similarity matric Ccc) & coloring
+cset$Ccc <- cset$Pci <- list() # similarity matrices for scoring functions
+cset$Ccc[[1]] <- Ccc # ccor: cluster-cluster similarity
+cset$Pci[[1]] <- Pci # icor: position-cluster similarity
+
+## CLUSTER SORTING & COLORING
+## clusters are sorted sequentiallz via similarity matrix Ccc,
+## see ?colorClusters
 cset <- colorClusters(cset)
+class(cset) 
 
-## NOTE: plot function for class "clustering"
-class(cset)
+## PLOT FUNCTION FOR CLASS "clustering"
+par(mfcol=c(3,1),mai=c(0,1.5,0,0))
+par(xaxs="i") # required to align x-axes with the heatmap plots
 plot(cset) # NOTE y-axis - re-ordered!
+plot(seg, plot=c("S", "segments"), lwd=3) # plot segmentation
 axis(1)
+
+
+
 
 ## TOTAL SCORING MATRIX S(i,c)
 ## handling of multiple max. score k 
