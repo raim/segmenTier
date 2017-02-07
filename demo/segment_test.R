@@ -18,7 +18,7 @@ seq <- c(4,4,1,2,4,4,4,2,4,4,3,4,4,2,4,1,4,4,0,0,0,0,0,0,1,2,2,2,4,1,1,1,1,
 #seq[seq=="a"]  <- "0"
 
 ## list of non-nuissance clusters
-C <- unique(seq)
+C <- sort(unique(seq))
 C <- C[as.character(C)!="0"]
 
 ## SCORING FUNCTIONS to be tested
@@ -61,8 +61,13 @@ cset$Ccc <- cset$Pci <- list()
 cset$Ccc[[1]] <- Ccc
 cset$Pci[[1]] <- Pci
 
-## cluster sorting & coloring
+## cluster sorting (via similarity matric Ccc) & coloring
 cset <- colorClusters(cset)
+
+## NOTE: plot function for class "clustering"
+class(cset)
+plot(cset) # NOTE y-axis - re-ordered!
+axis(1)
 
 ## TOTAL SCORING MATRIX S(i,c)
 ## handling of multiple max. score k 
@@ -84,10 +89,14 @@ scrR <- rep(list(NA),length(scores)) # result list for scoring function
 names(scrR) <- scores
 for ( score in scores ) {
 
-    ## set csim according to scoring function
-    if ( score == "ccor" ) csim <- Ccc
-    else if ( score == "icor") csim <- Pci
-    else csim <- NULL # will be constructed for 'ccls'
+    ## set similarity matrix `csim' according to scoring function
+    if ( score == "ccor" ) {
+        csim <- Ccc
+    } else if ( score == "icor" ) {
+        csim <- Pci
+    } else if ( score == "ccls" ) {
+        csim <- NULL # will be constructed automatically for 'ccls'
+    }
 
     ## result list for total scoring, will also hold the used
     ## scoring function matrices
@@ -105,14 +114,19 @@ for ( score in scores ) {
 
             ## run the algorithm with current parameters, and
             ## store SM and SK matrices for later plots
-            seg <- segmentClusters(seq=seq,csim=csim,score=score,M=M,Mn=M,
+            seg <- segmentClusters(seq=seq, csim=csim, E=1, S=score,M=M,Mn=M,
                                    a=a,nui=1,
                                    multi=multi, multib=multib,nextmax=nextmax,
-                                   save.mat=TRUE)
+                                   save.matrix=TRUE)
             ##multS$SM <- seg$SM # TODO: test whether they are the same?
             multS[[multi]]$SK <- seg$SK[[1]]
             ## store segments!
             multS[[multi]][[multib]] <- seg$segments
+            plot(seg, plot=c("segments","S"))
+
+            ## to make work with plot
+            ## copy colors, types,
+            ## perhaps allow plot to plot csim
         }
     }
     ## store all results for the current scoring function
@@ -120,7 +134,7 @@ for ( score in scores ) {
 }
 
 ## plotting segments and score traces (from total scoring matrix)
-plotSegments(scrR, seq=seq) #,out="segment_test")
+##plotSegments(scrR, seq=seq) #,out="segment_test")
 
 ## plot scoring function matrices
 ##for ( score in scores ) 
