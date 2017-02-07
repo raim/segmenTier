@@ -160,7 +160,8 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         seq <- cset$clusters[,k]
         if ( S=="ccor" & missing(csim) ) csim <- cset$Ccc[[k]]
         if ( S=="icor" & missing(csim) ) csim <- cset$Pci[[k]]
-        ## TODO: copy colors etc. as in batch function
+        ## TODO: inherit colors here instead of batch function,
+        ## or generate new if input was sequence!
     }
     
     ## 1: set up sequence and data
@@ -270,7 +271,8 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     ## TODO: add type column and colors for plot to work?
     ## TODO: add parameters 
     seg$N <- N # sequence length
-
+    seg$ids <- "segments" # default ID; required in plot functions
+    
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
     if ( save.matrix ) {
@@ -279,6 +281,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         seg$SK <- list(SK)
         ## add cluster similarity marix
         seg$csim <- list(csim) # not present in batch!
+        names(seg$SK) <- names(seg$csim) <- seg$ids
     }    
     
     
