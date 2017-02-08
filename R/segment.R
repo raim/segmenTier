@@ -88,13 +88,13 @@ clusterSegments <- function() {}
 #' segmenTier's main wrapper interface, calculates segments from a
 #' clustering sequence. This will run the segmentation algorithm once
 #' for the indicated parameters. In contrast, the function
-#' \code{\link{segmentClusters.batch}} allows for multiple runs over
+#' \code{\link{segmentCluster.batch}} allows for multiple runs over
 #' different parameters or input-clusterings.
-#' @param seq either a numeric or string vector providing a clustering
-#' sequence or a structure of class 'clustering' as returned by
+#' @param seq either a numeric vector providing a clustering
+#' sequence, or a structure of class 'clustering' as returned by
 #' \code{\link{clusterTimeseries}}. The only strict requirement for the
 #' first option is that nuissance clusters (which will not be segmented)
-#' have to be numeric or character "0" (zero).
+#' have to be '0' (zero).
 #' @param k if argument \code{seq} is of class 'clustering' the kth
 #' clustering will be used; defaults to 1
 #' @param csim the cluster-cluster or position-cluster similarity
@@ -124,10 +124,11 @@ clusterSegments <- function() {}
 #' either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace phase,
 #' either "min" (default), "max" or "skip"
-#' @param verb level of verbosity, 0: no output, 1: progress messages
+#' @param rm.nui remove nuissance cluster segments from final results
 #' @param save.matrix store the total score matrix \code{S(i,c)} and the
 #' backtracing matrix \code{K(i,c)}; useful in testing stage or for
 #' debugging or illustration of the algorithm;
+#' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @details This is the main R wrapper function for the segmentation algorithm.
 #' It takes a sequence of clusterings and returns segments of
 #' consistent clusters. It runs the dynamic programing algorithm for
@@ -150,20 +151,24 @@ clusterSegments <- function() {}
 segmentClusters <- function(seq, k=1, csim, E=1,
                             S="ccor", M=175, Mn=20, a=-2, nui=1,
                             nextmax=TRUE, multi="max",multib="max", 
-                            verb=1, save.matrix=FALSE) {
+                            rm.nui=TRUE, save.matrix=FALSE, verb=1) {
 
-    stime <- as.numeric(Sys.time()) 
+    ## timing currently only used in verbose mode
+    ## TODO: report in results
+    if ( verb>0 )
+      stime <- as.numeric(Sys.time()) 
     
-    ## cluster set from clusterTimeseries
+    ## input: cluster set from clusterTimeseries
+    cset <- NULL
     if ( class(seq)=="clustering" ) {
         cset <- seq
         seq <- cset$clusters[,k]
+        ## if cset & csim are provided, csim overrides
+        ## the cset internal matrix!
         if ( S=="ccor" & missing(csim) ) csim <- cset$Ccc[[k]]
         if ( S=="icor" & missing(csim) ) csim <- cset$Pci[[k]]
-        ## TODO: inherit colors here instead of batch function,
-        ## or generate new if input was sequence!
     }
-    
+           
     ## 1: set up sequence and data
     N <- length(seq)
     seqr <- seq
@@ -263,7 +268,8 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     seg$segments[,1] <- remap[seg$segments[,1]]
 
     ## rm nuissance segments
-    seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
+    if ( rm.nui )
+      seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
 
     ## add other data
     ## TODO: further align result with .batch function
@@ -272,6 +278,20 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     ## TODO: add parameters 
     seg$N <- N # sequence length
     seg$ids <- "segments" # default ID; required in plot functions
+    
+    ## TODO: inherit colors here instead of batch function,
+    ## or generate new if input was sequence!
+    if ( !is.null(cset) ) {
+        if ( "colors" %in% names(cset) ) 
+            colors <- cset$colors[[k]]
+    } else { # input: plain sequence
+        ## generate colors; use remap
+        colors <- rep("#888888", length(remap)) # nuissance color
+        names(colors) <- sort(remap)
+        colors[remap!=0] <- color_hue(length(remap[remap!=0])) # non-nuissance
+    }
+    seg$colors <- list(colors)
+    names(seg$colors) <- seg$ids
     
     ## add matrices if requested!
     ## ... can be used for plotting or re-analysis
