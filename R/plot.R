@@ -423,17 +423,21 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
         coors <- c(chr=1,start=1,end=N) 
 
         ## get & process segments
+        ## add colors!
         segs <- sset$segments
+        if ( !"color" %in% colnames(segs) ) {
+            segs <- cbind(segs, color=rep(NA, nrow(segs)))
+            for ( typ in unique(segs[,"type"]) ) {
+                cols <- sset$colors[[typ]]
+                segs[segs[,"type"]==typ,"color"] <-
+                  cols[as.character(segs[segs[,"type"]==typ,"CL"])]
+              }
+        }
 
         ## column mapping required for segment.plotFeatures
         columns <- c(type="type", start="start", end="end",
                      color="color") # name="ID" would be required for names=T
 
-        ## color is only present in segments from batch function
-        if ( !"color" %in% colnames(segs) )
-          columns["color"] <- "CL"
-
-        
         ## filter allsegs by segments for the current clustering
         ypos <- segment.plotFeatures(segs, types=types,
                                      coors=coors, typord=TRUE,cuttypes=TRUE,
@@ -460,22 +464,14 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
             sk.srt <- sset$sorting[types]
         else
             sk.srt <- lapply(SK, function(x) colnames(x$S))
-        if ( "colors" %in% names(sset) )
-            sk.col <- sset$colors[types]
-        else
-            sk.col <- lapply(sk.srt, function(x) {
-                cols <- color_hue(length(x))
-                names(cols) <- x
-                cols}) 
+        sk.col <- sset$colors[types]
 
         ## one plot for each segmentation!
         for ( j in 1:length(SK) ) {
 
             ## cluster sorting
             srt <- as.character(sk.srt[[j]])
-            ## cluster coloring; add black for nuissance
-            sgcols <- c("#000000", sk.col[[j]][srt])
-            if ( !"0" %in% srt ) # for generate sk.srt nuissance "0" is present
+            if ( !"0" %in% srt ) # in generated sk.srt nuissance "0" is present
                 srt <- c("0",srt)
 
             ## plot S1 as heatmap
@@ -488,10 +484,12 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
             }
             if ( !"S" %in% plot ) next
             
+            ## cluster coloring; add black for nuissance
+            sgcols <- sk.col[[j]][srt]
             ## add alpha
             sgcols <- paste(sgcols,"EE",sep="") 
             names(sgcols) <- srt
-            ## only show clusters that actually produced a segment
+            ## set NA: only show clusters that actually produced a segment
             tp <- sset$segments[,"type"]%in%names(SK)[j]
             sgcols[!names(sgcols)%in%as.character(sset$segments[tp,"CL"])] <- NA
 
