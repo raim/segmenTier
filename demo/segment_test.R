@@ -34,21 +34,21 @@ a <- -2 # penalty for non-matching clusters in scoring function "ccls"
 ## SCORING FUNCTION "ccls": score only by cluster membership
 ## this is all we need for a segmentation with the simplest
 ## scoring function "ccls" which is defined by three parameters
-segments <- segmentClusters(seq = seq,
+sset <- segmentClusters(seq = seq,
                             S = "ccls", M = 3, Mn = 3, a = -2, 
                             multi = "max", multib = "max" , nextmax = TRUE,
-                            save.matrix = TRUE)
+                            save.matrix = TRUE, rm.nui= FALSE)
 ## the returned structure has class "segments"
-class(segments)
+class(sset)
 
 ## ... for which a plot method is defined that can plot the segments, and,
 ## if option save.matrix was set to TRUE,
 ## the internal scoring matrices `S1(i,c)` and `S(i,c)`
 par(mfcol=c(3,1),mai=c(0,1.5,0,0))
-plot(seg, plot=c("S1","S", "segments"), lwd=3)
+plot(sset, plot=c("S1","S", "segments"), lwd=3)
 
 ## the segment coordinates are found in:
-head(segments$segments)
+head(sset$segments)
 
 
 ## CLUSTER SIMILARITIES
@@ -84,7 +84,8 @@ cset$Ccc[[1]] <- Ccc # ccor: cluster-cluster similarity
 cset$Pci[[1]] <- Pci # icor: position-cluster similarity
 
 ## CLUSTER SORTING & COLORING
-## clusters are sorted sequentiallz via similarity matrix Ccc,
+## add sorting and coloring to "clustering" object
+## clusters are sorted sequentially via similarity matrix Ccc,
 ## see ?colorClusters
 cset <- colorClusters(cset)
 class(cset) 
@@ -93,7 +94,7 @@ class(cset)
 par(mfcol=c(3,1),mai=c(0,1.5,0,0))
 par(xaxs="i") # required to align x-axes with the heatmap plots
 plot(cset) # NOTE y-axis - re-ordered!
-plot(seg, plot=c("S", "segments"), lwd=3) # plot segmentation
+plot(sset, plot=c("S", "segments"), lwd=3) # plot segmentation
 axis(1)
 
 
