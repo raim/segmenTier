@@ -61,7 +61,7 @@ if ( !interactive() )
     png("segment_data.png",res=300,units="in", width=10,height=5)
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
-plotSegmentation(tset,cset,sset, plot.matrix = FALSE) 
+plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
 
 
 if ( !interactive() )
