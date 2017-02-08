@@ -362,16 +362,8 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
 
     ## cluster sorting via Ccc (cluster-cluster correlation)
     if ( !"sorting" %in% names(cset) )
-        if ( sort )
-            cset <- sortClusters(cset, verb=1)
-        else { # default colors: as in clusterSegments.R
-            sorting <- NULL
-            for ( i in k ) 
-                sorting[[k]] <- sort(unique(cset$clusters[,i]))
-            sorting <- lapply(sorting, function(x) x[x!=0])
-            names(sorting) <- colnames(cset$clusters)
-            cset$sorting <- sorting
-        }
+        cset <- sortClusters(cset, sort=sort, verb=1)
+
     ## cluster colors
     if ( !"colors" %in% names(cset) )
       cset <- colorClusters(cset)

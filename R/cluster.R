@@ -504,8 +504,8 @@ colorClusters <- function(cset) {
 
     ## sort if no sorting is present
     ## this requires the cluster-cluster similarity matrix Ccc
-    if ( !"sorting" %in% names(cset) ) 
-        cset <- sortClusters(cset)
+    if ( !"sorting" %in% names(cset) )
+        cset <- sortClusters(cset, sort=TRUE)
 
     ## generate colors; use gray for nuissance
     for ( k in 1:ncol(cset$clusters) ) {
@@ -526,13 +526,25 @@ colorClusters <- function(cset) {
 #' \code{cset} is returned. This sorting is subsequently used to select
 #' cluster colors.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
+#' @param sort if set to FALSE the clusters will be sorted merely numerically
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #'@export
-sortClusters <- function(cset, verb=0) {
+sortClusters <- function(cset, sort=TRUE, verb=0) {
 
     ## each column in the clustering matrix is one clustering
     cset$sorting <- rep(list(NA), ncol(cset$clusters))
 
+    ## merely generate numerical sorting if sort is FALS
+    if ( !sort ) {
+        sorting <- NULL
+        for ( k in 1:ncol(cset$clusters) ) 
+            sorting[[k]] <- sort(unique(cset$clusters[,k]))
+        sorting <- lapply(sorting, function(x) x[x!=0])
+        names(sorting) <- colnames(cset$clusters)
+        cset$sorting <- sorting
+        return(cset)
+    }
+    
     ## each clustering in \code{cset} comes with a cluster-cluster
     ## similarity matrix (used for scoring function \code{ccor});
     ## here we use it to get a rough sorting, simply starting with
