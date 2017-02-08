@@ -87,17 +87,26 @@ cset$Pci[[1]] <- Pci # icor: position-cluster similarity
 ## add sorting and coloring to "clustering" object
 ## clusters are sorted sequentially via similarity matrix Ccc,
 ## see ?colorClusters
+## TODO: align sorting between cset and sset! if cset is unsorted
+## 
 cset <- colorClusters(cset)
 class(cset) 
+
+sset <- segmentClusters(seq = cset,
+                        S = "ccor", M = 3, Mn = 3, a = -2, 
+                        multi = "max", multib = "max" , nextmax = TRUE,
+                        save.matrix = TRUE, rm.nui= FALSE)
 
 ## PLOT FUNCTION FOR CLASS "clustering"
 par(mfcol=c(3,1),mai=c(0,1.5,0,0))
 par(xaxs="i") # required to align x-axes with the heatmap plots
-plot(cset) # NOTE y-axis - re-ordered!
+cs <- plot(cset) 
 plot(sset, plot=c("S", "segments"), lwd=3) # plot segmentation
 axis(1)
 
+## PARAMETER SCAN
 
+varySettings <- NULL
 
 
 ## TOTAL SCORING MATRIX S(i,c)
@@ -153,7 +162,11 @@ for ( score in scores ) {
             multS[[multi]]$SK <- seg$SK[[1]]
             ## store segments!
             multS[[multi]][[multib]] <- seg$segments
+
+            par(mfcol=c(3,1))
+            plot(cs)
             plot(seg, plot=c("segments","S"))
+            scan()
 
             ## to make work with plot
             ## copy colors, types,
