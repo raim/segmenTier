@@ -353,7 +353,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
 #' @return returns the input "clustering" object with (potentially new)
 #' cluster sorting and colors as in shown in the plot
 #'@export
-plot.clustering <- function(x, k, sort=TRUE, xaxis, pch=16, ...) {
+plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
 
     cset <- x
     
