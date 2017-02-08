@@ -507,9 +507,10 @@ colorClusters <- function(cset) {
     if ( !"sorting" %in% names(cset) ) 
         cset <- sortClusters(cset)
 
+    ## generate colors; use gray for nuissance
     for ( k in 1:ncol(cset$clusters) ) {
-        cols <- color_hue(ncol(cset$Ccc[[k]]))
-        names(cols) <- cset$sorting[[k]]
+        cols <- c("#888888", color_hue(ncol(cset$Ccc[[k]])))
+        names(cols) <- c("0", cset$sorting[[k]])
         cset$colors[[k]] <- cols
     }
     names(cset$colors) <- colnames(cset$clusters)
