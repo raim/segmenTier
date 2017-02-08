@@ -587,11 +587,11 @@ sortClusters <- function(cset, verb=0) {
 #' @param multib handling of multiple k with max. score in back-trace phase,
 #' either "min" (default), "max" or "skip"
 #'@export
-setVarySettings <- function(E=1,
+setVarySettings <- function(E=c(1,3),
                             S="ccor",
-                            M=c(100),
-                            Mn=c(20,100),
-                            a=-2, nui=1,
+                            M=100,
+                            Mn=100,
+                            a=-2, nui=c(1,3),
                             nextmax=TRUE,
                             multi="max",
                             multib="max") {
@@ -664,9 +664,12 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
     typenm <- colnames(params)
     ## rm those with length==1 to keep short names
     ## UNLESS there is no variation
-    if ( short.name & sum(vL>1)>0 ) 
-        typenm <- typenm[vL>1]
-
+    if ( short.name )
+        if ( sum(vL>1)>0 )
+            typenm <- typenm[vL>1]
+        else
+            typenm <- "S" # DEFAULT ID: scoring function
+    
     if ( verb>0 )
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
 
