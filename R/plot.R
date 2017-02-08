@@ -336,32 +336,48 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
 
 
 #' plot the clustering object returned by \code{\link{clusterTimeseries}}
-#' @param x  a clusterings object as returned by
+#' @param x  a "clustering" object as returned by
 #' \code{\link{clusterTimeseries}}
 #' @param k a numeric or string vector indicating the clusterings to be plotted;
 #' specifically the column numbers or names in the matrix of clusterings
 #' in \code{cset$clusters}; if missing all columns will be plotted
 #' and the calling code must take care of properly assigning \code{par(mfcol)}
 #' or \code{layout} for the plot
+#' @param sort sort if TRUE and the clustering is yet unsorted a cluster
+#' sorting will be calculated based on "ccor" cluster-cluster similarity
+#' matrix \code{x$Ccc}; see \code{\link{sortClusters}}
 #' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
-#' @param ... currently unused additional arguments to plot
+#' @param pch argument \code{pch} (symbol) for plot
+#' @param ... additional arguments to plot (untested)
+#' @return returns the input "clustering" object with (potentially new)
+#' cluster sorting and colors as in shown in the plot
 #'@export
-plot.clustering <- function(x, k, xaxis, ...) {
+plot.clustering <- function(x, k, sort=TRUE, xaxis, pch=16, ...) {
 
     cset <- x
     
+    if ( missing(k) ) 
+        k <- 1:ncol(cset$clusters)
+
     ## cluster sorting via Ccc (cluster-cluster correlation)
     if ( !"sorting" %in% names(cset) )
-      cset <- sortClusters(cset, verb=1)
+        if ( sort )
+            cset <- sortClusters(cset, verb=1)
+        else { # default colors: as in clusterSegments.R
+            sorting <- NULL
+            for ( i in k ) 
+                sorting[[k]] <- sort(unique(cset$clusters[,i]))
+            sorting <- lapply(sorting, function(x) x[x!=0])
+            names(sorting) <- colnames(cset$clusters)
+            cset$sorting <- sorting
+        }
     ## cluster colors
     if ( !"colors" %in% names(cset) )
       cset <- colorClusters(cset)
 
     ## plotting all: layout or mfcol must be set from outside;
     ## or a specific k chosen to only plot the k'th clustering
-    if ( missing(k) ) 
-        k <- 1:ncol(cset$clusters)
     if ( length(k)>1 )
         par(mfcol=c(length(k),1))
     for ( i in k ) {
@@ -374,10 +390,11 @@ plot.clustering <- function(x, k, xaxis, ...) {
         cols <- cset$colors[[i]]
         ## plot original clustering
         plot(xaxis,y[seq],axes=FALSE,xlab="",ylab=NA,
-             col=cols[seq],cex=1,pch=16)
+             col=cols[seq], pch=pch, ...)
         axis(2, at=y, labels=names(y), las=2)
         graphics::mtext("cluster", 2, 2)
     }
+    silent <- cset # silent return of cset with sorting and clustering
 }
 
 #' plot the final segmentation objects returned by
@@ -528,9 +545,11 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param plot.matrix include the internal scoring matrices in the plot
 #' @param mai margins of invidual plots, see \code{par}
+#' @param ... further arguments to plot methods for \code{cset} and
+#' \code{sset}
 #'@export
 plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
-                             mai=c(.01,1.5,.01,.01)) {
+                             mai=c(.01,1.5,.01,.01), ...) {
 
     nsg <- length(sset$ids)# total number of segmentations
     nk <- length(cset$ids) # number of clusterings
@@ -551,13 +570,13 @@ plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
     ## and colored along a color-wheel
     for ( k in 1:ncol(cset$clusters) ) {
         ## plot clustering
-        plot(cset, k)
+        plot(cset, k, ...)
         ## SEGMENTATION PLOT UTILITY
         ## plot all segments, S1(i,c), S(i,c) for this clustering
         kid <- cset$ids[k]
         types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
         plot <- "segments"
         if ( plot.matrix ) plot <- c("segments","S","S1")
-        plot(sset, plot=plot, types=types) 
+        plot(sset, plot=plot, types=types, ...) 
     }
 }
