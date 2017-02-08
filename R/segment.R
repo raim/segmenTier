@@ -286,7 +286,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     ## input: plain sequence or cset without colors
     if ( is.null(colors) ) { 
         ## generate colors; use remap for names
-        colors <- rep("#888888", length(remap)) # nuissance color
+        colors <- rep("#888888", length(remap)) # nuissance color!
         names(colors) <- sort(remap)
         colors[remap!=0] <- color_hue(length(remap[remap!=0])) # non-nuissance
     }
