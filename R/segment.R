@@ -262,7 +262,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     }
     seg <- backtrace(S=SK$S, K=SK$K, multib=multib, nextmax=nextmax, verb=verb)
 
-    ## 4: post-processing
+    ## 4: POST-PROCESSING
     ## remap: map back to original cluster names
     remap <- as.numeric(names(map))
     seg$segments[,1] <- remap[seg$segments[,1]]
@@ -271,21 +271,21 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     if ( rm.nui )
       seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
 
-    ## add other data
-    ## TODO: further align result with .batch function
-    ## TODO: do something with warning list?
-    ## TODO: add type column and colors for plot to work?
     ## TODO: add parameters 
+
+    ## segmentation ID and sequence length
     seg$N <- N # sequence length
     seg$ids <- "segments" # default ID; required in plot functions
     
-    ## TODO: inherit colors here instead of batch function,
-    ## or generate new if input was sequence!
-    if ( !is.null(cset) ) {
-        if ( "colors" %in% names(cset) ) 
-            colors <- cset$colors[[k]]
-    } else { # input: plain sequence
-        ## generate colors; use remap
+    ## add colors
+    colors <- NULL
+    ## inherit colors from cset
+    if ( !is.null(cset) ) 
+      if ( "colors" %in% names(cset) ) 
+          colors <- cset$colors[[k]]
+    ## input: plain sequence or cset without colors
+    if ( is.null(colors) ) { 
+        ## generate colors; use remap for names
         colors <- rep("#888888", length(remap)) # nuissance color
         names(colors) <- sort(remap)
         colors[remap!=0] <- color_hue(length(remap[remap!=0])) # non-nuissance
@@ -303,7 +303,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         seg$csim <- list(csim) # not present in batch!
         names(seg$SK) <- names(seg$csim) <- seg$ids
     }    
-    
+
     
     ## assign S3 class
     class(seg) <- "segments"
