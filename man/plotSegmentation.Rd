@@ -10,18 +10,18 @@ plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
   0.01, 0.01))
 }
 \arguments{
-\item{tset}{the time-series object returned by
+\item{tset}{a time-series object as returned by
 \code{\link{processTimeseries}}}
 
-\item{cset}{a set of clusterings as returned by
+\item{cset}{a clusterings object as returned by
 \code{\link{clusterTimeseries}}}
 
-\item{sset}{a set of segmentations as returned by}
+\item{sset}{a segmentation object as returned by
+\code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
 
 \item{plot.matrix}{include the internal scoring matrices in the plot}
 
-\item{mai}{margins of invidual plots, see \code{par}
-\code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
+\item{mai}{margins of invidual plots, see \code{par}}
 }
 \description{
 plot all objects from the segmentation pipeline, i.e. the processed

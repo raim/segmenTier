@@ -8,7 +8,7 @@
 \method{plot}{timeseries}(x, plot = c("total", "timeseries"), ...)
 }
 \arguments{
-\item{x}{the time-series object returned by
+\item{x}{a time-series object as returned by
 \code{\link{processTimeseries}}}
 
 \item{plot}{a string vector indicating the values to be plotted;

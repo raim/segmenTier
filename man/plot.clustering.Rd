@@ -7,7 +7,7 @@
 \method{plot}{clustering}(x, k, xaxis, ...)
 }
 \arguments{
-\item{x}{a set of clusterings as returned by
+\item{x}{a clusterings object as returned by
 \code{\link{clusterTimeseries}}}
 
 \item{k}{a numeric or string vector indicating the clusterings to be plotted;

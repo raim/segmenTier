@@ -5,22 +5,22 @@
 \title{plot the final segmentation objects returned by
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
 \usage{
-\method{plot}{segments}(x, types, xaxis, plot = c("segments", "S", "S1"), ...)
+\method{plot}{segments}(x, plot = c("S", "segments"), types, xaxis, ...)
 }
 \arguments{
-\item{x}{a set of segmentations as returned by
+\item{x}{a segmentation object as returned by
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
-
-\item{types}{a string vector indicating segment types to plot (a subset of
-\code{sset$ids}; defaults to all in \code{sset$ids})}
-
-\item{xaxis}{optional x-values to use as x-axis (e.g. to reflect absolute
-chromosomal coordinates)}
 
 \item{plot}{string list indicating which data should be plotted;
 `segments': plot segments as arrows; `S1' plot the scoring vectors
 \code{s(i,j,c} for all \code{c}; `S' plot the derivative of
 matrix \code{S(i,c)} for all \code{c}}
+
+\item{types}{a string vector indicating segment types to plot (a subset of
+\code{x$ids}; defaults to all in \code{x$ids})}
+
+\item{xaxis}{optional x-values to use as x-axis (e.g. to reflect absolute
+chromosomal coordinates)}
 
 \item{...}{currently unused additional arguments to plot}
 }

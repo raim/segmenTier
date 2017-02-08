@@ -5,7 +5,7 @@
 \title{segmenTier's main wrapper interface, calculates segments from a
 clustering sequence. This will run the segmentation algorithm once
 for the indicated parameters. In contrast, the function
-\code{\link{segmentClusters.batch}} allows for multiple runs over
+\code{\link{segmentCluster.batch}} allows for multiple runs over
 different parameters or input-clusterings.}
 \usage{
 segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175, Mn = 20,
@@ -82,7 +82,7 @@ the colors assigned to those clusters for convenient quick plotting.
 segmenTier's main wrapper interface, calculates segments from a
 clustering sequence. This will run the segmentation algorithm once
 for the indicated parameters. In contrast, the function
-\code{\link{segmentClusters.batch}} allows for multiple runs over
+\code{\link{segmentCluster.batch}} allows for multiple runs over
 different parameters or input-clusterings.
 }
 \details{
