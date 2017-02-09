@@ -6,8 +6,8 @@
 \code{\link{segmentCluster.batch}}, using defaults
 for all parameters not passed.}
 \usage{
-setVarySettings(E = 1, S = "ccor", M = c(100), Mn = c(20, 100),
-  a = -2, nui = 1, nextmax = TRUE, multi = "max", multib = "max")
+setVarySettings(E = c(1, 3), S = "ccor", M = 100, Mn = 100, a = -2,
+  nui = c(1, 3), nextmax = TRUE, multi = "max", multib = "max")
 }
 \arguments{
 \item{E}{exponent to scale similarity matrices, must be odd

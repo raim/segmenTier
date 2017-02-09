@@ -10,14 +10,14 @@ different parameters or input-clusterings.}
 \usage{
 segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175, Mn = 20,
   a = -2, nui = 1, nextmax = TRUE, multi = "max", multib = "max",
-  verb = 1, save.matrix = FALSE)
+  rm.nui = TRUE, save.matrix = FALSE, verb = 1)
 }
 \arguments{
-\item{seq}{either a numeric or string vector providing a clustering
-sequence or a structure of class 'clustering' as returned by
+\item{seq}{either a numeric vector providing a clustering
+sequence, or a structure of class 'clustering' as returned by
 \code{\link{clusterTimeseries}}. The only strict requirement for the
 first option is that nuissance clusters (which will not be segmented)
-have to be numeric or character "0" (zero).}
+have to be '0' (zero).}
 
 \item{k}{if argument \code{seq} is of class 'clustering' the kth
 clustering will be used; defaults to 1}
@@ -59,11 +59,13 @@ either "min" (default) or "max"}
 \item{multib}{handling of multiple k with max. score in back-trace phase,
 either "min" (default), "max" or "skip"}
 
-\item{verb}{level of verbosity, 0: no output, 1: progress messages}
+\item{rm.nui}{remove nuissance cluster segments from final results}
 
 \item{save.matrix}{store the total score matrix \code{S(i,c)} and the
 backtracing matrix \code{K(i,c)}; useful in testing stage or for
 debugging or illustration of the algorithm;}
+
+\item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \value{
 Returns a list containing the main result ("segments"), "warnings"

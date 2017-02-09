@@ -11,10 +11,12 @@ added as \code{sorting} to \code{cset} and the annotated
 \code{cset} is returned. This sorting is subsequently used to select
 cluster colors.}
 \usage{
-sortClusters(cset, verb = 0)
+sortClusters(cset, sort = TRUE, verb = 0)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
+
+\item{sort}{if set to FALSE the clusters will be sorted merely numerically}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }

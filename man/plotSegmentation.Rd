@@ -7,7 +7,7 @@ time-series, the clustering, the internal scoring matrices and
 the final segments}
 \usage{
 plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
-  0.01, 0.01))
+  0.01, 0.01), ...)
 }
 \arguments{
 \item{tset}{a time-series object as returned by
@@ -22,6 +22,9 @@ plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
 \item{plot.matrix}{include the internal scoring matrices in the plot}
 
 \item{mai}{margins of invidual plots, see \code{par}}
+
+\item{...}{further arguments to plot methods for \code{cset} and
+\code{sset}}
 }
 \description{
 plot all objects from the segmentation pipeline, i.e. the processed
