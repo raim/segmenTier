@@ -651,16 +651,17 @@ setVarySettings <- function(E=c(1,3),
 #' the centers of which have a Pearson correlation \code{>fuse.threshold}
 #' the field "fuse" will be set to 1 for the second segments (top-to-bottom
 #' as reported)
+#' @param rm.nui remove nuissance cluster segments from final results
 #' @param short.name if TRUE (default) parameters that are not varied
 #' will not be part of the segment type and ID
 #' @param id if set, the default segment IDs, constructed from numbered
 #' segment types, are replaced by this
-#' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @param save.matrix store the total score matrix \code{S(i,c)} and the
 #' backtracing matrix \code{K(i,c)}; useful in testing stage or for
 #' debugging or illustration of the algorithm
 #' TODO: save.matrix is currently not implemented, since batch function
 #' returns a matrix only
+#' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @details This is a high-level wrapper for \code{\link{segmentClusters}}
 #' which allows segmentation over multiple clusterings as provided by the
 #' function \code{\link{clusterTimeseries}} and over multiple segmentation
@@ -668,10 +669,10 @@ setVarySettings <- function(E=c(1,3),
 #' a vector and ALL combinations of the passed parameter values will
 #' be used for one run of \code{\link{segmentClusters}}.
 #'@export
-segmentCluster.batch <- function(cset, fuse.threshold=0.2,
+segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
+                                 fuse.threshold=0.2, rm.nui=TRUE, 
                                  short.name=TRUE, id,
-                                 save.matrix=FALSE, verb=1, 
-                                 varySettings=setVarySettings()) {
+                                 save.matrix=FALSE, verb=1) {
 
     ## TODO: allow defaults; getSettings to get full list!
     nk <- length(cset$K)
@@ -750,7 +751,7 @@ segmentCluster.batch <- function(cset, fuse.threshold=0.2,
         seg <-segmentClusters(seq=seq,csim=csim,E=E,
                               S=S,M=M,Mn=Mn,nui=nui,a=a,
                               multi=multi,multib=multib,nextmax=nextmax,
-                              save.matrix=save.matrix,verb=verb)
+                              save.matrix=save.matrix,rm.nui=rm.nui,verb=verb)
 
         ## retrieve algo-internal vectors and matrices
         ## S1: s(1,i,C) - scoring function from j=1 to i
