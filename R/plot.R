@@ -279,6 +279,8 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 } 
 
 
+#' Plot method for the "timeseries" object.
+#' 
 #' plot the processed time-series object returned from
 #' \code{\link{processTimeseries}}.
 #' @param x a time-series object as returned by
@@ -335,6 +337,8 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), ...) {
 }
 
 
+#' Plot method for the "clustering" object.
+#' 
 #' plot the clustering object returned by \code{\link{clusterTimeseries}}
 #' @param x  a "clustering" object as returned by
 #' \code{\link{clusterTimeseries}}
@@ -389,6 +393,8 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
     silent <- cset # silent return of cset with sorting and clustering
 }
 
+#' Plot method for the "segments" object.
+#' 
 #' plot the final segmentation objects returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param x a segmentation object as returned by
@@ -526,9 +532,11 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
     }
 }
 
-#' plot all objects from the segmentation pipeline, i.e. the processed
+#' Summary plot for the \code{segmenTier} pipeline.
+#' 
+#' Plot all objects from the segmentation pipeline, i.e. the processed
 #' time-series, the clustering, the internal scoring matrices and
-#' the final segments
+#' the final segments.
 #' @param tset a time-series object as returned by
 #' \code{\link{processTimeseries}}
 #' @param cset a clusterings object as returned by
