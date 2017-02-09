@@ -2,9 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{setVarySettings}
 \alias{setVarySettings}
-\title{generate the parameter list (\code{varySettings}) for
-\code{\link{segmentCluster.batch}}, using defaults
-for all parameters not passed.}
+\title{Parameters for \code{\link{segmentCluster.batch}}.}
 \usage{
 setVarySettings(E = c(1, 3), S = "ccor", M = 100, Mn = 100, a = -2,
   nui = c(1, 3), nextmax = TRUE, multi = "max", multib = "max")
@@ -38,7 +36,7 @@ either "min" (default) or "max"}
 either "min" (default), "max" or "skip"}
 }
 \description{
-generate the parameter list (\code{varySettings}) for
+Generates the parameter list (\code{varySettings}) for
 \code{\link{segmentCluster.batch}}, using defaults
 for all parameters not passed.
 }
