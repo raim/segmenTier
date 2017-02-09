@@ -4,8 +4,8 @@
 \alias{plotSegmentation}
 \title{Summary plot for the \code{segmenTier} pipeline.}
 \usage{
-plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
-  0.01, 0.01), ...)
+plotSegmentation(tset, cset, sset, split = FALSE, plot.matrix = FALSE,
+  mai = c(0.01, 1.5, 0.01, 0.01), ...)
 }
 \arguments{
 \item{tset}{a time-series object as returned by
@@ -16,6 +16,8 @@ plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
 
 \item{sset}{a segmentation object as returned by
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
+
+\item{split}{split segment plots by clustering plots}
 
 \item{plot.matrix}{include the internal scoring matrices in the plot}
 
