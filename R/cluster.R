@@ -56,7 +56,7 @@ color_hue <- function(n) {
 }
 
 ## PLOT UTILITIES
-#' Switch between plot devices
+#' Switch between plot devices.
 #' @param file.name file name without suffix (.png, etc)
 #' @param type plot type: pdf, png or eps
 #' @param width figure width in inches
@@ -74,8 +74,11 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
 }
 
 
-#' process a time-series apt for the \code{\link{segmenTier}}
-#' clustering wrapper \code{\link{clusterTimeseries}}
+#' Process a time-series for \code{\link{segmenTier}}.
+#' 
+#' Performs the requested data transformations, including a Discrete
+#' Fourier Transform (DFT) of the time-series as direct input for 
+#' the clustering wrapper \code{\link{clusterTimeseries}}.
 #' @param ts the timeseries as a matrix, where columns are the timepoints
 #' and rows individual measurements (e.g., genomic positions for transcriptome
 #' data)
@@ -251,7 +254,14 @@ processTimeseries <- function(ts, trafo="raw",
 
 ## TODO: adapt to be used in segmentation as well, is fcls@mu
 ## equal/similar to kmeans' 'centers'? Are Ccc and Pci calculated correctly?
-#' wrapper for \pkg{flowClust}, currently only used for
+
+#' Cluster a processed time-series with \pkg{flowClust} & \pkg{flowMerge}.
+#' 
+#' A wrapper for \pkg{flowClust}, clustering
+#' a time-series object \code{tset} provided by \code{\link{processTimeseries}},
+#' where specifically the DFT of a time-series and requested data
+#' transformation were calculated. The clustering is performed
+#' on the \code{tset$dat} matrix. This currently only used for
 #' clustering of final segment time-series; it could in principle also
 #' be used for segmentation, but that has not been tested.
 #' @param tset processed time-series as provided by
@@ -363,8 +373,13 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     tmp <- fcset
 }
 
-#' wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
-#' of a time-series preprocessed by \code{\link{processTimeseries}}.
+#' Cluster a processed time-series with k-means.
+#' 
+#' A wrapper for \code{\link[stats:kmeans]{kmeans}}, clustering
+#' a time-series object \code{tset} provided by \code{\link{processTimeseries}},
+#' where specifically the DFT of a time-series and requested data
+#' transformation were calculated. The clustering is performed
+#' on the \code{tset$dat} matrix.
 #' @param tset a timeseries processed by \code{\link{processTimeseries}}
 #' @param K selected cluster numbers, the argument \code{centers}
 #' of \code{\link[stats:kmeans]{kmeans}} 
@@ -489,7 +504,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     tmp <- cset
 }
 
-#' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
+#' Assign colors to clusters.
+#' 
+#' Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 #' assigns colors to each cluster in each clustering along
 #' the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
 #' if \code{cset} contains a sorting (see
@@ -517,7 +534,9 @@ colorClusters <- function(cset) {
     cset
 }
 
-#' takes a clustering set as returned by \code{\link{clusterTimeseries}} and
+#' Sort clusters by similarity.
+#' 
+#' Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 #' uses the cluster-cluster similarity matrix \code{Ccc} to sort
 #' clusters by their similarity, starting with the first cluster `1'; the next
 #' cluster is the first cluster (lowest cluster number) with the highest
@@ -613,6 +632,8 @@ setVarySettings <- function(E=c(1,3),
          nextmax=nextmax, multi=multi, multib=multib) # backtracing
 }
 
+#' Batch wrapper for \code{\link{segmentClusters}}.
+#' 
 #' A high-level wrapper for multiple runs of segmentation by
 #' \code{\link{segmentClusters}} for multiple clusterings and
 #' multiple segmentation parameters. It additionally allows to
