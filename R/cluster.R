@@ -826,10 +826,14 @@ fuseTagSegments <- function(segs, Ccc, fuse.threshold=.2) {
     if ( nrow(segs)==0 ) return(NULL)
     if ( nrow(segs)==1 ) return(FALSE)
     
-    fuse <- rep(NA,nrow(segs))
-    for ( j in 2:nrow(segs) ) 
-        fuse[j] <- Ccc[segs[j,1],segs[j-1,1]]
-
+    fuse <- rep(-Inf,nrow(segs))
+    for ( j in 2:nrow(segs) ) {
+        previous <- segs[j-1,1]
+        current <- segs[j,1]
+        if ( !0 %in% c(previous,current) ) 
+            fuse[j] <- Ccc[current,previous]
+    }
+            
     ## FUSE directly adjacent if clusters correlate?
     adj <- segs[2:nrow(segs),2] - segs[2:nrow(segs)-1,3] ==1
     close <- c(FALSE,adj) & fuse > fuse.threshold
