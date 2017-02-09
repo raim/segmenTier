@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.timeseries}
 \alias{plot.timeseries}
-\title{plot the processed time-series object returned from
-\code{\link{processTimeseries}}.}
+\title{Plot method for the "timeseries" object.}
 \usage{
 \method{plot}{timeseries}(x, plot = c("total", "timeseries"), ...)
 }

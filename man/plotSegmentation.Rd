@@ -2,9 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plotSegmentation}
 \alias{plotSegmentation}
-\title{plot all objects from the segmentation pipeline, i.e. the processed
-time-series, the clustering, the internal scoring matrices and
-the final segments}
+\title{Summary plot for the \code{segmenTier} pipeline.}
 \usage{
 plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
   0.01, 0.01), ...)
@@ -27,8 +25,8 @@ plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
 \code{sset}}
 }
 \description{
-plot all objects from the segmentation pipeline, i.e. the processed
+Plot all objects from the segmentation pipeline, i.e. the processed
 time-series, the clustering, the internal scoring matrices and
-the final segments
+the final segments.
 }
 

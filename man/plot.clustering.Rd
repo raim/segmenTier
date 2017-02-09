@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.clustering}
 \alias{plot.clustering}
-\title{plot the clustering object returned by \code{\link{clusterTimeseries}}}
+\title{Plot method for the "clustering" object.}
 \usage{
 \method{plot}{clustering}(x, k, sort = FALSE, xaxis, pch = 16, ...)
 }
