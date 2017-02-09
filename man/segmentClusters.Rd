@@ -2,11 +2,7 @@
 % Please edit documentation in R/segment.R
 \name{segmentClusters}
 \alias{segmentClusters}
-\title{segmenTier's main wrapper interface, calculates segments from a
-clustering sequence. This will run the segmentation algorithm once
-for the indicated parameters. In contrast, the function
-\code{\link{segmentCluster.batch}} allows for multiple runs over
-different parameters or input-clusterings.}
+\title{Run the \code{segmenTier} algorithm.}
 \usage{
 segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175, Mn = 20,
   a = -2, nui = 1, nextmax = TRUE, multi = "max", multib = "max",
