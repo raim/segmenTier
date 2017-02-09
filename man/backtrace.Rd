@@ -2,7 +2,7 @@
 % Please edit documentation in R/segment.R
 \name{backtrace}
 \alias{backtrace}
-\title{back-tracing : collect clustered segments from the scoring function matrix}
+\title{Back-tracing step of the \code{segmenTier} algorithm.}
 \usage{
 backtrace(S, K, multib, nextmax = FALSE, verb = TRUE)
 }
@@ -21,6 +21,8 @@ openening a new segment}
 \item{verb}{print messages}
 }
 \description{
-back-tracing : collect clustered segments from the scoring function matrix
+back-tracing : collect clustered segments from the scoring matrix
+\code{S(i,c)} by back-tracing the position \code{j=k} which delivered
+the maximal score at position {i}.
 }
 

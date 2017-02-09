@@ -3,10 +3,9 @@
 \docType{data}
 \name{tsd}
 \alias{tsd}
-\title{transcriptome time series data from a region encompassing
-four genes and regulatory upstream non-coding RNA}
+\title{Transcriptome time-series from budding yeast.}
 \description{
 transcriptome time series data from a region encompassing
-four genes and regulatory upstream non-coding RNA
+four genes and regulatory upstream non-coding RNA in budding yeast.
 }
 
