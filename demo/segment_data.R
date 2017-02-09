@@ -24,12 +24,6 @@ dc.trafo <- "ash"  # transformation of the first (DC) component of the DFT
 low.thresh <- -Inf # minimal total signal (DC component of DFT if use.fft)
 
 ### CLUSTERING PARAMETERS
-## Here we can generate multiple clusterings, and segmentations
-## will be calculated for all of them.
-## NOTE that nui.thresh acts as a noise filter for clustering, 
-## based on a minimal position-cluster similarity in marix cset$Pci
-## NOTE that random effects of k-means clustering could potentially
-## be utilized to clean data.
 K <- c(16)         # cluster number K; multiple allowed; specifically, note
                    # that k-means has a random effect at initialization
                    # and replicates of the same K can  yield different
@@ -91,7 +85,14 @@ if ( !interactive() )
 
 
 ### MULTIPLE CLUSTERINGS
+## Here we generate multiple clusterings, and segmentations
+## (here with constant parameters) will be calculated for all of them.
+## NOTE that nui.thresh acts as a noise filter for clustering, 
+## based on a minimal position-cluster similarity in marix cset$Pci
+## NOTE that random effects of k-means clustering could potentially
+## be utilized to clean data.
 ## cluster
+nui.thresh <- nui.thresh
 K <- c(16,16,16,20,20,20)
 cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
