@@ -1,12 +1,9 @@
 
-* switch to scoring function with j<=i
+* test scoring function with j<=i; segment_test/data, runSegmentier testsets
 
 * check initialization
 
 * implement alternative nuissance cluster
-
-* segment_test and segment_data: cluster sequence for segmentClusters
-0- or 1-based?
 
 * segmentCluster vs. segmentCluster.batch aligned in usage?
 
