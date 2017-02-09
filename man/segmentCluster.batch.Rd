@@ -4,16 +4,27 @@
 \alias{segmentCluster.batch}
 \title{Batch wrapper for \code{\link{segmentClusters}}.}
 \usage{
-segmentCluster.batch(cset, fuse.threshold = 0.2, short.name = TRUE, id,
-  save.matrix = FALSE, verb = 1, varySettings = setVarySettings())
+segmentCluster.batch(cset, varySettings = setVarySettings(),
+  fuse.threshold = 0.2, rm.nui = TRUE, short.name = TRUE, id,
+  save.matrix = FALSE, verb = 1)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
+
+\item{varySettings}{list of settings where each entry can be a vector;
+the function will construct a matrix of all possible combinations of
+parameter values in this list, call \code{\link{segmentClusters}} for
+each, and report a matrix of segments where the segment `type' is
+constructed from the varied parameters; see option \code{short.name}.
+A varySettings list with all required (default) parameters can be
+obtained via function \code{\link{setVarySettings}}.}
 
 \item{fuse.threshold}{if adjacent segments are associated with clusters
 the centers of which have a Pearson correlation \code{>fuse.threshold}
 the field "fuse" will be set to 1 for the second segments (top-to-bottom
 as reported)}
+
+\item{rm.nui}{remove nuissance cluster segments from final results}
 
 \item{short.name}{if TRUE (default) parameters that are not varied
 will not be part of the segment type and ID}
@@ -28,14 +39,6 @@ TODO: save.matrix is currently not implemented, since batch function
 returns a matrix only}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
-
-\item{varySettings}{list of settings where each entry can be a vector;
-the function will construct a matrix of all possible combinations of
-parameter values in this list, call \code{\link{segmentClusters}} for
-each, and report a matrix of segments where the segment `type' is
-constructed from the varied parameters; see option \code{short.name}.
-A varySettings list with all required (default) parameters can be
-obtained via function \code{\link{setVarySettings}}.}
 }
 \description{
 A high-level wrapper for multiple runs of segmentation by
