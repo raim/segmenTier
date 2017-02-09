@@ -20,19 +20,17 @@ nui.thresh <- 0.6 # threshold of position-cluster correlation below which the po
 
 ### SEGMENTATION PARAMETERS
 vary <- setVarySettings(
-  ## SCORING
-  E=1:3, #c(1,3), # scale exponent of similarity matrices csim
-  S="icor", #c("ccor","icor","ccls"), # SCORING FUNCTIONS
-  M=100, #c(30,175), # scoring function minimal length penalty
-  Mn=100, ## for nuissance clusters: allow smaller segments!?
-  a=-2, 
-  nui=c(1:3), #-/+ correlation of nuissance cluster with others and itself
-    ## BACKTRACING
-  nextmax=TRUE, # in back-tracing, search for the next non-decreasing S(i,c)
-  multi="max", # "min" # handling of multiple max. score k in scoring
-  multib="max" # "min" # multiple max. score clusters in back-tracing
-  )
+    E=1:3,    # scale exponent of similarity matrices csim
+    S="icor", # SCORING FUNCTIONS
+    M=100,    # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=1:3   #-/+ correlation of nuissance cluster with others and itself
+)
 
+## Here we vary the parameters with strongest effect
+## on segmentation of our budding yeast data set.
+## Paramters with little effect on similarity-based scoring functions
+## icor and ccor are discussed in demo(segment_test)
 
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
 ## take DFT and scale amplitudes, and
