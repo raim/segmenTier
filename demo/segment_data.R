@@ -6,19 +6,38 @@ library("segmenTier")
 ## a 7.6 kb genomic region
 data(primseg436)
 
-### TIME-SERIES CLUSTERING PARAMETERS
-use.fft <- TRUE # cluster discrete Fourier transform of data?
-use.snr <- TRUE # take SNR of DFT
-trafo <- "raw" # "ash" # "log_1" #
-dc.trafo <- "ash" # "ash" # NOTE: add component 1 (DC) to DFT range to use
-low.thresh <- -Inf # -Inf/0 # minimal mean value (DC component of DFT if use.fft)
-dft.range <- 2:7 # range of DFT to use for clustering
-K <- c(16) # cluster number K
+### TIME-SERIES PROCESSING PARAMETERS
+## NOTE that the current pipe-line for batch processing
+## allows only one configuration of time-series processing
+## while all downstream steps (clustering, segmentation)
+## can be varied over parameter ranges.
+## NOTE that currently segmenTier is not tested for clustering
+## of time-series directly (without Discrete Fourier Transform)
+## but can be tested by setting use.fft to FALSE
+trafo <- "raw"     # transformation of the raw data 
+use.fft <- TRUE    # cluster discrete Fourier transform of data?
+use.snr <- TRUE    # use DFT scaling (SNR is described as
+                   # relative amplitude scaling in Machne&Murray, PLoS ONE 2012)
+dft.range <- 1:7   # range of DFT to use for clustering
+dc.trafo <- "ash"  # transformation of the first (DC) component of the DFT
+                   # NOTE: add component 1 (DC) to DFT range to use
+low.thresh <- -Inf # minimal total signal (DC component of DFT if use.fft)
+
+### CLUSTERING PARAMETERS
+## Here we can generate multiple clusterings, and segmentations
+## will be calculated for all of them.
+K <- c(16)         # cluster number K; multiple allowed; specifically, note
+                   # that k-means has a random effect at initialization
+                   # and replicates of the same K can  yield different
+                   # results for otherwise 
 iter.max <- 100000 # max. iterations in kmeans
-nstart <- 100   # number of initial configurations tested in kmeans
-nui.thresh <- 0.6 # threshold of position-cluster correlation below which the position will be assigned to the nuissance cluster
+nstart <- 100      # number of initial configurations tested in kmeans
+nui.thresh <- 0.6  # threshold of position-cluster correlation below which
+                   # the position will be assigned to the nuissance cluster
 
 ### SEGMENTATION PARAMETERS
+## segmenTier parameters are handled via the settings function,
+## where all parameters can be passed as vectors.
 vary <- setVarySettings(
     E=1:3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
