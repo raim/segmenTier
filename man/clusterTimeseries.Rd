@@ -2,8 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{clusterTimeseries}
 \alias{clusterTimeseries}
-\title{wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
-of a time-series preprocessed by \code{\link{processTimeseries}}.}
+\title{Cluster a processed time-series with k-means.}
 \usage{
 clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
   nui.thresh = -Inf, verb = 1)
@@ -26,7 +25,10 @@ center; if below the data point will be added to nuissance cluster 0}
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \description{
-wrapper for \code{\link[stats:kmeans]{kmeans}} clustering
-of a time-series preprocessed by \code{\link{processTimeseries}}.
+A wrapper for \code{\link[stats:kmeans]{kmeans}}, clustering
+a time-series object \code{tset} provided by \code{\link{processTimeseries}},
+where specifically the DFT of a time-series and requested data
+transformation were calculated. The clustering is performed
+on the \code{tset$dat} matrix.
 }
 

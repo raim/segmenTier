@@ -2,8 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{processTimeseries}
 \alias{processTimeseries}
-\title{process a time-series apt for the \code{\link{segmenTier}}
-clustering wrapper \code{\link{clusterTimeseries}}}
+\title{Process a time-series for \code{\link{segmenTier}}.}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
   dft.range = 2:7, perm = 0, use.snr = TRUE, low.thresh = -Inf,
@@ -51,8 +50,9 @@ and last time-points (again using span \code{smooth.time})}
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \description{
-process a time-series apt for the \code{\link{segmenTier}}
-clustering wrapper \code{\link{clusterTimeseries}}
+Performs the requested data transformations, including a Discrete
+Fourier Transform (DFT) of the time-series as direct input for 
+the clustering wrapper \code{\link{clusterTimeseries}}.
 }
 \details{
 This function exemplifies the processing of an oscillatory

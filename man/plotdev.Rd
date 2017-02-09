@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{plotdev}
 \alias{plotdev}
-\title{Switch between plot devices}
+\title{Switch between plot devices.}
 \usage{
 plotdev(file.name = "test", type = "png", width = 5, height = 5,
   res = 100)
@@ -19,6 +19,6 @@ plotdev(file.name = "test", type = "png", width = 5, height = 5,
 \item{res}{resolution in ppi (pixels per inch), only for 'png'}
 }
 \description{
-Switch between plot devices
+Switch between plot devices.
 }
 

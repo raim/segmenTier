@@ -2,9 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{flowclusterTimeseries}
 \alias{flowclusterTimeseries}
-\title{wrapper for \pkg{flowClust}, currently only used for
-clustering of final segment time-series; it could in principle also
-be used for segmentation, but that has not been tested.}
+\title{Cluster a processed time-series with \pkg{flowClust} & \pkg{flowMerge}.}
 \usage{
 flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
   lambda = 1, nu = 4, nu.est = 0, trans = 1, ...)
@@ -33,7 +31,11 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
 \item{...}{further parameter to \code{flowClust}}
 }
 \description{
-wrapper for \pkg{flowClust}, currently only used for
+A wrapper for \pkg{flowClust}, clustering
+a time-series object \code{tset} provided by \code{\link{processTimeseries}},
+where specifically the DFT of a time-series and requested data
+transformation were calculated. The clustering is performed
+on the \code{tset$dat} matrix. This currently only used for
 clustering of final segment time-series; it could in principle also
 be used for segmentation, but that has not been tested.
 }

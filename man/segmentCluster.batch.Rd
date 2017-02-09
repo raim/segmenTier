@@ -2,11 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{segmentCluster.batch}
 \alias{segmentCluster.batch}
-\title{A high-level wrapper for multiple runs of segmentation by
-\code{\link{segmentClusters}} for multiple clusterings and
-multiple segmentation parameters. It additionally allows to
-tag adjacent segments to be potentially fused due to similarity
-of their clusters.}
+\title{Batch wrapper for \code{\link{segmentClusters}}.}
 \usage{
 segmentCluster.batch(cset, fuse.threshold = 0.2, short.name = TRUE, id,
   save.matrix = FALSE, verb = 1, varySettings = list(E = 1, S = "ccor", M

@@ -2,12 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{colorClusters}
 \alias{colorClusters}
-\title{takes a clustering set as returned by \code{\link{clusterTimeseries}} and
-assigns colors to each cluster in each clustering along
-the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
-if \code{cset} contains a sorting (see
-\code{clusterSort}), this sorting will be used to assing colors along
-the color wheel, otherwise a sorting will be calculated first;}
+\title{Assign colors to clusters.}
 \usage{
 colorClusters(cset)
 }
@@ -15,7 +10,7 @@ colorClusters(cset)
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
 }
 \description{
-takes a clustering set as returned by \code{\link{clusterTimeseries}} and
+Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 assigns colors to each cluster in each clustering along
 the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
 if \code{cset} contains a sorting (see
