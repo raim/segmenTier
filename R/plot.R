@@ -544,12 +544,13 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
 #' \code{\link{clusterTimeseries}}
 #' @param sset a segmentation object as returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
+#' @param split split segment plots by clustering plots
 #' @param plot.matrix include the internal scoring matrices in the plot
 #' @param mai margins of invidual plots, see \code{par}
 #' @param ... further arguments to plot methods for \code{cset} and
 #' \code{sset}
 #'@export
-plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
+plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
                              mai=c(.01,1.5,.01,.01), ...) {
 
     nsg <- length(sset$ids)# total number of segmentations
@@ -559,7 +560,8 @@ plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
     ## each clustering can have multiple segmentations; plot each
     ## 2 for time-series; and for each clustering 2 (clustering and segments),
     ## plus S1 & S 
-    nplots <- 2 + nk * (2 + ifelse(plot.matrix, 2*spk, 0))
+    nplots <- 2 + nk * (ifelse(split,2,1) + ifelse(plot.matrix, 2*spk, 0)) +
+        ifelse(split,0,1)
     par(mfcol=c(nplots,1), xaxs="i", mai=mai)
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
@@ -569,15 +571,22 @@ plotSegmentation <- function(tset, cset, sset, plot.matrix=FALSE,
     ## CLUSTERING PLOT UTILITY: 
     ## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)
     ## and colored along a color-wheel
-    for ( k in 1:ncol(cset$clusters) ) {
-        ## plot clustering
-        plot(cset, k, ...)
-        ## SEGMENTATION PLOT UTILITY
-        ## plot all segments, S1(i,c), S(i,c) for this clustering
-        kid <- cset$ids[k]
-        types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
+    if ( !split ) {
+        for ( k in 1:ncol(cset$clusters) )
+            plot(cset, k, ...)
         plot <- "segments"
         if ( plot.matrix ) plot <- c("segments","S","S1")
-        plot(sset, plot=plot, types=types, ...) 
-    }
+        plot(sset, plot=plot, ...)
+    } else
+        for ( k in 1:ncol(cset$clusters) ) {
+            ## plot clustering
+            plot(cset, k, ...)
+            ## SEGMENTATION PLOT UTILITY
+            ## plot all segments, S1(i,c), S(i,c) for this clustering
+            kid <- cset$ids[k]
+            types <- rownames(sset$settings)[sset$settings[,"K"] %in% kid]
+            plot <- "segments"
+            if ( plot.matrix ) plot <- c("segments","S","S1")
+            plot(sset, plot=plot, types=types, ...) 
+        }
 }
