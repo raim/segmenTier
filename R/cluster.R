@@ -671,14 +671,7 @@ setVarySettings <- function(E=c(1,3),
 segmentCluster.batch <- function(cset, fuse.threshold=0.2,
                                  short.name=TRUE, id,
                                  save.matrix=FALSE, verb=1, 
-                                 varySettings=list(E=1,
-                                                   S="ccor",
-                                                   M=c(100),
-                                                   Mn=c(20,100),
-                                                   a=-2, nui=1,
-                                                   nextmax=TRUE,
-                                                   multi="max",
-                                                   multib="max")) {
+                                 varySettings=setVarySettings()) {
 
     ## TODO: allow defaults; getSettings to get full list!
     nk <- length(cset$K)
