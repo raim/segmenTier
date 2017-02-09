@@ -80,7 +80,29 @@ head(sset$segments)
 
 ## plot segmentation
 if ( !interactive() )
-    png("segment_data.png",res=300,units="in", width=10,height=5)
+    png("segment_data_exponents.png",res=300,units="in", width=10,height=5)
+
+# plot.matrix=TRUE will additionally plot the internal scoring matrices
+plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
+
+
+if ( !interactive() )
+    dev.off()
+
+
+### MULTIPLE CLUSTERINGS
+## cluster
+K <- c(16,16,16,20,20,20)
+cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
+                          nui.thresh=nui.thresh)
+
+## calculate segments
+vary$nui <- vary$E <- 1
+sset <- segmentCluster.batch(cset, varySettings=vary, 
+                             verb=1, save.matrix=TRUE)
+## plot segmentation
+if ( !interactive() )
+    png("segment_data_clusterings.png",res=300,units="in", width=10,height=5)
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
