@@ -26,14 +26,19 @@ low.thresh <- -Inf # minimal total signal (DC component of DFT if use.fft)
 ### CLUSTERING PARAMETERS
 ## Here we can generate multiple clusterings, and segmentations
 ## will be calculated for all of them.
+## NOTE that nui.thresh acts as a noise filter for clustering, 
+## based on a minimal position-cluster similarity in marix cset$Pci
+## NOTE that random effects of k-means clustering could potentially
+## be utilized to clean data.
 K <- c(16)         # cluster number K; multiple allowed; specifically, note
                    # that k-means has a random effect at initialization
                    # and replicates of the same K can  yield different
                    # results for otherwise 
-iter.max <- 100000 # max. iterations in kmeans
-nstart <- 100      # number of initial configurations tested in kmeans
 nui.thresh <- 0.6  # threshold of position-cluster correlation below which
                    # the position will be assigned to the nuissance cluster
+## k-means initialization
+iter.max <- 100000 # max. iterations in kmeans
+nstart <- 100      # number of initial configurations tested in kmeans
 
 ### SEGMENTATION PARAMETERS
 ## segmenTier parameters are handled via the settings function,
