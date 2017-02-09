@@ -577,7 +577,9 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
     cset
 }
 
-#' generate the parameter list (\code{varySettings}) for
+#' Parameters for \code{\link{segmentCluster.batch}}.
+#' 
+#' Generates the parameter list (\code{varySettings}) for
 #' \code{\link{segmentCluster.batch}}, using defaults
 #' for all parameters not passed.
 #' @param E exponent to scale similarity matrices, must be odd
