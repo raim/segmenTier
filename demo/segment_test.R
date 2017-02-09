@@ -1,43 +1,31 @@
 
 library("segmenTier")
-library("Rcpp")
-source("~/programs/segmenTier/R/plot.R")
-source("~/programs/segmenTier/R/cluster.R")
-source("~/programs/segmenTier/R/segment.R")
-sourceCpp("~/programs/segmenTier/src/segment.cpp")
 
-## a sequence of clusters - note that `0' will be treated
-## as the nuissance cluster, which will not result in segments
+debug <- FALSE
+if ( debug ) {
+    library("Rcpp")
+    source("~/programs/segmenTier/R/plot.R")
+    source("~/programs/segmenTier/R/cluster.R")
+    source("~/programs/segmenTier/R/segment.R")
+    sourceCpp("~/programs/segmenTier/src/segment.cpp")
+}
+
+## A sequence of clusters: this must be of type "numeric", and
+## most importantly, a nuissance cluster `0' indicates
+## noisy or absent data. The nuissance cluster is handled
+## with separate parameters, which mostly helps to define
+## "tighter" ends of segments with similarity-based scoring functions!
+
 seq <- c(4,4,1,2,4,4,4,2,4,4,3,4,4,2,4,1,4,4,0,0,0,0,0,0,1,2,2,2,4,1,1,1,1,
          0,0,1,1,1,1,1,3,3,3,0,3,3,3,3,0,1,3,4,3,2,4,4,1,3)
-
-### clustering can also be letters
-## TODO: use this to test allowing character clusters
-#seq <- letters[seq]
-## BUT: nuissance cluster must be 0 or "0"!
-#seq[seq=="a"]  <- "0"
-
-## list of non-nuissance clusters
-C <- sort(unique(seq))
-C <- C[as.character(C)!="0"]
-
-## SCORING FUNCTIONS to be tested
-scores <- c("ccor","icor", "ccls") # ,"cls"
-
-## SCORING FUNCTION PARAMETERS
-## segment size and penalty parameters
-M <- 3 # minimal segment size; note: this is not a strict cutoff
-Mn <- 3 # minimal segment size for nuissance cluster "0"
-a <- -2 # penalty for non-matching clusters in scoring function "ccls"
 
 
 ## SCORING FUNCTION "ccls": score only by cluster membership
 ## this is all we need for a segmentation with the simplest
 ## scoring function "ccls" which is defined by three parameters
 sset <- segmentClusters(seq = seq,
-                            S = "ccls", M = 3, Mn = 3, a = -2, 
-                            multi = "max", multib = "max" , nextmax = TRUE,
-                            save.matrix = TRUE, rm.nui= FALSE)
+                        S = "ccls", M = 3, Mn = 3, a = -2, 
+                        save.matrix = TRUE, rm.nui= FALSE)
 ## the returned structure has class "segments"
 class(sset)
 
@@ -53,7 +41,18 @@ head(sset$segments)
 
 ## CLUSTER SIMILARITIES
 
+## For illustration, we manually create a "clustering" object
+## as returned by function clusterTimeseries later. It mainly
+## comprises a matrix of one or more clusterings and for
+## each clustering, the cluster similarity matrices required
+## by scoring functions ccor and icor.
+
+## get list of clusters
+C <- sort(unique(seq))
+C <- C[as.character(C)!="0"]
+
 ## SCORING FUNCTION "ccor": cluster-cluster similarity (correlation)
+## list of non-nuissance clusters
 Ccc <- matrix(0,ncol=length(C),nrow=length(C))
 colnames(Ccc) <- rownames(Ccc) <- as.character(C)
 diag(Ccc)<- 1 # set diagonal to 1
@@ -82,6 +81,7 @@ colnames(cset$clusters) <- paste("K",length(C),sep="") # an ID
 cset$Ccc <- cset$Pci <- list() # similarity matrices for scoring functions
 cset$Ccc[[1]] <- Ccc # ccor: cluster-cluster similarity
 cset$Pci[[1]] <- Pci # icor: position-cluster similarity
+names(cset$Ccc) <- names(cset$Pci) <- colnames(cset$clusters)
 
 ## CLUSTER SORTING & COLORING
 ## add sorting and coloring to "clustering" object
@@ -90,12 +90,19 @@ cset$Pci[[1]] <- Pci # icor: position-cluster similarity
 ## TODO: align sorting between cset and sset! if cset is unsorted
 ## 
 cset <- colorClusters(cset)
-class(cset) 
+class(cset)
+plot(cset) # plot method for class "clustering"
 
+## SIMILIRITY BASED SCORING FUNCTIONS
+## ccor requires matrix Ccc: cluster-cluster similarity, here correlation
+## icor required matrix Pci: position-cluster similarity, here correlation
 sset <- segmentClusters(seq = cset,
-                        S = "ccor", M = 3, Mn = 3, a = -2, 
-                        multi = "max", multib = "max" , nextmax = TRUE,
+                        S = "ccor", M = 3, Mn = 3, 
                         save.matrix = TRUE, rm.nui= FALSE)
+
+## Note, that here we keep nuissance segments for illustration.
+## Nuissance segments are plotted in gray, while data-based
+## segments are colored.
 
 ## PLOT FUNCTION FOR CLASS "clustering"
 par(mfcol=c(3,1),mai=c(0,1.5,0,0))
@@ -104,82 +111,33 @@ cs <- plot(cset)
 plot(sset, plot=c("S", "segments"), lwd=3) # plot segmentation
 axis(1)
 
-## PARAMETER SCAN
+## PARAMETER SCAN: the batch function
 
-varySettings <- NULL
-
-
-## TOTAL SCORING MATRIX S(i,c)
-## handling of multiple max. score k 
-## "max" for highest k (favors shorter segments) or
-## "min" for lowest k (favors longer segments)
-multis <- c("max","min") # total scoring matrix, take
-
-## BACK-TRACING:
-## when back-tracing search the next highest score before starting a segment
-nextmax <-TRUE
-## handling of multiple max. score clusters in back-tracing
-## "skip" or 
-## "max" for highest k (favors shorter segments) or
-## "min" for lowest k (favors longer segments)
-multibs <- c("max","skip","min") # back-tracing
+## get settings structure, with all parameters and their defaults
+## parameters you want to test can be supplied as numeric or
+## character vectors
+parameters <- setVarySettings(M=3, Mn=3, a=-2, nui=1, E=1,
+                              S=c("ccls","ccor"),
+                              multi=c("max","min"),
+                              multib=c("max","min","skip"),
+                              nextmax=c(TRUE,FALSE))
 
 
-scrR <- rep(list(NA),length(scores)) # result list for scoring function
-names(scrR) <- scores
-for ( score in scores ) {
+sset <- segmentCluster.batch(cset = cset,
+                             varySettings=parameters,
+                             save.matrix = TRUE, rm.nui= FALSE)
 
-    ## set similarity matrix `csim' according to scoring function
-    if ( score == "ccor" ) {
-        csim <- Ccc
-    } else if ( score == "icor" ) {
-        csim <- Pci
-    } else if ( score == "ccls" ) {
-        csim <- NULL # will be constructed automatically for 'ccls'
-    }
 
-    ## result list for total scoring, will also hold the used
-    ## scoring function matrices
-    multS <- rep(list(NA),length(multis) +1) 
-    names(multS) <- c("SM",multis)
-    
-    for ( multi in multis ) {
+## PLOT ALL
+par(mfcol=c(2,1), mai=c(.1,4,.1,.05))
+plot(cset)
+axis(1)
+plot(sset, "segments")
 
-        ## result list for back-tracing, will also hold
-        ## the total scoring and back-tracing matrices
-        multS[[multi]] <- rep(list(NA),length(multibs)+1) 
-        names(multS[[multi]]) <- c("SK",multibs)
-        
-        for ( multib in multibs ) {
+## NOTE that the parameters "multi", "multib" and "nextmax" only
+## affect the basic scoring function "ccls" which is not recommended
+## for real data sets, unless the clustering is well defined, and
+## and no continuous cluster similarities can be defined.
+## Parameters with effects on real data are discussed in demo(segment_data)
 
-            ## run the algorithm with current parameters, and
-            ## store SM and SK matrices for later plots
-            seg <- segmentClusters(seq=seq, csim=csim, E=1, S=score,M=M,Mn=M,
-                                   a=a,nui=1,
-                                   multi=multi, multib=multib,nextmax=nextmax,
-                                   save.matrix=TRUE)
-            ##multS$SM <- seg$SM # TODO: test whether they are the same?
-            multS[[multi]]$SK <- seg$SK[[1]]
-            ## store segments!
-            multS[[multi]][[multib]] <- seg$segments
 
-            par(mfcol=c(3,1))
-            plot(cs)
-            plot(seg, plot=c("segments","S"))
-            scan()
-
-            ## to make work with plot
-            ## copy colors, types,
-            ## perhaps allow plot to plot csim
-        }
-    }
-    ## store all results for the current scoring function
-    scrR[[score]] <- multS
-}
-
-## plotting segments and score traces (from total scoring matrix)
-##plotSegments(scrR, seq=seq) #,out="segment_test")
-
-## plot scoring function matrices
-##for ( score in scores ) 
-##    plotScoring(scrR[[score]]$SM, seq=seq, score=score) 
