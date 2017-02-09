@@ -389,6 +389,7 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
              col=cols[seq], pch=pch, ...)
         axis(2, at=y, labels=names(y), las=2)
         graphics::mtext("cluster", 2, 2)
+        graphics::mtext(colnames(cset$clusters)[i], side=2 , line=4.5, las=2)
     }
     silent <- cset # silent return of cset with sorting and clustering
 }
