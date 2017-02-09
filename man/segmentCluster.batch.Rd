@@ -5,9 +5,7 @@
 \title{Batch wrapper for \code{\link{segmentClusters}}.}
 \usage{
 segmentCluster.batch(cset, fuse.threshold = 0.2, short.name = TRUE, id,
-  save.matrix = FALSE, verb = 1, varySettings = list(E = 1, S = "ccor", M
-  = c(100), Mn = c(20, 100), a = -2, nui = 1, nextmax = TRUE, multi = "max",
-  multib = "max"))
+  save.matrix = FALSE, verb = 1, varySettings = setVarySettings())
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
