@@ -85,6 +85,8 @@ clusterSegments <- function() {}
 ## NOTE that most of the work is done in segment.cpp
 ## using the Rcpp interface to C++
 
+#' Run the \code{segmenTier} algorithm.
+#' 
 #' segmenTier's main wrapper interface, calculates segments from a
 #' clustering sequence. This will run the segmentation algorithm once
 #' for the indicated parameters. In contrast, the function
@@ -320,7 +322,12 @@ segmentClusters <- function(seq, k=1, csim, E=1,
 }
 
 ## TODO: move this to .cpp as well, then the whole algo is available in C++
-#' back-tracing : collect clustered segments from the scoring function matrix
+#' Back-tracing step of the \code{segmenTier} algorithm.
+#' 
+#' back-tracing : collect clustered segments from the scoring matrix
+#' \code{S(i,c)} by back-tracing the position \code{j=k} which delivered
+#' the maximal score at position {i}.
+#' 
 #' @param S matrix S, containing the local scores
 #' @param K matrix K, containing the position k used for score maximization
 #' @param multib if multiple k produce the maximal score, take either the
@@ -416,8 +423,10 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
     
 ### DATA SET DOC
 
+#' Transcriptome time-series from budding yeast.
+#' 
 #' transcriptome time series data from a region encompassing
-#' four genes and regulatory upstream non-coding RNA
+#' four genes and regulatory upstream non-coding RNA in budding yeast.
 #'
 #' @name tsd
 #' @docType data
