@@ -2,12 +2,12 @@
 % Please edit documentation in R/plot.R
 \name{plot.clustering}
 \alias{plot.clustering}
-\title{Plot method for the "clustering" object.}
+\title{plot the clustering object returned by \code{\link{clusterTimeseries}}}
 \usage{
-\method{plot}{clustering}(x, k, sort = FALSE, xaxis, pch = 16, ...)
+\method{plot}{clustering}(x, k, xaxis, ...)
 }
 \arguments{
-\item{x}{a "clustering" object as returned by
+\item{x}{a clusterings object as returned by
 \code{\link{clusterTimeseries}}}
 
 \item{k}{a numeric or string vector indicating the clusterings to be plotted;
@@ -16,20 +16,10 @@ in \code{cset$clusters}; if missing all columns will be plotted
 and the calling code must take care of properly assigning \code{par(mfcol)}
 or \code{layout} for the plot}
 
-\item{sort}{sort if TRUE and the clustering is yet unsorted a cluster
-sorting will be calculated based on "ccor" cluster-cluster similarity
-matrix \code{x$Ccc}; see \code{\link{sortClusters}}}
-
 \item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
 
-\item{pch}{argument \code{pch} (symbol) for plot}
-
-\item{...}{additional arguments to plot (untested)}
-}
-\value{
-returns the input "clustering" object with (potentially new)
-cluster sorting and colors as in shown in the plot
+\item{...}{currently unused additional arguments to plot}
 }
 \description{
 plot the clustering object returned by \code{\link{clusterTimeseries}}

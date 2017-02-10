@@ -2,10 +2,12 @@
 % Please edit documentation in R/plot.R
 \name{plotSegmentation}
 \alias{plotSegmentation}
-\title{Summary plot for the \code{segmenTier} pipeline.}
+\title{plot all objects from the segmentation pipeline, i.e. the processed
+time-series, the clustering, the internal scoring matrices and
+the final segments}
 \usage{
-plotSegmentation(tset, cset, sset, split = FALSE, plot.matrix = FALSE,
-  mai = c(0.01, 1.5, 0.01, 0.01), ...)
+plotSegmentation(tset, cset, sset, plot.matrix = FALSE, mai = c(0.01, 1.5,
+  0.01, 0.01), ...)
 }
 \arguments{
 \item{tset}{a time-series object as returned by
@@ -17,18 +19,13 @@ plotSegmentation(tset, cset, sset, split = FALSE, plot.matrix = FALSE,
 \item{sset}{a segmentation object as returned by
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
 
-\item{split}{split segment plots by clustering plots}
-
 \item{plot.matrix}{include the internal scoring matrices in the plot}
 
 \item{mai}{margins of invidual plots, see \code{par}}
-
-\item{...}{further arguments to plot methods for \code{cset} and
-\code{sset}}
 }
 \description{
-Plot all objects from the segmentation pipeline, i.e. the processed
+plot all objects from the segmentation pipeline, i.e. the processed
 time-series, the clustering, the internal scoring matrices and
-the final segments.
+the final segments
 }
 

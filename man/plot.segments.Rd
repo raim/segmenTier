@@ -2,7 +2,8 @@
 % Please edit documentation in R/plot.R
 \name{plot.segments}
 \alias{plot.segments}
-\title{Plot method for the "segments" object.}
+\title{plot the final segmentation objects returned by
+\code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
 \usage{
 \method{plot}{segments}(x, plot = c("S", "segments"), types, xaxis, ...)
 }
@@ -18,7 +19,7 @@ matrix \code{S(i,c)} for all \code{c}}
 \item{types}{a string vector indicating segment types to plot (a subset of
 \code{x$ids}; defaults to all in \code{x$ids})}
 
-\item{xaxis}{optional x-values to use as x-axis (e.g. to reflect absolute
+\item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
 
 \item{...}{currently unused additional arguments to plot}

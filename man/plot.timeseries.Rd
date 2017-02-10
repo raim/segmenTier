@@ -2,9 +2,11 @@
 % Please edit documentation in R/plot.R
 \name{plot.timeseries}
 \alias{plot.timeseries}
-\title{Plot method for the "timeseries" object.}
+\title{plot the processed time-series object returned from
+\code{\link{processTimeseries}}.}
 \usage{
-\method{plot}{timeseries}(x, plot = c("total", "timeseries"), ...)
+\method{plot}{timeseries}(x, plot = c("total", "timeseries"), xaxis,
+  strand = "+", ...)
 }
 \arguments{
 \item{x}{a time-series object as returned by
@@ -17,6 +19,11 @@ note that the total levels may have been transformed (e.g. by \code{log_1}
 or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
 in \code{\link{processTimeseries}}; `timeseries': plot the complete
 time-series as a heatmap, where time is plotted bottom-up on the y-axis}
+
+\item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
+chromosomal coordinates)}
+
+\item{strand}{setting to '-' will plot the time-series from bottom to top}
 
 \item{...}{currently unused additional arguments to plot}
 }
