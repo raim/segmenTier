@@ -292,10 +292,9 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
 #' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
-#' @param strand setting to '-' will plot the time-series from bottom to top
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, strand="+", ...) {
+plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ...) {
     
     tset <- x
     
@@ -305,11 +304,6 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, strand="+", 
     
     tot <- tset$tot # total of the time-series
 
-    ## 
-    if ( strand=="-" ) {
-        tot <- rev(tot)
-        tsd <- tsd[nrow(tsd):1,]
-    }
 
     ## mock "chromosome" coordinates
     rel.coors <- c(chr=1,start=1,end=nrow(ts)) 
