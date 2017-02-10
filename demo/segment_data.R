@@ -1,10 +1,22 @@
 
-library("segmenTier")
+debug <- FALSE
+if ( debug ) {
+    library("Rcpp")
+    source("~/programs/segmenTier/R/plot.R")
+    source("~/programs/segmenTier/R/cluster.R")
+    source("~/programs/segmenTier/R/segment.R")
+    sourceCpp("~/programs/segmenTier/src/segment.cpp")
+    sourceCpp("~/programs/segmenTier/src/cluster.cpp")
+    load("~/programs/segmenTier/data/primseg436.rda")
+} else {
+    library("segmenTier")
+
 
 ## load time-series data
 ## contains tsd from primseg436 for
 ## a 7.6 kb genomic region
-data(primseg436)
+    data(primseg436)
+}
 
 ### TIME-SERIES PROCESSING PARAMETERS
 ## NOTE that the current pipe-line for batch processing
@@ -79,7 +91,6 @@ if ( !interactive() )
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
 
-
 if ( !interactive() )
     dev.off()
 
@@ -98,7 +109,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
 ## calculate segments
-vary$nui <- vary$E <- 1
+vary$nui <- vary$E <- 3
 sset <- segmentCluster.batch(cset, varySettings=vary, 
                              verb=1, save.matrix=TRUE)
 ## plot segmentation

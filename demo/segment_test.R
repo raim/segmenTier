@@ -1,5 +1,5 @@
 
-library("segmenTier")
+#library("segmenTier")
 
 debug <- FALSE
 if ( debug ) {
@@ -8,6 +8,8 @@ if ( debug ) {
     source("~/programs/segmenTier/R/cluster.R")
     source("~/programs/segmenTier/R/segment.R")
     sourceCpp("~/programs/segmenTier/src/segment.cpp")
+} else {
+    library("segmenTier")
 }
 
 ## A sequence of clusters: this must be of type "numeric", and
