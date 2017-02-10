@@ -159,7 +159,7 @@ List calculateScore(NumericVector seq, NumericVector C,
   for ( int i=2; i<N; i++ ) {
     for ( int c=0; c<L; c++ ) {
       
-      int kmax = i-1; // j<i - TODO: j<=i -> kmax <- i
+      int kmax = i; // j<=i !
       NumericVector scr(kmax); // store values from k=0 to k=i-1
 
       // max_D ( S(k-1,D) + score(k,i,c) 
@@ -197,3 +197,4 @@ List calculateScore(NumericVector seq, NumericVector C,
 			    Rcpp::Named("S") = S,   /* scoring mat S(i,c) */
 			    Rcpp::Named("K") = K);  /* back-tracing matrix */
 }
+
