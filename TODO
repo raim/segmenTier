@@ -1,6 +1,4 @@
 
-testing git
-
 * convert varySettings to matrix params; and allow combine=FALSE
 
 * test scoring function with j<=i; segment_test/data, runSegmentier testsets
