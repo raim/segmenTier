@@ -16,7 +16,39 @@ during third cycle
 # Methods
 ## Problem & Algorithm: `Karl`
 
+
+
 ## Implementation: `segmenTier`
+
+die offiziellen zwei "demos" des R pakets sind nun fokusiert auf die
+parameter, die man auch im paper kurz besprechen sollte. eine simulierte
+clusteringsequenz erklaert die 3 verwendeten scoring functionen (dzt. 
+"ccls", "ccor" und "icor"),  und zeigt an denen auch die im weiteren
+nicht mehr relevanten interne algo-details (variationen in  S(i,c) berechnung 
+und back-tracing); 
+
+die zweite demo wie bisher eine kurze domain um SRG1, um die relevanten 
+parameter fuer echte daten zu illustrieren.
+das sind
+1) trafo der rohdaten: dft als snr + dc scaling
+2) nui-cluster korrelationen (zb. -3.. +3 statt -1..+1)
+3) exponent auf den korrelationsmatrizen 
+4) zufallskomponente in der k-means initialisierung
+
+ohne (1) gibt es klare ueberfragmentierung,
+va. 2 hilft die enden tighter zu machen, naeher an total;
+va. (2) und (3) haben sonst aehnliche effekte, man kann mit
+ihnen interne bruchstellen (FP in guten transkripten, FN 
+zw. sehr engen benachbarten in-phase transkripten) fine-tunen,
+is aber sehr schwierig freihaendig zu optimieren.
+
+als outlook sind segmenTier (u. segmenTools) so gebaut, dass man (a)
+auto- und systematisch optimierungsstrategien fuer obige parameter und 
+v.a. das fine-tuning implementieren kann, und (b) die zufallskomponente in (4)
+nutzen kann fuer systematische consensus definition; und (c) man mit
+weiterer co-variation von (2), (3) und parameter M zb. auch sequencing
+artefakte, splice-sites, finden koennte; und (d) alle (1-3) angepasst
+werden koennen fuer andere daten.
 
 * `segmenTier`
 ** Algorithm: R & Rcpp
