@@ -1,7 +1,7 @@
 
 #library("segmenTier")
 
-debug <- FALSE
+debug <- TRUE
 if ( debug ) {
     library("Rcpp")
     source("~/programs/segmenTier/R/plot.R")
@@ -64,12 +64,11 @@ Ccc[1,3] <- Ccc[3,1] <- -.5
 
 ## SCORING FUNCTION "icor": position-cluster similarity (correlation)
 Pci <- matrix(0,ncol=length(C),nrow=length(seq))
+set.seed(42) # to keep results constant
 for ( i in 1:length(seq) ) {
     for ( j in 1:ncol(Pci) )
-        set.seed(42) # to keep results constant
         Pci[i,j] <- sample(seq(-1,.1,.01))[3] # set bad correlation
     if ( seq[i]!=0 ) { # set good correlation to its own cluster
-        set.seed(42) # to keep results constant
         Pci[i,seq[i]] <- sample(seq(.3,1,.01))[1]
     }
 }
@@ -119,22 +118,26 @@ axis(1)
 ## parameters you want to test can be supplied as numeric or
 ## character vectors
 parameters <- setVarySettings(M=3, Mn=3, a=-2, nui=1, E=1,
-                              S=c("ccls","ccor"),
+                              S=c("ccls","ccor","icor"), #"ccor",#
                               multi=c("max","min"),
                               multib=c("max","min","skip"),
                               nextmax=c(TRUE,FALSE))
 
 
-sset <- segmentCluster.batch(cset = cset,
+sset <- segmentCluster.batch(cset = cset, id="test",
                              varySettings=parameters,
                              save.matrix = TRUE, rm.nui= FALSE)
 
 
 ## PLOT ALL
-par(mfcol=c(2,1), mai=c(.1,4,.1,.05))
+layout(matrix(1:4), heights=c(.15,.25,.25,.25))
+par(mai=c(.01,2.8,.01,.05))
 plot(cset)
-axis(1)
-plot(sset, "segments")
+axis(1,mgp=c(1,.2,0))
+for ( S in c("ccls", "ccor", "icor") ) {
+    plot.segments(sset, plot="segments", params=c(S=S), lwd=2)
+    axis(1,mgp=c(1,.2,0))
+}
 
 ## NOTE that the parameters "multi", "multib" and "nextmax" only
 ## affect the basic scoring function "ccls" which is not recommended
