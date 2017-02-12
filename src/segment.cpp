@@ -153,7 +153,7 @@ List calculateScore(NumericVector seq, NumericVector C,
     S(1,c) = S1(1,c); // TODO: can this be solved below within the loop?
   }
 
-  //S(i,C) = max_{j<i} max_{D!=C} ( S(j−1, D) + s(j, i, C) )
+  //S(i,C) = max_{j<=i} max_{D!=C} ( S(j−1, D) + s(j, i, C) )
   // go through sequence of clusters
   // start at index 2, since 0&1 were initialized already
   for ( int i=2; i<N; i++ ) {
