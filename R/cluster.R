@@ -29,10 +29,17 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
     Re(pvl/perm)
 }
 
-## asinh trafo: alternative to log
+#' asinh data transformation
+#'
+#' The asinh trafo, an alternative to log transformation that has less
+#' (compressing) effects on the extreme values (low and high values),
+#' and naturally handles negative numbers and 0.
+#' @param x a numeric vector
 #' @export
 ash <- function(x) log(x+sqrt(x^2+1))
-## log trafo handling zeros by adding 1
+
+#' log trafo handling zeros by adding 1
+#' @param x a numeric vector
 #' @export
 log_1 <- function(x) log(x+1)
 
