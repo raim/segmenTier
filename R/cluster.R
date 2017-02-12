@@ -30,8 +30,10 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
 }
 
 ## asinh trafo: alternative to log
+#' @export
 ash <- function(x) log(x+sqrt(x^2+1))
 ## log trafo handling zeros by adding 1
+#' @export
 log_1 <- function(x) log(x+1)
 
 ## moving average

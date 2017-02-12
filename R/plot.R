@@ -416,17 +416,27 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
 #' matrix \code{S(i,c)} for all \code{c}
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.segments <- function(x, plot=c("S","segments"), types, xaxis, ...) {
+plot.segments <- function(x, plot=c("S","segments"),  types, params, xaxis, ...) {
     for ( pl in plot ) 
-        plotSegments(x, pl, types, xaxis, ...)
+        plotSegments(x, pl, types, params, xaxis, ...)
 }
 ## above public wrapper allows to sort the plots by the order in plots
-plotSegments <- function(x, plot=c("segments", "S", "S1"), types, xaxis, ...) {
+plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, ...) {
     sset <- x
 
     ## sub-types to be plotted
-    if ( missing(types) ) {
-        if ( "settings" %in% names(sset) ) # only in batch function
+    if ( missing(types) ) types <- NULL
+    if ( is.null(types) ) {
+        if ( !missing(params) ) {
+            if ( "settings"%in% names(sset) ) { 
+                for ( i in 1:length(params) ) {
+                    pid <- names(params)[i]
+                    p <- params[i]
+                    typ <- sset$settings[,pid] == p
+                    types <- c(types, rownames(sset$settings)[typ])
+                }
+            }
+        } else if ( "ids" %in% names(sset) ) 
           types <- sset$ids # rownames(sset$settings)
         else
           types <- "segments" # for direct function segmentClusters

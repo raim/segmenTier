@@ -410,7 +410,8 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
             i <- i-1
             next
         }
-        
+
+        ## assign segment!
         segments <- rbind(segments, c(c,k,i))
         i <- k -1
     }
