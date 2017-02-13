@@ -75,7 +75,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
-sset <- segmentCluster.batch(cset, varySettings=vary, 
+sset <- segmentCluster.batch(cset, varySettings=vary, #type.name="S",
                              verb=1, save.matrix=TRUE)
 
 ## NOTE: segments are in sset$segments
