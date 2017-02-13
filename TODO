@@ -1,19 +1,10 @@
 
 * convert varySettings to matrix params; and allow combine=FALSE
 
-* test scoring function with j<=i; segment_test/data, runSegmentier testsets
-
-* check initialization
+* check initialization, esp. wrt i<=j
 
 * implement alternative nuissance cluster
 
 * segmentCluster vs. segmentCluster.batch aligned in usage?
 
-* proper nuissance cluster: set multi and multib properly to get
-segment breaks ?
-
-* check backtrace
-
-* test current dc1 scaling to account for total score in clustering
-
-* consensus segments!
+* consensus segments over multiple clusterings with the same K!
