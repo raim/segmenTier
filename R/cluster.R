@@ -499,11 +499,12 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     }
     ## name all results by K, will be used!
     colnames(clusters) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste(id,"_K:",K,sep="")
+        names(Pci) <- names(Ccc) <- paste("K:",K,sep="") #paste(id,"_K:",K,sep="")
 
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
-                 K=K, usedk=usedk, warn=warn, ids=colnames(clusters))
+                 K=K, usedk=usedk, warn=warn, ids=colnames(clusters),
+                 tsid=rep(id,ncol(clusters)))
     class(cset) <- "clustering"
 
     ## add cluster colors
@@ -661,8 +662,14 @@ setVarySettings <- function(E=c(1,3),
 #' the field "fuse" will be set to 1 for the second segments (top-to-bottom
 #' as reported)
 #' @param rm.nui remove nuissance cluster segments from final results
-#' @param short.name if TRUE (default) parameters that are not varied
-#' will not be part of the segment type and ID
+#' @param type.name vector of strings selecting the parameters which will be
+#' used as segment types. Note, that all parameters that are actually varied
+#' will be automatically added (if missing). The list can include parameters
+#' from time-series processing found in the "clustering" object \code{cset}
+#' as \code{cset$tids}.
+#' @param short.name default type name construction; if TRUE (default)
+#' parameters that are not varied will not be part of the segment type and ID.
+#' This argument has no effect if argument \code{type.name} is set.
 #' @param id if set, the default segment IDs, constructed from numbered
 #' segment types, are replaced by this
 #' @param save.matrix store the total score matrix \code{S(i,c)} and the
@@ -680,13 +687,17 @@ setVarySettings <- function(E=c(1,3),
 #'@export
 segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
                                  fuse.threshold=0.2, rm.nui=TRUE, 
-                                 short.name=TRUE, id,
+                                 type.name, short.name=TRUE, id,
                                  save.matrix=FALSE, verb=1) {
 
     ## TODO: allow defaults; getSettings to get full list!
+
+    ## SETTING UP PARAMETER MATRIX
+    ## 1) combine clusterings with segmentation parameters
     nk <- length(cset$K)
     vS <- append(list(K=colnames(cset$clusters)), varySettings)
     vL <- sapply(vS,length)
+    names(vL) <- names(vS)
     rL <- c(1,vL)
     params <- as.data.frame(matrix(NA,ncol=length(vS),
                                  nrow=prod(sapply(vS,length))))
@@ -696,17 +707,47 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
         params[,j] <- rep(rep(vS[[j]],prod(rL[1:(j)])),
                           each=prod(rL[(j+2):length(rL)]))
 
-    ## TODO: store actual parameters
-    ##       store previous processing IDs explicitly, to be used in plots
-    
-    typenm <- colnames(params)
-    ## rm those with length==1 to keep short names
-    ## UNLESS there is no variation
-    if ( short.name )
-        if ( sum(vL>1)>0 )
-            typenm <- typenm[vL>1]
-        else
-            typenm <- "S" # DEFAULT ID: scoring function
+    ## TODO: add time-series processing info
+    if ( !is.null(cset$tsid) ) {
+        cllst <- strsplit(cset$tsid, "_")
+        ## get class ids
+        clid <- unique(unlist(lapply(cllst, function(x) sub(":.*","",x))))
+        ## fill data.frame
+        cltab <- data.frame(matrix(NA, nrow=length(cset$tsid),
+                                   ncol=length(clid)))
+        colnames(cltab) <- clid
+        for ( i in 1:length(cllst) ) {
+            tmp <- strsplit(cllst[[i]],":")
+            class <- unlist(lapply(tmp, function(x) x[2]))
+            names(class) <- unlist(lapply(tmp, function(x) x[1]))
+            cltab[i, names(class)] <- class
+        }
+        cltab <- apply(cltab, 2, function(x)
+                       rep(rep(x,prod(rL[1])),
+                           each=prod(rL[(1+2):length(rL)])))
+        params <- cbind(cltab, params)
+        ## recalculate vL; number of types in each setting
+        vL <- apply(params,2,function(x) length(unique(x)))
+        names(vL) <- colnames(params)
+    }
+
+    ## TODO: store previous processing IDs explicitly, to be used in plots
+
+    ## CONSTRUCT SEGMENT CLASS NAMES!
+    if ( missing(type.name) ) { 
+        type.name <- colnames(params)
+        ## rm those with length==1 to keep short names
+        ## UNLESS there is no variation
+        if ( short.name )
+          if ( sum(vL>1)>0 )
+            type.name <- type.name[vL>1]
+          else
+            type.name <- "S" # DEFAULT ID: scoring function
+    } else {
+        ## add all varied parameters appear in type.name
+        varied <- names(vL[vL>1])
+        type.name <- unique(c(type.name, varied))
+    }
     
     if ( verb>0 )
         cat(paste("SEGMENTATIONS\t",nrow(params),"\n",sep=""))
@@ -725,8 +766,9 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
     ## TODO: redirect messages to msgfile or store in results
     for ( i in 1:nrow(params) ) {
 
-        sgtype <- paste(paste(typenm,params[i,typenm],sep=":"),collapse="_")
-        ## rm first typenm, since these should come formatted (X:id) already
+        sgtype <- paste(paste(type.name,params[i,type.name],sep=":"),
+                        collapse="_")
+        ## rm first type.name, since these should come formatted (X:id) already
         sgtype <- sub("^K:","", sgtype)
         sgtypes <- c(sgtypes, sgtype)
 
