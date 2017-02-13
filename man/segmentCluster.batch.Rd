@@ -5,7 +5,7 @@
 \title{Batch wrapper for \code{\link{segmentClusters}}.}
 \usage{
 segmentCluster.batch(cset, varySettings = setVarySettings(),
-  fuse.threshold = 0.2, rm.nui = TRUE, short.name = TRUE, id,
+  fuse.threshold = 0.2, rm.nui = TRUE, type.name, short.name = TRUE, id,
   save.matrix = FALSE, verb = 1)
 }
 \arguments{
@@ -26,8 +26,15 @@ as reported)}
 
 \item{rm.nui}{remove nuissance cluster segments from final results}
 
-\item{short.name}{if TRUE (default) parameters that are not varied
-will not be part of the segment type and ID}
+\item{type.name}{vector of strings selecting the parameters which will be
+used as segment types. Note, that all parameters that are actually varied
+will be automatically added (if missing). The list can include parameters
+from time-series processing found in the "clustering" object \code{cset}
+as \code{cset$tids}.}
+
+\item{short.name}{default type name construction; if TRUE (default)
+parameters that are not varied will not be part of the segment type and ID.
+This argument has no effect if argument \code{type.name} is set.}
 
 \item{id}{if set, the default segment IDs, constructed from numbered
 segment types, are replaced by this}
