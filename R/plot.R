@@ -406,6 +406,10 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param x a segmentation object as returned by
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
+#' @param params a named vector of parameter settings used in
+#' \code{\link{segmentCluster.batch}} allows to filter plotted segment
+#' types, e.g. params=c(S="icor") will only plot segments where
+#' the scoring function (parameter S) "icor" was used.
 #' @param types a string vector indicating segment types to plot (a subset of
 #' \code{x$ids}; defaults to all in \code{x$ids})
 #' @param xaxis optional x-values to use as x-axis (e.g. to reflect absolute
