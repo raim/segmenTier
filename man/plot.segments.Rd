@@ -4,7 +4,8 @@
 \alias{plot.segments}
 \title{Plot method for the "segments" object.}
 \usage{
-\method{plot}{segments}(x, plot = c("S", "segments"), types, xaxis, ...)
+\method{plot}{segments}(x, plot = c("S", "segments"), types, params, xaxis,
+  ...)
 }
 \arguments{
 \item{x}{a segmentation object as returned by
@@ -17,6 +18,11 @@ matrix \code{S(i,c)} for all \code{c}}
 
 \item{types}{a string vector indicating segment types to plot (a subset of
 \code{x$ids}; defaults to all in \code{x$ids})}
+
+\item{params}{a named vector of parameter settings used in
+\code{\link{segmentCluster.batch}} allows to filter plotted segment
+types, e.g. params=c(S="icor") will only plot segments where
+the scoring function (parameter S) "icor" was used.}
 
 \item{xaxis}{optional x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
