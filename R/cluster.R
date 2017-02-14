@@ -766,10 +766,13 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
     ## TODO: redirect messages to msgfile or store in results
     for ( i in 1:nrow(params) ) {
 
-        sgtype <- paste(paste(type.name,params[i,type.name],sep=":"),
+        ## construct segment type name  
+        sgtype <- paste(paste(type.name,
+                              unlist(lapply(params[i,type.name],as.character)),
+                              sep=":"),
                         collapse="_")
-        ## rm first type.name, since these should come formatted (X:id) already
-        sgtype <- sub("^K:","", sgtype)
+        ## clustering K comes formatted already (K:id)
+        sgtype <- sub("K:K:","K:", sgtype)
         sgtypes <- c(sgtypes, sgtype)
 
         ## clustering input
