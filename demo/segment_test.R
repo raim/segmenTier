@@ -1,7 +1,7 @@
 
 #library("segmenTier")
 
-debug <- TRUE
+debug <- FALSE#TRUE
 if ( debug ) {
     library("Rcpp")
     source("~/programs/segmenTier/R/plot.R")
@@ -135,7 +135,7 @@ par(mai=c(.01,2.8,.01,.05))
 plot(cset)
 axis(1,mgp=c(1,.2,0))
 for ( S in c("ccls", "ccor", "icor") ) {
-    plot.segments(sset, plot="segments", params=c(S=S), lwd=2)
+    plot(sset, plot="segments", params=c(S=S), lwd=2)
     axis(1,mgp=c(1,.2,0))
 }
 
