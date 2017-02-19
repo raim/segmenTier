@@ -432,8 +432,10 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(K))
     centers <- Pci <- Ccc <- rep(list(NA), length(K))
     
-    if ( verb>0 )
+    if ( verb>0 ) {
         cat(paste("Timeseries N\t",N,"\n",sep=""))
+        cat(paste("Used datapoints\t",sum(!rm.vals),"\n",sep=""))
+   }
     
     usedk <- K
     for ( k in 1:length(K) ) {
