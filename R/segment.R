@@ -157,8 +157,9 @@ segmentClusters <- function(seq, k=1, csim, E=1,
 
     ## timing currently only used in verbose mode
     ## TODO: report in results
-    if ( verb>0 )
-      stime <- as.numeric(Sys.time()) 
+    ##if ( verb>0 )
+    ## start time
+    stime <- as.numeric(Sys.time()) 
     
     ## input: cluster set from clusterTimeseries
     cset <- NULL
@@ -307,15 +308,19 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     }    
 
     
+
+    ## record run-time
+    etime <- as.numeric(Sys.time())
+    elapsed <- etime-stime
+    seg$elapsed <- elapsed
+
     ## assign S3 class
     class(seg) <- "segments"
-    
-    if ( verb>0 ) 
-        cat(paste("Done at  \t", time(), "\n",sep=""))
 
+    ## report timing
     if ( verb>0 ) {
-        etime <- as.numeric(Sys.time())
-        cat(paste("elapsed, sec\t", round((etime-stime)), "\n",sep=""))
+        cat(paste("elapsed, sec\t", round(elapsed), "\n",sep=""))
+        cat(paste("Done at  \t", time(), "\n",sep=""))
     }
     return(seg)
     
