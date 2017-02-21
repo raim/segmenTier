@@ -594,6 +594,7 @@ plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
     ## for threshold) and a heatmap of the time-series
     plot(tset, plot=c("total","timeseries"))
+    axis(1)
     
     ## CLUSTERING PLOT UTILITY: 
     ## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)

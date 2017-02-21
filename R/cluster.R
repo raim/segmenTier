@@ -724,9 +724,13 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
             names(class) <- unlist(lapply(tmp, function(x) x[1]))
             cltab[i, names(class)] <- class
         }
-        cltab <- apply(cltab, 2, function(x)
-                       rep(rep(x,prod(rL[1])),
-                           each=prod(rL[(1+2):length(rL)])))
+        ## copy each to all existing param values
+        if ( any(rL>1) ){ # do only if necessary, because otherwise
+                          # cltab will be converted to a vector!
+            cltab <- apply(cltab, 2, function(x)
+                           rep(rep(x,prod(rL[1])),
+                               each=prod(rL[(1+2):length(rL)])))
+        }
         params <- cbind(cltab, params)
         ## recalculate vL; number of types in each setting
         vL <- apply(params,2,function(x) length(unique(x)))
