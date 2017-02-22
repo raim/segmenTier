@@ -153,41 +153,41 @@ List calculateScore(NumericVector seq, NumericVector C,
     S(1,c) = S1(1,c); // TODO: can this be solved below within the loop?
   }
 
-  //S(i,C) = max_{j<=i} max_{D!=C} ( S(j−1, D) + s(j, i, C) )
+  //S(i,C) = max_{j<i} max_{D!=C} ( S(j−1, D) + s(j, i, C) )
   // go through sequence of clusters
   // start at index 2, since 0&1 were initialized already
   for ( int i=2; i<N; i++ ) {
     for ( int c=0; c<L; c++ ) {
       
-      int kmax = i; // j<=i !
-      NumericVector scr(kmax); // store values from k=0 to k=i-1
+      int jmax = i-1; // j<i
+      NumericVector scr(jmax); // store values from j=0 to j=i-1
 
-      // max_D ( S(k-1,D) + score(k,i,c) 
+      // max_D ( S(j-1,D) + score(j,i,c) )
 
-      scr[0] = S1(i, c); // s(1,i,c)  for k=0
-      for ( int k=1; k<kmax; k++ ) {
+      scr[0] = S1(i, c); // s(1,i,c)  for j=0
+      for ( int j=1; j<jmax; j++ ) {
 	
-	// s(k,i,C) = -M + s(1,i,C) - s(1,k-1,C)
-	scr[k] = -M + S1(i, c) - S1(k-1, c);
+	// s(j,i,C) = -M + s(1,i,C) - s(1,j-1,C)
+	scr[j] = -M + S1(i, c) - S1(j-1, c);
 	
 	// + max_D S(j-1,D) : add this sub-max on the fly 
-	double mxsk = - std::numeric_limits<double>::infinity();
+	double mxsj = - std::numeric_limits<double>::infinity();
 	for ( int cp=0; cp<L; cp++ ) 
 	  if ( cp!=c ) 
-	    if ( S(k-1,cp) > mxsk ) mxsk = S(k-1,cp);
-	scr[k] += mxsk;
+	    if ( S(j-1,cp) > mxsj ) mxsj = S(j-1,cp);
+	scr[j] += mxsj;
       }
-      // max_k ( max_D ( S(k-1,D) + score(k,i,c) ) )
+      // max_j ( max_D ( S(j-1,D) + score(j,i,c) ) )
       float mxsc = max( scr );
       S(i,c) = mxsc; // TODO: why not directly max(scr) but via mxsc?
 
-      // store which k was used for back-tracing
+      // store which j was used for back-tracing
       if ( multi=="max" ) { 
-	// "max" means the closest k from the left - shorter
-	// i.e. min(i-k)
+	// "max" means the closest j from the left - shorter
+	// i.e. min(i-j)
 	NumericVector rcs = clone<NumericVector>(scr);
 	std::reverse(rcs.begin(), rcs.end());
-	K(i,c) = kmax - which_max( rcs );
+	K(i,c) = jmax - which_max( rcs );
       } else {
 	K(i,c) = which_max( scr ) + 1;
       }
