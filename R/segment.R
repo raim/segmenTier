@@ -171,6 +171,8 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         if ( S=="ccor" & missing(csim) ) csim <- cset$Ccc[[k]]
         if ( S=="icor" & missing(csim) ) csim <- cset$Pci[[k]]
     }
+    ## input: processed timeseries from processTimeseries
+    ## TODO: cluster-free approach; generate Pci for all vs. all
            
     ## 1: set up sequence and data
     N <- length(seq)
