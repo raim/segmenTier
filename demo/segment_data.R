@@ -52,7 +52,7 @@ nstart <- 100      # number of initial configurations tested in kmeans
 vary <- setVarySettings(
     E=1:3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
-    M=c(100,125,150),    # scoring function minimal length penalty
+    M=c(100), # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=1:3   #-/+ correlation of nuissance cluster with others and itself
 )
