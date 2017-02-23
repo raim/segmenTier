@@ -52,7 +52,7 @@ nstart <- 100      # number of initial configurations tested in kmeans
 vary <- setVarySettings(
     E=1:3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
-    M=100,    # scoring function minimal length penalty
+    M=c(100,125,150),    # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=1:3   #-/+ correlation of nuissance cluster with others and itself
 )
@@ -86,7 +86,7 @@ head(sset$segments)
 
 ## plot segmentation
 if ( !interactive() )
-    png("segment_data_exponents.png",res=300,units="in", width=10,height=5)
+    plotdev("segment_data_exponents.png",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
@@ -114,7 +114,7 @@ sset <- segmentCluster.batch(cset, varySettings=vary,
                              verb=1, save.matrix=TRUE)
 ## plot segmentation
 if ( !interactive() )
-    png("segment_data_clusterings.png",res=300,units="in", width=10,height=5)
+    plotdev("segment_data_clusterings.png",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
@@ -122,3 +122,25 @@ plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2)
 
 if ( !interactive() )
     dev.off()
+
+
+## CLUSTER-FREE - NOTE: this takes a lot of memory and time!
+## each position x_i is treated as its own cluster
+##N <- nrow(tset$dat)
+##D <- sum(!tset$rm.vals)
+##seq <- rep(0, N)
+##seq[!tset$rm.vals] <- 1:D
+##P <- matrix(NA,nrow=N,ncol=D)
+#### position-position cross-correlation
+##P[!tset$rm.vals,] <- clusterCor_c(tset$dat[!tset$rm.vals,],
+##                                  tset$dat[!tset$rm.vals,])
+##cset <- list()
+##cset$clusters <- matrix(seq,ncol=1)
+##cset$Pci <- list(P)
+##colnames(cset$clusters) <- names(cset$Pci) <- "all"
+##
+##vary$S <- "icor" # only 'icor' is possible for this approach!
+##vary$M <- 150
+##vary$nui <- vary$E <- 3
+##sset <- segmentCluster.batch(cset, varySettings=vary, 
+##                             verb=1, save.matrix=TRUE)
