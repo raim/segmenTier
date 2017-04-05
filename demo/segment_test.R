@@ -130,14 +130,17 @@ sset <- segmentCluster.batch(cset = cset, id="test",
 
 
 ## PLOT ALL
+## for paper as pdf
+#pdf("segment_data.pdf", width=10,height=4)
 layout(matrix(1:4), heights=c(.15,.25,.25,.25))
-par(mai=c(.01,2.8,.01,.05))
-plot(cset)
+par(mai=c(.01,2.5,.05,.1),xaxs="i",yaxs="i")
+plot(cset,ylim=c(0.5,4.5))
 axis(1,mgp=c(1,.2,0))
 for ( S in c("ccls", "ccor", "icor") ) {
     plot(sset, plot="segments", params=c(S=S), lwd=2)
     axis(1,mgp=c(1,.2,0))
 }
+#dev.off()
 
 ## NOTE that the parameters "multi", "multib" and "nextmax" only
 ## affect the basic scoring function "ccls" which is not recommended
