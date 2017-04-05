@@ -104,12 +104,15 @@ if ( !interactive() )
 ## be utilized to clean data.
 ## cluster
 nui.thresh <- nui.thresh
-K <- c(16,16,16,20,20,20)
+K <- c(16,16,16) #,20,20,20)
 cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
 ## calculate segments
 vary$nui <- vary$E <- 3
+
+set.seed(10) # ensures consistent test results
+
 sset <- segmentCluster.batch(cset, varySettings=vary, 
                              verb=1, save.matrix=TRUE)
 ## plot segmentation
