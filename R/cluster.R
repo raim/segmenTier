@@ -480,6 +480,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     }
 
     ## re-assign by correlation threshold
+    ## NOTE: this only affects scoring function ccor
     for ( k in 1:ncol(clusters) ) {
         cls <- clusters[,k]
         for ( p in 1:nrow(Pci[[k]]) )
