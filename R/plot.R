@@ -415,18 +415,19 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
 #' \code{x$ids}; defaults to all in \code{x$ids})
 #' @param xaxis optional x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
+#' @param show.fused show the fuse tag as a black x
 #' @param plot string list indicating which data should be plotted;
 #' `segments': plot segments as arrows; `S1' plot the scoring vectors
 #' \code{s(i,j,c} for all \code{c}; `S' plot the derivative of
 #' matrix \code{S(i,c)} for all \code{c}
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.segments <- function(x, plot=c("S","segments"),  types, params, xaxis, ...) {
+plot.segments <- function(x, plot=c("S","segments"),  types, params, xaxis, show.fused=FALSE, ...) {
     for ( pl in plot ) 
-        plotSegments(x, pl, types, params, xaxis, ...)
+        plotSegments(x, pl, types, params, xaxis, show.fused, ...)
 }
 ## above public wrapper allows to sort the plots by the order in plots
-plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, ...) {
+plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, show.fused, ...) {
     sset <- x
 
     ## sub-types to be plotted
@@ -488,7 +489,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
                                          tcx=.5, ...)
             ##axis(1)
             ## plot fuse tag - only present in segments from batch function
-            if ( "fuse" %in% colnames(segs) ) {
+            if ( show.fused & "fuse" %in% colnames(segs) ) {
                 fuse <- segs[segs[,"fuse"],]
                 points(fuse[,"start"], ypos[fuse[,"type"]], col="black",
                        pch=4, lwd=1, cex=1.5)
