@@ -582,6 +582,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
 plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
                              mai=c(.01,1.5,.01,.01), ...) {
 
+    nt <- ifelse(is.null(tset), 0, 2)
     nsg <- length(sset$ids)# total number of segmentations
     nk <- length(cset$ids) # number of clusterings
     spk <- nsg/nk # segmentations per clustering
@@ -589,14 +590,16 @@ plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
     ## each clustering can have multiple segmentations; plot each
     ## 2 for time-series; and for each clustering 2 (clustering and segments),
     ## plus S1 & S 
-    nplots <- 2 + nk * (ifelse(split,2,1) + ifelse(plot.matrix, 2*spk, 0)) +
+    nplots <- nt + nk * (ifelse(split,2,1) + ifelse(plot.matrix, 2*spk, 0)) +
         ifelse(split,0,1)
     par(mfcol=c(nplots,1), xaxs="i", mai=mai)
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
     ## for threshold) and a heatmap of the time-series
-    plot(tset, plot=c("total","timeseries"))
-    axis(1)
+    if ( !is.null(tset) ) {
+        plot(tset, plot=c("total","timeseries"))
+        axis(1)
+    }
     
     ## CLUSTERING PLOT UTILITY: 
     ## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)

@@ -118,8 +118,8 @@ if ( !interactive() )
     plotdev("segment_data_clusterings",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
-plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
-
+plotSegmentation(NULL, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
+#plot(cset)
 
 if ( !interactive() )
     dev.off()
