@@ -18,6 +18,8 @@ if ( debug ) {
     data(primseg436)
 }
 
+plot.pdf <- FALSE
+
 ### TIME-SERIES PROCESSING PARAMETERS
 ## NOTE that the current pipe-line for batch processing
 ## allows only one configuration of time-series processing
@@ -70,6 +72,7 @@ tset <- processTimeseries(ts=tsd, trafo=trafo, dc.trafo=dc.trafo,
                           use.snr=use.snr, low.thresh=low.thresh)
 
 ## CLUSTER PRE-PROCESSED TIME SERIES
+set.seed(15) # stable kmeans clustering
 cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
@@ -85,13 +88,13 @@ head(sset$segments)
 ## PLOT RESULTS
 
 ## plot segmentation
-if ( !interactive() )
+if ( plot.pdf )
     plotdev("segment_data_exponents",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
 
-if ( !interactive() )
+if ( plot.pdf )
     dev.off()
 
 
@@ -105,7 +108,7 @@ if ( !interactive() )
 ## cluster
 nui.thresh <- nui.thresh
 K <- c(16,16,16) #,20,20,20)
-set.seed(10) # ensures consistent test results
+set.seed(10) # stable kmeans clustering
 cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
@@ -114,14 +117,14 @@ vary$nui <- vary$E <- 3
 sset <- segmentCluster.batch(cset, varySettings=vary, 
                              verb=1, save.matrix=TRUE)
 ## plot segmentation
-if ( !interactive() )
+if ( plot.pdf )
     plotdev("segment_data_clusterings",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(NULL, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
 #plot(cset)
 
-if ( !interactive() )
+if ( plot.pdf )
     dev.off()
 
 
