@@ -78,7 +78,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
-sset <- segmentCluster.batch(cset, varySettings=vary, verb=1, save.matrix=FALSE)
+sset <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
 ## NOTE: segments are in sset$segments
 head(sset$segments)
 
@@ -108,8 +108,8 @@ layout(matrix(1:6,ncol=1),heights=c(.5,.5,.5,.1,1,.1))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
 plot(tset)
-par(cex=.7) 
-plot.clustering(cset,axes=2,pwd=1)
+par(cex=.6) 
+plot.clustering(cset,axes=2,cex=.7)
 par(cex=1.25) # increase axis labels
 plot(bad1,"segments",lwd=2.5)
 plot(sset,"segments",lwd=2.5)
