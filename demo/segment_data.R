@@ -54,7 +54,7 @@ nstart <- 100      # number of initial configurations tested in kmeans
 vary <- setVarySettings(
     E=1:3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
-    M=c(100), # scoring function minimal length penalty
+    M=c(175), # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=1:3   #-/+ correlation of nuissance cluster with others and itself
 )
@@ -78,24 +78,44 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
 
 ## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ## FOR CHOSEN SEGMENTATION PARAMETERS
-sset <- segmentCluster.batch(cset, varySettings=vary, #type.name="S",
-                             verb=1, save.matrix=TRUE)
-
+sset <- segmentCluster.batch(cset, varySettings=vary, verb=1, save.matrix=FALSE)
 ## NOTE: segments are in sset$segments
 head(sset$segments)
 
-
 ## PLOT RESULTS
-
 ## plot segmentation
 if ( plot.pdf )
-    plotdev("segment_data_exponents",res=300,width=10,height=5,type="pdf")
+  plotdev("segment_data_exponents",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
 
 if ( plot.pdf )
-    dev.off()
+  dev.off()
+
+## BAD PARAMETER SETS:
+vary$E <- vary$nui <- 1
+vary$M <- 200 ## UNDER-FRAGMENTATION - red
+bad1 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
+vary$E <- vary$nui <- 3
+vary$M <- 75 ## OVER-FRAGMENATION - magenta
+bad2 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
+
+## use layout to combine plots
+if ( plot.pdf )
+  plotdev("segment_data_examples",res=300,width=10,height=6,type="pdf")
+layout(matrix(1:6,ncol=1),heights=c(.5,.5,.5,.1,1,.1))
+par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
+par(cex=1) 
+plot(tset)
+par(cex=.7) 
+plot.clustering(cset,axes=2,pwd=1)
+par(cex=1.25) # increase axis labels
+plot(bad1,"segments",lwd=2.5)
+plot(sset,"segments",lwd=2.5)
+plot(bad2,"segments",lwd=2.5)
+if ( plot.pdf )
+  dev.off()
 
 
 ### MULTIPLE CLUSTERINGS
@@ -107,8 +127,8 @@ if ( plot.pdf )
 ## be utilized to clean data.
 ## cluster
 nui.thresh <- nui.thresh
-K <- c(16,16,16) #,20,20,20)
-set.seed(10) # stable kmeans clustering
+K <- rep(16,6) # c(16,16,16) #,20,20,20)
+set.seed(15) # stable kmeans clustering
 cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
