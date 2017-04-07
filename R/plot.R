@@ -358,12 +358,14 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ...) {
 #' matrix \code{x$Ccc}; see \code{\link{sortClusters}}
 #' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
+#' @param axes list of axes to plot, numbers as used as first argument
+#' in function \code{axis}
 #' @param pch argument \code{pch} (symbol) for plot
 #' @param ... additional arguments to plot (untested)
 #' @return returns the input "clustering" object with (potentially new)
 #' cluster sorting and colors as in shown in the plot
 #'@export
-plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
+plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ...) {
 
     cset <- x
     
@@ -393,8 +395,14 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, pch=16, ...) {
         ## plot original clustering
         plot(xaxis,y[seq],axes=FALSE,xlab="",ylab=NA,
              col=cols[seq], pch=pch, ...)
-        axis(2, at=y, labels=names(y), las=2)
-        axis(1,labels=FALSE)
+        if ( 2%in%axes )
+          axis(2, at=y, labels=names(y), las=2)
+        if ( 1%in% axes )
+          axis(1,labels=FALSE)
+        if ( 3%in%axes )
+          axis(3,labels=FALSE)
+        if ( 4%in%axes)
+          axis(4, at=y, labels=names(y), las=2)
         graphics::mtext("cluster", 2, 2)
         graphics::mtext(colnames(cset$clusters)[i], side=2 , line=4.5, las=2)
     }
@@ -427,7 +435,7 @@ plot.segments <- function(x, plot=c("S","segments"),  types, params, xaxis, show
         plotSegments(x, pl, types, params, xaxis, show.fused, ...)
 }
 ## above public wrapper allows to sort the plots by the order in plots
-plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, show.fused, ...) {
+plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, show.fused=FALSE, ...) {
     sset <- x
 
     ## sub-types to be plotted
@@ -503,6 +511,11 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
 
     if ( any(c("S","S1") %in% plot) ) {
 
+        if ( !"SK"%in%plot )
+          stop("ERROR: matrix plot was requested but matrices where",
+               "not stored. Use `save.matrix=TRUE' in segmentation or",
+               "omit 'S' and 'S1' from  argument `plot' in plot")
+        
         ## get matrices, cluster sorting and colors
         SK <- sset$SK[types]
         if ( "sorting" %in% names(sset) )
@@ -591,7 +604,9 @@ plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
     ## 2 for time-series; and for each clustering 2 (clustering and segments),
     ## plus S1 & S 
     nplots <- nt + nk * (ifelse(split,2,1) + ifelse(plot.matrix, 2*spk, 0)) +
-        ifelse(split,0,1)
+      ifelse(split,0,1)
+    
+    old.par <- par(c("mai","xaxs","mfcol")) # store plot params and set new
     par(mfcol=c(nplots,1), xaxs="i", mai=mai)
 
     ## TIME-SERIES PLOT UTILITY: plot both the total signal (optionally used
@@ -622,4 +637,5 @@ plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
             if ( plot.matrix ) plot <- c("segments","S","S1")
             plot(sset, plot=plot, types=types, ...) 
         }
+    par(old.par)
 }
