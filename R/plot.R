@@ -331,7 +331,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,.
                               min(tot,na.rm=TRUE)),col="#00000055",border=NA)
         graphics::abline(h=low.thresh,col="#000000BB")
         lines(coors["start"]:coors["end"],tot)
-        axis(2);
+        axis(2, las=2)
         #axis(1)
         if ( ylabh )
             graphics::mtext("total signal", 2, 4, las=2, cex=1.25)
