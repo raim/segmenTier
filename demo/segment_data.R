@@ -131,7 +131,7 @@ best <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## use layout to combine plots
 if ( plot.pdf )
-  plotdev("segment_data_examples",res=300,width=10,height=4,type="pdf")
+  plotdev("segment_data_examples",res=300,width=10,height=4.5,type="pdf")
 #layout(matrix(1:9,ncol=1),heights=c(.25,.5,.5,.3,.3,.3,.1,.1,.1))
 layout(matrix(1:6,ncol=1),heights=c(.25,.5,.5,.1,.1,.1))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
