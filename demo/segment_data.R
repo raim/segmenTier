@@ -61,7 +61,7 @@ nstart <- 100      # number of initial configurations tested in kmeans
 vary <- setVarySettings(
     E=1:3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
-    M=c(100,150), # scoring function minimal length penalty
+    M=c(150), # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=1:3   #-/+ correlation of nuissance cluster with others and itself
 )
@@ -79,23 +79,23 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
 
-## CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
-## FOR CHOSEN SEGMENTATION PARAMETERS
-sset <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
-## NOTE: segments are in sset$segments
-head(sset$segments)
-
-## PLOT RESULTS
-## plot segmentation
-if ( plot.pdf )
-  plotdev("segment_data_exponents",res=300,width=10,height=5,type="pdf")
-
-# plot.matrix=TRUE will additionally plot the internal scoring matrices
-plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
-
-if ( plot.pdf )
-  dev.off()
-
+### CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
+### FOR CHOSEN SEGMENTATION PARAMETERS
+#sset <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+### NOTE: segments are in sset$segments
+#head(sset$segments)
+#
+### PLOT RESULTS
+### plot segmentation
+#if ( plot.pdf )
+#  plotdev("segment_data_exponents",res=300,width=10,height=5,type="pdf")
+#
+## plot.matrix=TRUE will additionally plot the internal scoring matrices
+#plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
+#
+#if ( plot.pdf )
+#  dev.off()
+#
 
 
 ## BEST AND WORST PARAMETER SETS, as resulting from paramater scan
