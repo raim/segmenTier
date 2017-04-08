@@ -294,9 +294,10 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
 #' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
-#' @param ... currently unused additional arguments to plot
+#' @param ylabh plot y-axis title horizontally
+#' @param ... additional arguments to plot of total signal
 #'@export
-plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ...) {
+plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,...) {
     
     tset <- x
     
@@ -323,7 +324,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ...) {
     
     if ( "total" %in% plot ) {
         plot(coors["start"]:coors["end"],tot,log=ifelse(logged,"","y"),
-             type="l",lwd=2,axes=FALSE,ylab=NA,xlab=NA)
+             type="l",lwd=2,axes=FALSE,ylab=NA,xlab=NA, ...)
         graphics::polygon(x=c(coors["start"],coors["start"],
                               coors["end"],coors["end"]),
                           y=c(min(tot,na.rm=TRUE),rep(low.thresh,2),
@@ -332,13 +333,19 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ...) {
         lines(coors["start"]:coors["end"],tot)
         axis(2);
         #axis(1)
-        graphics::mtext("total signal", 2, 2)
-    }
+        if ( ylabh )
+            graphics::mtext("total signal", 2, 4.5, las=2)
+        else
+            graphics::mtext("total signal", 2, 2)
+   }
     if ( "timeseries" %in% plot ) {
         segment.plotHeat(ts,coors=rel.coors,chrS=0,colors=colors0, colnorm=TRUE)
         axis(2,at=1:ncol(ts))
         #axis(1)
-        graphics::mtext("time points", 2, 2)
+        if ( ylabh )
+            graphics::mtext("time points", 2, 4.5, las=2)
+        else
+            graphics::mtext("time points", 2, 2)
     }
 }
 
