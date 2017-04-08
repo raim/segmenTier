@@ -410,8 +410,8 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ...) {
           axis(3,labels=FALSE)
         if ( 4%in%axes)
           axis(4, at=y, labels=names(y), las=2)
-        graphics::mtext("cluster", 2, 2)
-        graphics::mtext(colnames(cset$clusters)[i], side=2 , line=4.5, las=2)
+        graphics::mtext(colnames(cset$clusters)[i], 2, 2)
+        graphics::mtext("clustering", side=2 , line=4.5, las=2)
     }
     silent <- cset # silent return of cset with sorting and clustering
 }
