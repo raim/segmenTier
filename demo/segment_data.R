@@ -20,6 +20,13 @@ if ( debug ) {
 
 plot.pdf <- FALSE
 
+## EXAMPLE DATASET FROM BUDDING YEAST
+## NOTE Here we vary the parameters with strongest effect
+## on segmentation of our budding yeast data set.
+## Paramters with little effect on similarity-based scoring functions
+## icor and ccor are discussed in demo(segment_test)
+
+
 ### TIME-SERIES PROCESSING PARAMETERS
 ## NOTE that the current pipe-line for batch processing
 ## allows only one configuration of time-series processing
@@ -54,15 +61,10 @@ nstart <- 100      # number of initial configurations tested in kmeans
 vary <- setVarySettings(
     E=1:3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
-    M=c(175), # scoring function minimal length penalty
+    M=c(100,150), # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=1:3   #-/+ correlation of nuissance cluster with others and itself
 )
-
-## Here we vary the parameters with strongest effect
-## on segmentation of our budding yeast data set.
-## Paramters with little effect on similarity-based scoring functions
-## icor and ccor are discussed in demo(segment_test)
 
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
 ## take DFT and scale amplitudes, and
@@ -93,27 +95,91 @@ plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2)
 if ( plot.pdf )
   dev.off()
 
+## VARY SETTINGS
+
+## vary M; E=nui=2
+vary <- setVarySettings(
+    E=2,    # scale exponent of similarity matrices csim
+    S="icor", # SCORING FUNCTIONS
+    M=c(100,150,200), # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=2   #-/+ correlation of nuissance cluster with others and itself
+)
+varM <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+
+## vary E; nui=2, M=150
+vary <- setVarySettings(
+    E=1:3,    # scale exponent of similarity matrices csim
+    S="icor", # SCORING FUNCTIONS
+    M=150,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=2   #-/+ correlation of nuissance cluster with others and itself
+)
+varE <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+
+## vary nui; E=2, M=150
+vary <- setVarySettings(
+    E=2,    # scale exponent of similarity matrices csim
+    S="icor", # SCORING FUNCTIONS
+    M=150,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=1:3   #-/+ correlation of nuissance cluster with others and itself
+)
+varNui <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+
+
+
+## worst at E=nui=3, M=75
+## worst at E=nui=1, M=200
+
+
 ## BAD PARAMETER SETS:
-vary$E <- vary$nui <- 1
-vary$M <- 200 ## UNDER-FRAGMENTATION - red
+## UNDER-FRAGMENTATION - red cluster in fig 2
+vary <- setVarySettings(
+    E=1,    # scale exponent of similarity matrices csim
+    S="ccor", # SCORING FUNCTIONS
+    M=200,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=1   #-/+ correlation of nuissance cluster with others and itself
+)
 bad1 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
-vary$E <- vary$nui <- 3
-vary$M <- 75 ## OVER-FRAGMENATION - magenta
+## OVER-FRAGMENATION - magenta
+vary <- setVarySettings(
+    E=3,    # scale exponent of similarity matrices csim
+    S="ccor", # SCORING FUNCTIONS
+    M=75,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=3   #-/+ correlation of nuissance cluster with others and itself
+)
 bad2 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
+
+## BEST FRAGMENATION - cyan
+vary <- setVarySettings(
+    E=2,    # scale exponent of similarity matrices csim
+    S="icor", # SCORING FUNCTIONS
+    M=150,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=2   #-/+ correlation of nuissance cluster with others and itself
+)
+best <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## use layout to combine plots
 if ( plot.pdf )
   plotdev("segment_data_examples",res=300,width=10,height=6,type="pdf")
-layout(matrix(1:6,ncol=1),heights=c(.5,.5,.5,.1,1,.1))
+layout(matrix(1:9,ncol=1),heights=c(.25,.5,.5,.3,.3,.3,.1,.1,.1))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
 plot(tset)
 par(cex=.6) 
-plot.clustering(cset,axes=2,cex=.7)
-par(cex=1.25) # increase axis labels
-plot(bad1,"segments",lwd=2.5)
-plot(sset,"segments",lwd=2.5)
-plot(bad2,"segments",lwd=2.5)
+plot(cset,axes=2,cex=.7)
+par(cex=1.2) # increase axis labels
+par(mai=c(0.01,2,0.01,0.01))
+plot(varM,"segments",lwd=3)
+plot(varE,"segments",lwd=3)
+plot(varNui,"segments",lwd=3)
+plot(bad1,"segments",lwd=3)
+plot(best,"segments",lwd=3)
+plot(bad2,"segments",lwd=3)
 if ( plot.pdf )
   dev.off()
 
@@ -127,21 +193,29 @@ if ( plot.pdf )
 ## be utilized to clean data.
 ## cluster
 nui.thresh <- nui.thresh
-K <- rep(16,6) # c(16,16,16) #,20,20,20)
-set.seed(15) # stable kmeans clustering
-cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
+vK <- rep(16,6) # c(16,16,16) #,20,20,20)
+set.seed(10) # stable kmeans clustering
+kset <- clusterTimeseries(tset, K=vK, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
 
 ## calculate segments
-vary$nui <- vary$E <- 3
-sset <- segmentCluster.batch(cset, varySettings=vary, 
+vary <- setVarySettings(
+    E=3,    # scale exponent of similarity matrices csim
+    S="icor", # SCORING FUNCTIONS
+    M=100,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=3   #-/+ correlation of nuissance cluster with others and itself
+)
+#vary$nui <- vary$E <- 3
+vark <- segmentCluster.batch(kset, varySettings=vary, 
                              verb=1, save.matrix=TRUE)
 ## plot segmentation
 if ( plot.pdf )
     plotdev("segment_data_clusterings",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
-plotSegmentation(NULL, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
+#par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
+plotSegmentation(NULL, kset, vark, plot.matrix=FALSE, cex=.5, lwd=2, mai=c(0.1,2,0.05,0.01)) 
 #plot(cset)
 
 if ( plot.pdf )
