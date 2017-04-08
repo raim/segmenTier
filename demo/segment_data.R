@@ -125,7 +125,7 @@ vary <- setVarySettings(
     Mn=100,   # M for nuissance clusters
     nui=1:3   #-/+ correlation of nuissance cluster with others and itself
 )
-varNui <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
 
 
 
@@ -165,7 +165,7 @@ best <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## use layout to combine plots
 if ( plot.pdf )
-  plotdev("segment_data_examples",res=300,width=10,height=6,type="pdf")
+  plotdev("segment_data_examples",res=300,width=10,height=4,type="pdf")
 layout(matrix(1:9,ncol=1),heights=c(.25,.5,.5,.3,.3,.3,.1,.1,.1))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
@@ -174,9 +174,9 @@ par(cex=.6)
 plot(cset,axes=2,cex=.7)
 par(cex=1.2) # increase axis labels
 par(mai=c(0.01,2,0.01,0.01))
-plot(varM,"segments",lwd=3)
-plot(varE,"segments",lwd=3)
-plot(varNui,"segments",lwd=3)
+#plot(varM,"segments",lwd=3)
+#plot(varE,"segments",lwd=3)
+#plot(varN,"segments",lwd=3)
 plot(bad1,"segments",lwd=3)
 plot(best,"segments",lwd=3)
 plot(bad2,"segments",lwd=3)
