@@ -334,7 +334,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,.
         axis(2);
         #axis(1)
         if ( ylabh )
-            graphics::mtext("total signal", 2, 4.5, las=2)
+            graphics::mtext("total signal", 2, 4, las=2, cex=1.25)
         else
             graphics::mtext("total signal", 2, 2)
    }
@@ -343,7 +343,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,.
         axis(2,at=1:ncol(ts))
         #axis(1)
         if ( ylabh )
-            graphics::mtext("time points", 2, 4.5, las=2)
+            graphics::mtext("time points", 2, 4, las=2, cex=1.25)
         else
             graphics::mtext("time points", 2, 2)
     }
