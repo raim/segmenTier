@@ -103,7 +103,7 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
 ## UNDER-FRAGMENTATION - red cluster in fig 2
 vary <- setVarySettings(
     E=1,    # scale exponent of similarity matrices csim
-    S="ccor", # SCORING FUNCTIONS
+    S="icor", # SCORING FUNCTIONS
     M=200,   # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=1   #-/+ correlation of nuissance cluster with others and itself
@@ -112,12 +112,22 @@ bad1 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 ## OVER-FRAGMENATION - magenta
 vary <- setVarySettings(
     E=3,    # scale exponent of similarity matrices csim
-    S="ccor", # SCORING FUNCTIONS
+    S="icor", # SCORING FUNCTIONS
     M=75,   # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
     nui=3   #-/+ correlation of nuissance cluster with others and itself
 )
 bad2 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
+
+## as above but with ccor
+vary <- setVarySettings(
+    E=3,    # scale exponent of similarity matrices csim
+    S="ccor", # SCORING FUNCTIONS
+    M=75,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=3   #-/+ correlation of nuissance cluster with others and itself
+)
+bad2.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
 ## BEST FRAGMENATIONS - cyan
 
@@ -148,12 +158,21 @@ vary <- setVarySettings(
     nui=1   #-/+ correlation of nuissance cluster with others and itself
 )
 best3 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
+## best 3-ccor - E/nui=1 - short M
+vary <- setVarySettings(
+    E=1,    # scale exponent of similarity matrices csim
+    S="ccor", # SCORING FUNCTIONS
+    M=75,   # scoring function minimal length penalty
+    Mn=100,   # M for nuissance clusters
+    nui=1   #-/+ correlation of nuissance cluster with others and itself
+)
+best3.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
 ## use layout to combine plots
 if ( plot.pdf )
   plotdev("segment_data_examples",res=300,width=10,height=5,type="pdf")
 #layout(matrix(1:9,ncol=1),heights=c(.25,.5,.5,.3,.3,.3,.1,.1,.1))
-layout(matrix(1:8,ncol=1),heights=c(.25,.5,.5,.075,.075,.075,.075,.075))
+layout(matrix(1:10,ncol=1),heights=c(.25,.5,.5,.075,.075,.075,.075,.075,.075,.075))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
 plot(tset,ylabh=TRUE)
@@ -163,9 +182,11 @@ par(cex=1.2) # increase axis labels
 par(mai=c(0.01,2,0.01,0.01))
 plot(bad1,"segments",lwd=3)
 plot(best3,"segments",lwd=3)
+plot(best3.ccor,"segments",lwd=3)
 plot(best2,"segments",lwd=3)
 plot(best1,"segments",lwd=3)
 plot(bad2,"segments",lwd=3)
+plot(bad2.ccor,"segments",lwd=3)
 if ( plot.pdf )
   dev.off()
 
