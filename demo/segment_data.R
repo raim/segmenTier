@@ -146,7 +146,7 @@ vary <- setVarySettings(
     S="icor", # SCORING FUNCTIONS
     M=150,   # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
-    nui=2   #-/+ correlation of nuissance cluster with others and itself
+    nui=3   #-/+ correlation of nuissance cluster with others and itself
 )
 best2 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 ## best 3 - E/nui=1 - short M
