@@ -329,13 +329,18 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     best <- which(K==max.clb)
     if ( length(fcls) > 1 ) fc <- fcls[[best]]
     else fc <- fcls
-    obj <- flowMerge::flowObj(fc, flowCore::flowFrame(clsDat))
-    mrg <- flowMerge::merge(obj)
-    mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
-    obj <- mrg[[mrg.cl]]
     mcls <- rep(0, nrow(dat))
-    mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
-    mrg.id <- paste(K[best],"m",mrg.cl,sep="")
+    mrg.id <- "NA"
+    obj <- try(flowMerge::flowObj(fc, flowCore::flowFrame(clsDat)))
+    if ( class(obj)!="try-error" ) {
+        mrg <- try(flowMerge::merge(obj))
+        if ( class(mrg)!="try-error" ) {
+            mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
+            obj <- mrg[[mrg.cl]]
+            mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
+            mrg.id <- paste(K[best],"m",mrg.cl,sep="")
+        }
+    }
     cluster.matrix <- cbind(cluster.matrix, mcls)
     colnames(cluster.matrix)[ncol(cluster.matrix)] <- mrg.id
 
