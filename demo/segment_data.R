@@ -45,7 +45,7 @@ dc.trafo <- "ash"  # transformation of the first (DC) component of the DFT
 low.thresh <- -Inf # minimal total signal (DC component of DFT if use.fft)
 
 ### CLUSTERING PARAMETERS
-K <- c(16)         # cluster number K; multiple allowed; specifically, note
+K <- c(12)         # cluster number K; multiple allowed; specifically, note
                    # that k-means has a random effect at initialization
                    # and replicates of the same K can  yield different
                    # results for otherwise 
@@ -249,7 +249,7 @@ if ( plot.pdf )
 ## be utilized to clean data.
 ## cluster
 nui.thresh <- nui.thresh
-vK <- rep(16,6) # c(16,16,16) #,20,20,20)
+vK <- rep(12,6) # c(16,16,16) #,20,20,20)
 set.seed(10) # stable kmeans clustering
 kset <- clusterTimeseries(tset, K=vK, iter.max=iter.max, nstart=nstart,
                           nui.thresh=nui.thresh)
