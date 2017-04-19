@@ -330,7 +330,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
     if ( length(fcls) > 1 ) fc <- fcls[[best]]
     else fc <- fcls
     mcls <- rep(0, nrow(dat))
-    mrg.id <- "NA"
+    mrg.id <- mrg.cl <- "NA"
     obj <- try(flowMerge::flowObj(fc, flowCore::flowFrame(clsDat)))
     if ( class(obj)!="try-error" ) {
         mrg <- try(flowMerge::merge(obj))
