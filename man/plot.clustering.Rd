@@ -4,7 +4,8 @@
 \alias{plot.clustering}
 \title{Plot method for the "clustering" object.}
 \usage{
-\method{plot}{clustering}(x, k, sort = FALSE, xaxis, pch = 16, ...)
+\method{plot}{clustering}(x, k, sort = FALSE, xaxis, axes = 1:2, pch = 16,
+  ...)
 }
 \arguments{
 \item{x}{a "clustering" object as returned by
@@ -22,6 +23,9 @@ matrix \code{x$Ccc}; see \code{\link{sortClusters}}}
 
 \item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
+
+\item{axes}{list of axes to plot, numbers as used as first argument
+in function \code{axis}}
 
 \item{pch}{argument \code{pch} (symbol) for plot}
 

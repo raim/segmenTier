@@ -4,7 +4,8 @@
 \alias{plot.timeseries}
 \title{Plot method for the "timeseries" object.}
 \usage{
-\method{plot}{timeseries}(x, plot = c("total", "timeseries"), xaxis, ...)
+\method{plot}{timeseries}(x, plot = c("total", "timeseries"), xaxis,
+  ylabh = TRUE, ...)
 }
 \arguments{
 \item{x}{a time-series object as returned by
@@ -21,7 +22,9 @@ time-series as a heatmap, where time is plotted bottom-up on the y-axis}
 \item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
 
-\item{...}{currently unused additional arguments to plot}
+\item{ylabh}{plot y-axis title horizontally}
+
+\item{...}{additional arguments to plot of total signal}
 }
 \description{
 plot the processed time-series object returned from

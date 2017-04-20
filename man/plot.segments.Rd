@@ -5,7 +5,7 @@
 \title{Plot method for the "segments" object.}
 \usage{
 \method{plot}{segments}(x, plot = c("S", "segments"), types, params, xaxis,
-  ...)
+  show.fused = FALSE, ...)
 }
 \arguments{
 \item{x}{a segmentation object as returned by
@@ -26,6 +26,8 @@ the scoring function (parameter S) "icor" was used.}
 
 \item{xaxis}{optional x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
+
+\item{show.fused}{show the fuse tag as a black x}
 
 \item{...}{currently unused additional arguments to plot}
 }
