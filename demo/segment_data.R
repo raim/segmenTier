@@ -176,7 +176,7 @@ par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
 plot(tset,ylabh=TRUE)
 par(cex=.6) 
-plot(cset,axes=2,cex=.7)
+plot(cset,axes=2,cex=.7,ylabh=FALSE); mtext("clustering",2,7.2,las=2,cex=1.2)
 par(cex=1.2) # increase axis labels
 par(mai=c(0.01,2,0.01,0.01))
 plot(bad1,"segments",lwd=3)
