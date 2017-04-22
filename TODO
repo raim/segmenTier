@@ -1,4 +1,3 @@
-
 * convert varySettings to matrix params; and allow combine=FALSE
 
 * implement alternative nuissance cluster
@@ -6,3 +5,5 @@
 * consensus segments over multiple clusterings with the same K!
 
 * analyze re-clustering by segmentation, e.g. silhouettes, BIC, etc.
+
+* write a proper vignette and check all documentation
