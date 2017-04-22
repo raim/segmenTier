@@ -34,7 +34,7 @@ class(sset)
 ## ... for which a plot method is defined that can plot the segments, and,
 ## if option save.matrix was set to TRUE,
 ## the internal scoring matrices `S1(i,c)` and `S(i,c)`
-par(mfcol=c(3,1),mai=c(0,1.5,0,0))
+par(mfcol=c(3,1),mai=c(0,2,0,0))
 plot(sset, plot=c("S1","S", "segments"), lwd=3)
 
 ## the segment coordinates are found in:
@@ -106,7 +106,7 @@ sset <- segmentClusters(seq = cset,
 ## segments are colored.
 
 ## PLOT FUNCTION FOR CLASS "clustering"
-par(mfcol=c(3,1),mai=c(0,1.5,0,0))
+par(mfcol=c(3,1),mai=c(0,2,0,0))
 par(xaxs="i") # required to align x-axes with the heatmap plots
 cs <- plot(cset) 
 plot(sset, plot=c("S", "segments"), lwd=3) # plot segmentation
