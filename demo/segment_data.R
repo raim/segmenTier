@@ -171,7 +171,6 @@ best3.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 ## use layout to combine plots
 if ( plot.pdf )
   plotdev("segment_data_examples",res=300,width=10,height=5,type="pdf")
-#layout(matrix(1:9,ncol=1),heights=c(.25,.5,.5,.3,.3,.3,.1,.1,.1))
 layout(matrix(1:10,ncol=1),heights=c(.25,.5,.5,.075,.075,.075,.075,.075,.075,.075))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
@@ -225,13 +224,12 @@ varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"),
 ## use layout to combine plots
 if ( plot.pdf )
   plotdev("segment_data_scans",res=300,width=10,height=7.5,type="pdf")
-#layout(matrix(1:9,ncol=1),heights=c(.25,.5,.5,.3,.3,.3,.1,.1,.1))
 layout(matrix(1:4,ncol=1),heights=c(.5,.5,.5,.5))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 #par(cex=1) 
 #plot(tset,ylabh=TRUE)
 par(cex=.6) 
-plot.clustering(cset,axes=2,cex=.7)
+plot(cset,axes=2,cex=.7)
 par(cex=1.2) # increase axis labels
 par(mai=c(0.0,2,0.0,0.01))
 plot(varM,"segments",lwd=3)
@@ -276,6 +274,8 @@ plotSegmentation(NULL, kset, vark, plot.matrix=FALSE, cex=.5, lwd=2, mai=c(0.1,2
 
 if ( plot.pdf )
     dev.off()
+
+## TODO: PROOF OF CONCEPT: CLUSTER-FREE SEGMENTATION
 
 ## CLUSTER-FREE - NOTE: this takes a lot of memory and time!
 ## each position x_i is treated as its own cluster
