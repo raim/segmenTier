@@ -1,10 +1,8 @@
 
 * convert varySettings to matrix params; and allow combine=FALSE
 
-* check initialization, esp. wrt i<=j
-
 * implement alternative nuissance cluster
 
-* segmentCluster vs. segmentCluster.batch aligned in usage?
-
 * consensus segments over multiple clusterings with the same K!
+
+* analyze re-clustering by segmentation, e.g. silhouettes, BIC, etc.
