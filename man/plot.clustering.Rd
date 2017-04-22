@@ -5,7 +5,7 @@
 \title{Plot method for the "clustering" object.}
 \usage{
 \method{plot}{clustering}(x, k, sort = FALSE, xaxis, axes = 1:2, pch = 16,
-  ...)
+  ylabh = TRUE, ...)
 }
 \arguments{
 \item{x}{a "clustering" object as returned by
@@ -28,6 +28,8 @@ chromosomal coordinates)}
 in function \code{axis}}
 
 \item{pch}{argument \code{pch} (symbol) for plot}
+
+\item{ylabh}{plot "clustering" horizontally at y-axis}
 
 \item{...}{additional arguments to plot (untested)}
 }

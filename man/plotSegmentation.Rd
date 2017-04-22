@@ -5,7 +5,7 @@
 \title{Summary plot for the \code{segmenTier} pipeline.}
 \usage{
 plotSegmentation(tset, cset, sset, split = FALSE, plot.matrix = FALSE,
-  mai = c(0.01, 1.5, 0.01, 0.01), ...)
+  mai = c(0.01, 2, 0.01, 0.01), ...)
 }
 \arguments{
 \item{tset}{a time-series object as returned by
