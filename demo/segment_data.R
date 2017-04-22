@@ -81,21 +81,21 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
 
 ### CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ### FOR CHOSEN SEGMENTATION PARAMETERS
-#sset <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
-### NOTE: segments are in sset$segments
-#head(sset$segments)
-#
-### PLOT RESULTS
-### plot segmentation
-#if ( plot.pdf )
-#  plotdev("segment_data_exponents",res=300,width=10,height=5,type="pdf")
-#
-## plot.matrix=TRUE will additionally plot the internal scoring matrices
-#plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
-#
-#if ( plot.pdf )
-#  dev.off()
-#
+sset <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+## NOTE: segments are in sset$segments
+head(sset$segments)
+
+## PLOT RESULTS
+## plot segmentation
+if ( plot.pdf )
+  plotdev("segment_data",res=300,width=10,height=5,type="pdf")
+
+# plot.matrix=TRUE will additionally plot the internal scoring matrices
+plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
+
+if ( plot.pdf )
+  dev.off()
+
 
 
 ## BEST AND WORST PARAMETER SETS, as resulting from paramater scan
@@ -169,7 +169,7 @@ vary <- setVarySettings(
 best3.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
 ## use layout to combine plots
-if ( plot.pdf )
+if ( plot.pdf ) # Figure 3 of the preprint manuscript
   plotdev("segment_data_examples",res=300,width=10,height=5,type="pdf")
 layout(matrix(1:10,ncol=1),heights=c(.25,.5,.5,.075,.075,.075,.075,.075,.075,.075))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
@@ -190,6 +190,9 @@ if ( plot.pdf )
   dev.off()
 
 ## SYSTEMATIC VARIATION OF SPECIFIC PARAMETERS
+
+## NOTE: the following produces Figure S4a of the preprint manuscript
+
 
 ## vary M; E=nui=2
 vary <- setVarySettings(
@@ -221,8 +224,8 @@ vary <- setVarySettings(
 )
 varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
 
-## use layout to combine plots
-if ( plot.pdf )
+## NOTE: use layout to combine plots
+if ( plot.pdf ) # Figure S4a of the preprint manuscript
   plotdev("segment_data_scans",res=300,width=10,height=7.5,type="pdf")
 layout(matrix(1:4,ncol=1),heights=c(.5,.5,.5,.5))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
@@ -263,17 +266,17 @@ vary <- setVarySettings(
 #vary$nui <- vary$E <- 3
 vark <- segmentCluster.batch(kset, varySettings=vary, 
                              verb=1, save.matrix=TRUE)
-## plot segmentation
-if ( plot.pdf )
-    plotdev("segment_data_clusterings",res=300,width=10,height=7.5,type="pdf")
 
-# plot.matrix=TRUE will additionally plot the internal scoring matrices
-#par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
+## plot segmentations
+if ( plot.pdf ) # Figure S4b of the preprint manuscript
+    plotdev("segment_data_clusterings",res=300,width=10,height=7.5,type="pdf")
+## NOTE: plot.matrix=TRUE will additionally plot the internal scoring matrices
+# #par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 plotSegmentation(NULL, kset, vark, plot.matrix=FALSE, cex=.5, lwd=2, mai=c(0.1,2,0.05,0.01)) 
-#plot(cset)
 
 if ( plot.pdf )
     dev.off()
+
 
 ## TODO: PROOF OF CONCEPT: CLUSTER-FREE SEGMENTATION
 
