@@ -3,6 +3,16 @@
 Similarity-Based Segmentation of
 Multi-Dimensional Signals
 
+## Quick Guide
+
+```R
+library(devtools)
+install_github("raim/segmenTier")
+library(segmenTier)
+demo("segment_test") # direct algorithm interface and plotting
+demo("segment_data") # time-series processing, clustering and batch segmentation
+```
+
 ## Theory
 
 The theory behind the package is outlined in 
