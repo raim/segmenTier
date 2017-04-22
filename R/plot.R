@@ -392,11 +392,12 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,.
 #' @param axes list of axes to plot, numbers as used as first argument
 #' in function \code{axis}
 #' @param pch argument \code{pch} (symbol) for plot
+#' @param ylabh plot "clustering" horizontally at y-axis
 #' @param ... additional arguments to plot (untested)
 #' @return returns the input "clustering" object with (potentially new)
 #' cluster sorting and colors as in shown in the plot
 #'@export
-plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ...) {
+plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ylabh=TRUE, ...) {
 
     cset <- x
     
@@ -435,7 +436,8 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ...) {
         if ( 4%in%axes)
           axis(4, at=y, labels=names(y), las=2)
         graphics::mtext(colnames(cset$clusters)[i], 2, 2)
-        graphics::mtext("clustering", side=2 , line=7.5, las=2, cex=1.25)
+        if ( ylabh )
+            graphics::mtext("clustering", side=2, line=4.5, las=2, cex=1.25)
     }
     silent <- cset # silent return of cset with sorting and clustering
 }
@@ -624,7 +626,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
 #' \code{sset}
 #'@export
 plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
-                             mai=c(.01,1.5,.01,.01), ...) {
+                             mai=c(.01,2,.01,.01), ...) {
 
     nt <- ifelse(is.null(tset), 0, 2)
     nsg <- length(sset$ids)# total number of segmentations
