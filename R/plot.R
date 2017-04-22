@@ -1,7 +1,28 @@
 ### plotting segmentation results and segments
 
 
-### PLOTTING RESULTS - from genomeBrowser 20161102
+
+### PLOT UTILITIES
+#' Switch between plot devices.
+#' @param file.name file name without suffix (.png, etc)
+#' @param type plot type: png, eps, pdf, tiff or svg
+#' @param width figure width in inches
+#' @param height figure height in inches
+#' @param res resolution in ppi (pixels per inch), only for 'png' and 'tiff'
+#' @export
+plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
+  file.name <- paste(file.name, type, sep=".")
+  if ( type == "png" )
+    grDevices::png(file.name, width=width, height=height, units="in", res=res)
+  if ( type == "eps" )
+    grDevices::postscript(file.name, width=width, height=height,paper="special")
+  if ( type == "pdf" )
+    grDevices::pdf(file.name, width=width, height=height)
+  if ( type == "tiff" )
+    grDevices::tiff(file.name, width=width, height=height, units="in", res=res)
+  if ( type == "svg" )
+    grDevices::svg(file.name, width=width, height=height)
+}
 
 ## from lib TeachingDemos; used in plotFeatures
 shadowtext <- function(x, y=NULL, labels, col='white', bg='black',
@@ -16,6 +37,9 @@ shadowtext <- function(x, y=NULL, labels, col='white', bg='black',
   }
   text(xy$x, xy$y, labels, col=col, ... )
 }
+
+
+### PLOTTING RESULTS - from genomeBrowser 20161102
 
 ## plot features as arrows; kept private since official version
 ## of this function is maintained in package genomeBrowser
