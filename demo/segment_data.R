@@ -59,11 +59,11 @@ nstart <- 100      # number of initial configurations tested in kmeans
 ## segmenTier parameters are handled via the settings function,
 ## where all parameters can be passed as vectors.
 vary <- setVarySettings(
-    E=1:3,    # scale exponent of similarity matrices csim
+    E=c(1,3), # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=c(150), # scoring function minimal length penalty
     Mn=100,   # M for nuissance clusters
-    nui=1:3   #-/+ correlation of nuissance cluster with others and itself
+    nui=c(1,3)#-/+ correlation of nuissance cluster with others and itself
 )
 
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
@@ -81,7 +81,12 @@ cset <- clusterTimeseries(tset, K=K, iter.max=iter.max, nstart=nstart,
 
 ### CALCULATE SEGMENTS FOR ALL CLUSTERINGS and
 ### FOR CHOSEN SEGMENTATION PARAMETERS
-sset <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+## NOTE, that the function optionally also stores the
+## the scoring and backtracing matrices (see demo/segment_test.R)
+sset <- segmentCluster.batch(cset, varySettings=vary,
+                             id="mysegments",
+                             type.name=c("E","M","nui"), # segment type names
+                             verb=1, save.matrix=FALSE) 
 ## NOTE: segments are in sset$segments
 head(sset$segments)
 
@@ -91,7 +96,8 @@ if ( plot.pdf )
   plotdev("segment_data",res=300,width=10,height=5,type="pdf")
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
-plotSegmentation(tset, cset, sset, plot.matrix=FALSE, cex=.5, lwd=2) 
+# if segmentation was calculated with save.matrix=TRUE
+plotSegmentation(tset, cset, sset, cex=.5, lwd=2) 
 
 if ( plot.pdf )
   dev.off()
@@ -202,7 +208,7 @@ vary <- setVarySettings(
     Mn=100,   # M for nuissance clusters
     nui=1   #-/+ correlation of nuissance cluster with others and itself
 )
-varM <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+varM <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## vary E; nui=1, M=150
 vary <- setVarySettings(
@@ -212,7 +218,7 @@ vary <- setVarySettings(
     Mn=100,   # M for nuissance clusters
     nui=2  #-/+ correlation of nuissance cluster with others and itself
 )
-varE <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+varE <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## vary nui; E=1, M=150
 vary <- setVarySettings(
@@ -222,7 +228,7 @@ vary <- setVarySettings(
     Mn=100,   # M for nuissance clusters
     nui=1:9   #-/+ correlation of nuissance cluster with others and itself
 )
-varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"), verb=1, save.matrix=FALSE)
+varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## NOTE: use layout to combine plots
 if ( plot.pdf ) # Figure S4a of the preprint manuscript
@@ -264,15 +270,12 @@ vary <- setVarySettings(
     nui=3   #-/+ correlation of nuissance cluster with others and itself
 )
 #vary$nui <- vary$E <- 3
-vark <- segmentCluster.batch(kset, varySettings=vary, 
-                             verb=1, save.matrix=TRUE)
+vark <- segmentCluster.batch(kset, varySettings=vary)
 
 ## plot segmentations
 if ( plot.pdf ) # Figure S4b of the preprint manuscript
     plotdev("segment_data_clusterings",res=300,width=10,height=7.5,type="pdf")
-## NOTE: plot.matrix=TRUE will additionally plot the internal scoring matrices
-# #par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
-plotSegmentation(NULL, kset, vark, plot.matrix=FALSE, cex=.5, lwd=2, mai=c(0.1,2,0.05,0.01)) 
+plotSegmentation(NULL, kset, vark, cex=.5, lwd=2, mai=c(0.1,2,0.05,0.01)) 
 
 if ( plot.pdf )
     dev.off()
@@ -298,5 +301,4 @@ if ( plot.pdf )
 ##vary$S <- "icor" # only 'icor' is possible for this approach!
 ##vary$M <- 150
 ##vary$nui <- vary$E <- 3
-##sset <- segmentCluster.batch(cset, varySettings=vary, 
-##                             verb=1, save.matrix=TRUE)
+##sset <- segmentCluster.batch(cset, varySettings=vary)
