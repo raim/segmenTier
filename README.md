@@ -21,17 +21,17 @@ install_github("raim/segmenTier")
 Usage of the package is demonstrated in two R demos.
 
 Artificial data to demonstrate the low level functions
-are in file (demo/segment_test.R). It produces
+are in file [demo/segment_test.R]. It produces
 Supplemental Figure S1 of the preprint manuscript.
 
-To run it in R simply type:
+To run it in R grep simply type:
 ```
 library(segmenTier)
 demo("segment_test", package = "segmenTier")
 ```
 
 A real-life data set is segmented with varying
-parameters in (demo/segment_data.R).
+parameters in [demo/segment_data.R].
 
 This demo runs quite long, since it calculates many 
 segmentations. It produces Figure 3 and Supplemental Figures
