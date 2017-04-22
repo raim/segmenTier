@@ -542,7 +542,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
 
     if ( any(c("S","S1") %in% plot) ) {
 
-        if ( !"SK"%in%plot )
+        if ( !"SK"%in%names(sset) )
           stop("ERROR: matrix plot was requested but matrices where",
                "not stored. Use `save.matrix=TRUE' in segmentation or",
                "omit 'S' and 'S1' from  argument `plot' in plot")
