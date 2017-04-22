@@ -6,7 +6,7 @@ Multi-Dimensional Signals
 ## Theory
 
 The theory behind the package is outlined in 
-the manuscript at the preprint server of the
+the manuscript at the preprint server of 
 the [Santa Fe Institute](https://www.santafe.edu/).
 
 ## Installation
@@ -20,19 +20,24 @@ install_github("raim/segmenTier")
 
 Usage of the package is demonstrated in two R demos.
 
-Artificial data to demonstrate the low level functions
-are in file [demo/segment_test.R](demo/segment_test.R). 
+### Direct Interface to Algorithm
+
+The main low level interface to the algorithm, function `segmentClusters`,
+is demonstrated in the file [demo/segment_test.R](demo/segment_test.R). 
 It produces Supplemental Figure S1 of the preprint 
 manuscript.
 
-To run it in R grep simply type:
+To run it as a demo in R grep simply type:
 ```
 library(segmenTier)
 demo("segment_test", package = "segmenTier")
 ```
 
-A real-life data set is segmented with varying
-parameters in [demo/segment_data.R](demo/segment_data.R).
+### Interfaces to Time-Series Processing, Clustering and Batch Segmentation 
+
+A real-life data set is processed, clustered and 
+segmented with varying parameters in 
+[demo/segment_data.R](demo/segment_data.R).
 
 This demo runs quite long, since it calculates many 
 segmentations. It produces Figure 3 and Supplemental Figures
