@@ -21,7 +21,7 @@ install_github("raim/segmenTier")
 Usage of the package is demonstrated in two R demos.
 
 Artificial data to demonstrate the low level functions
-are in file [demo/segment_test.R]([demo/segment_test.R]). 
+are in file [demo/segment_test.R](demo/segment_test.R). 
 It produces Supplemental Figure S1 of the preprint 
 manuscript.
 
