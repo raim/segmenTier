@@ -1,6 +1,4 @@
-# ![segmenTier](doc/logo.png)
-
-# Similarity-Based Segmentation of Multi-Dimensional Signals
+# ![segmenTier](doc/logo.png) : Similarity-Based Segmentation of Multi-Dimensional Signals
 
 ## Quick Guide
 
