@@ -1,9 +1,13 @@
 * convert varySettings to matrix params; and allow combine=FALSE
 
-* implement alternative nuissance cluster
+* implement Appendix A for cluster-free segmentation
 
 * consensus segments over multiple clusterings with the same K!
 
 * analyze re-clustering by segmentation, e.g. silhouettes, BIC, etc.
 
-* write a proper vignette and check all documentation
+* allow to use a global clustering, i.e., provide an interface
+that takes cluster centers and calculates icor/ccor matrices
+for local data
+
+* write a proper vignette and re-check all documentation
