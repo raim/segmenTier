@@ -36,7 +36,7 @@ is demonstrated in the file [demo/segment_test.R](demo/segment_test.R).
 It produces Supplemental Figure S1 of the preprint 
 manuscript.
 
-To run it as a demo in R grep simply type:
+To run it as a demo in R simply type:
 ```
 library(segmenTier)
 demo("segment_test", package = "segmenTier")
