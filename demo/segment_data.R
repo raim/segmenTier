@@ -175,6 +175,7 @@ vary <- setVarySettings(
 best3.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
 ## use layout to combine plots
+#plotdev("segment_data_examples",res=300,width=10,height=5,type="jpeg")
 if ( plot.pdf ) # Figure 3 of the preprint manuscript
   plotdev("segment_data_examples",res=300,width=10,height=5,type="pdf")
 layout(matrix(1:10,ncol=1),heights=c(.25,.5,.5,.075,.075,.075,.075,.075,.075,.075))
