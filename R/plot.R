@@ -23,6 +23,8 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
     grDevices::tiff(file.name, width=width, height=height, units="in", res=res)
   if ( type == "svg" )
     grDevices::svg(file.name, width=width, height=height)
+  if ( type == "jpeg" )
+    grDevices::jpeg(file.name, width=width, height=height, units="in", res=res)
 }
 
 ## from lib TeachingDemos; used in plotFeatures
