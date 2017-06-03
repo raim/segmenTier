@@ -15,7 +15,8 @@ plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
   if ( type == "png" )
     grDevices::png(file.name, width=width, height=height, units="in", res=res)
   if ( type == "eps" )
-    grDevices::postscript(file.name, width=width, height=height,paper="special")
+    grDevices::postscript(file.name, width=height, height=width,paper="special",
+                          horizontal = FALSE, onefile = FALSE)
   if ( type == "pdf" )
     grDevices::pdf(file.name, width=width, height=height)
   if ( type == "tiff" )
