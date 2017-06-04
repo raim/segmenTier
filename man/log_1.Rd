@@ -12,4 +12,3 @@ log_1(x)
 \description{
 log trafo handling zeros by adding 1
 }
-

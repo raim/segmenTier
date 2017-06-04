@@ -25,4 +25,3 @@ back-tracing : collect clustered segments from the scoring matrix
 \code{S(i,c)} by back-tracing the position \code{j=k} which delivered
 the maximal score at position {i}.
 }
-

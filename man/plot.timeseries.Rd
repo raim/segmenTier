@@ -30,4 +30,3 @@ chromosomal coordinates)}
 plot the processed time-series object returned from
 \code{\link{processTimeseries}}.
 }
-

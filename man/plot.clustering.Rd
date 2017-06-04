@@ -40,4 +40,3 @@ cluster sorting and colors as in shown in the plot
 \description{
 plot the clustering object returned by \code{\link{clusterTimeseries}}
 }
-

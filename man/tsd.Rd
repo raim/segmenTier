@@ -8,4 +8,3 @@
 transcriptome time series data from a region encompassing
 four genes and regulatory upstream non-coding RNA in budding yeast.
 }
-

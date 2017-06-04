@@ -17,4 +17,3 @@ if \code{cset} contains a sorting (see
 \code{clusterSort}), this sorting will be used to assing colors along
 the color wheel, otherwise a sorting will be calculated first;
 }
-

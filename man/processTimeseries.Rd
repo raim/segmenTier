@@ -65,4 +65,3 @@ their change pattern.
 \references{
 @cite Machne2012 Lehmann2013
 }
-

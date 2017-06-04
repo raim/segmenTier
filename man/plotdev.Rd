@@ -10,7 +10,7 @@ plotdev(file.name = "test", type = "png", width = 5, height = 5,
 \arguments{
 \item{file.name}{file name without suffix (.png, etc)}
 
-\item{type}{plot type: png, eps, pdf, tiff or svg}
+\item{type}{plot type: png, jpeg, eps, pdf, tiff or svg}
 
 \item{width}{figure width in inches}
 
@@ -21,4 +21,3 @@ plotdev(file.name = "test", type = "png", width = 5, height = 5,
 \description{
 Switch between plot devices.
 }
-

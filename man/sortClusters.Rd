@@ -23,4 +23,3 @@ added as \code{sorting} to \code{cset} and the annotated
 \code{cset} is returned. This sorting is subsequently used to select
 cluster colors.
 }
-

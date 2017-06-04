@@ -39,4 +39,3 @@ on the \code{tset$dat} matrix. This currently only used for
 clustering of final segment time-series; it could in principle also
 be used for segmentation, but that has not been tested.
 }
-

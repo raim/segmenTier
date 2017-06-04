@@ -35,4 +35,3 @@ chromosomal coordinates)}
 plot the final segmentation objects returned by
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 }
-

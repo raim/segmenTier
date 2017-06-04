@@ -92,4 +92,3 @@ followed by the  back-tracing step to find segments.
 Some more details of the algorithm can be tuned, but these usually
 have little effect on real-life data sets.
 }
-

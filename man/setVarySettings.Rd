@@ -40,4 +40,3 @@ Generates the parameter list (\code{varySettings}) for
 \code{\link{segmentCluster.batch}}, using defaults
 for all parameters not passed.
 }
-

@@ -18,4 +18,3 @@ Pearson product-moment correlation coefficient
 Simply calculates Pearson's product-moment correlation
 between vectors \code{x} and \code{y}.
 }
-

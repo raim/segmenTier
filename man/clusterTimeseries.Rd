@@ -31,4 +31,3 @@ where specifically the DFT of a time-series and requested data
 transformation were calculated. The clustering is performed
 on the \code{tset$dat} matrix.
 }
-

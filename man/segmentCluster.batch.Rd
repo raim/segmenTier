@@ -62,4 +62,3 @@ parameters. Each parameter in the list \code{varySettings} can be
 a vector and ALL combinations of the passed parameter values will
 be used for one run of \code{\link{segmentClusters}}.
 }
-

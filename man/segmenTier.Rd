@@ -16,10 +16,10 @@ from a sequential clustering
 All other dependencies are usually present in a
 basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 }
-\author{
-Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
-}
+
 \references{
 @bibliography segmenTier.bib
 }
-
+\author{
+Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
+}

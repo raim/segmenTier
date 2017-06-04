@@ -25,4 +25,3 @@ to clusters and report the (first!) cluster which had max correlation.
 Note that this can lead to amibiguities since several clusters may
 reach the same maximum.
 }
-

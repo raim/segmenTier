@@ -14,4 +14,3 @@ The asinh trafo, an alternative to log transformation that has less
 (compressing) effects on the extreme values (low and high values),
 and naturally handles negative numbers and 0.
 }
-

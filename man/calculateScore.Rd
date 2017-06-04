@@ -64,4 +64,3 @@ number of clusters in sequence k:i, over all k and i, that are identical
 to the tested cluster \code{c}, and sub-tracts a minimal size penality
 and a penalty the for the count of non-identical clusters.
 }
-

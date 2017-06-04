@@ -31,4 +31,3 @@ Plot all objects from the segmentation pipeline, i.e. the processed
 time-series, the clustering, the internal scoring matrices and
 the final segments.
 }
-

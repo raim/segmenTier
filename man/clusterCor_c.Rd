@@ -22,4 +22,3 @@ Calculates data-cluster similarity.
 calculates Pearson's product-moment correlation coefficients
 of original data to cluster centers as used in the scoring function "icor".
 }
-
