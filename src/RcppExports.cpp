@@ -92,3 +92,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"segmenTier_myPearson", (DL_FUNC) &segmenTier_myPearson, 2},
+    {"segmenTier_clusterCor_c", (DL_FUNC) &segmenTier_clusterCor_c, 2},
+    {"segmenTier_clusterMaxCor_c", (DL_FUNC) &segmenTier_clusterMaxCor_c, 4},
+    {"segmenTier_icor", (DL_FUNC) &segmenTier_icor, 6},
+    {"segmenTier_ccor", (DL_FUNC) &segmenTier_ccor, 6},
+    {"segmenTier_calculateScore", (DL_FUNC) &segmenTier_calculateScore, 7},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_segmenTier(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}
