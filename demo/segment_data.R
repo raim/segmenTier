@@ -18,7 +18,8 @@ if ( debug ) {
     data(primseg436)
 }
 
-plot.pdf <- !interactive() # plot to pdf if called from command-line
+plot2file <- !interactive() # plot to pdf if called from command-line
+fig.type <- "eps"
 
 ## EXAMPLE DATASET FROM BUDDING YEAST
 ## NOTE Here we vary the parameters with strongest effect
@@ -92,14 +93,14 @@ head(sset$segments)
 
 ## PLOT RESULTS
 ## plot segmentation
-if ( plot.pdf )
-  plotdev("segment_data",res=300,width=10,height=5,type="pdf")
+if ( plot2file )
+  plotdev("segment_data",res=300,width=10,height=5,type=fig.type)
 
 # plot.matrix=TRUE will additionally plot the internal scoring matrices
 # if segmentation was calculated with save.matrix=TRUE
 plotSegmentation(tset, cset, sset, cex=.5, lwd=2) 
 
-if ( plot.pdf )
+if ( plot2file )
   dev.off()
 
 
@@ -176,8 +177,8 @@ best3.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
 ## use layout to combine plots
 #plotdev("segment_data_examples",res=300,width=10,height=5,type="jpeg")
-if ( plot.pdf ) # Figure 3 of the preprint manuscript
-  plotdev("segment_data_examples",res=300,width=10,height=5,type="pdf")
+if ( plot2file ) # Figure 3 of the preprint manuscript
+  plotdev("segment_data_examples",res=300,width=10,height=5,type=fig.type)
 layout(matrix(1:10,ncol=1),heights=c(.25,.5,.5,.075,.075,.075,.075,.075,.075,.075))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 par(cex=1) 
@@ -193,7 +194,7 @@ plot(best2,"segments",lwd=3)
 plot(best1,"segments",lwd=3)
 plot(bad2,"segments",lwd=3)
 plot(bad2.ccor,"segments",lwd=3)
-if ( plot.pdf )
+if ( plot2file )
   dev.off()
 
 ## SYSTEMATIC VARIATION OF SPECIFIC PARAMETERS
@@ -232,8 +233,8 @@ vary <- setVarySettings(
 varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
 ## NOTE: use layout to combine plots
-if ( plot.pdf ) # Figure S4a of the preprint manuscript
-  plotdev("segment_data_scans",res=300,width=10,height=7.5,type="pdf")
+if ( plot2file ) # Figure S4a of the preprint manuscript
+  plotdev("segment_data_scans",res=300,width=10,height=7.5,type=fig.type)
 layout(matrix(1:4,ncol=1),heights=c(.5,.5,.5,.5))
 par(mai=c(0.1,2,0.05,0.01),xaxs="i",yaxs="r")
 #par(cex=1) 
@@ -245,7 +246,7 @@ par(mai=c(0.0,2,0.0,0.01))
 plot(varM,"segments",lwd=3)
 plot(varE,"segments",lwd=3)
 plot(varN,"segments",lwd=3)
-if ( plot.pdf )
+if ( plot2file )
   dev.off()
 
 ### MULTIPLE CLUSTERINGS
@@ -274,11 +275,11 @@ vary <- setVarySettings(
 vark <- segmentCluster.batch(kset, varySettings=vary)
 
 ## plot segmentations
-if ( plot.pdf ) # Figure S4b of the preprint manuscript
-    plotdev("segment_data_clusterings",res=300,width=10,height=7.5,type="pdf")
+if ( plot2file ) # Figure S4b of the preprint manuscript
+    plotdev("segment_data_clusterings",res=300,width=10,height=7.5,type=fig.type)
 plotSegmentation(NULL, kset, vark, cex=.5, lwd=2, mai=c(0.1,2,0.05,0.01)) 
 
-if ( plot.pdf )
+if ( plot2file )
     dev.off()
 
 
