@@ -14,9 +14,8 @@ demo("segment_data") # time-series processing, clustering and batch segmentation
 
 ## Theory
 
-The theory behind the package is outlined in 
-the [preprint](https://www.santafe.edu/research/results/working-papers/similarity-based-segmentation-multi-dimensional-si) available from the  
-the [Santa Fe Institute](https://www.santafe.edu/) 
+The theory behind the package is outlined in
+[Machne, Murray & Stadler 2017](http://www.nature.com/articles/s41598-017-12401-8).
 
 ## Installation
 
