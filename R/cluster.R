@@ -261,6 +261,8 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param ncpu number of cores available for parallel mode of
 #' \pkg{flowClust}
 #' @param K the requested cluster numbers (vector of integers)
+#' @param merge logical indicating whether cluster merging with
+#' \pkg{flowMerge} should be attempted
 #' @param B max. num. of EM iterations 
 #' @param tol tolerance for EM convergence
 #' @param lambda intial Box-Cox trafo
@@ -269,8 +271,9 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param trans 0: no, 1: non-specific, 2: cluster-specific estim. of lambda
 #' @param ... further parameter to \code{flowClust}
 #' @export
-flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
-                                nu=4, nu.est=0, trans=1, ...) {
+flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
+                                  B=500, tol=1e-5, lambda=1,
+                                  nu=4, nu.est=0, trans=1, ...) {
 
     if ( !requireNamespace("flowMerge", quietly = TRUE) )
       stop("`flowclusterTimeseries' requires the bioconductor package `flowMerge' (incl. its dependencies  `flowCore' and `flowClust'")
@@ -309,37 +312,47 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
    
 
     ## MERGE CLUSTERS, starting from best BIC by flowMerge
-    best <- which(K==max.clb)
-    if ( length(fcls) > 1 ) fc <- fcls[[best]]
-    else fc <- fcls
-    mcls <- rep(0, nrow(dat))
-    mrg.id <- mrg.cl <- "NA"
-    obj <- try(flowMerge::flowObj(fc, flowCore::flowFrame(clsDat)))
-    if ( class(obj)!="try-error" ) {
-        mrg <- try(flowMerge::merge(obj))
-        if ( class(mrg)!="try-error" ) {
-            mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
-            obj <- mrg[[mrg.cl]]
-            mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
-            mrg.id <- paste(K[best],"m",mrg.cl,sep="")
+    mrg.cl <- mrg.id <- obj <- NULL
+    if ( merge ) {
+        best <- which(K==max.clb)
+        if ( length(fcls) > 1 ) fc <- fcls[[best]]
+        else fc <- fcls
+        mcls <- rep(0, nrow(dat))
+        mrg.id <- mrg.cl <- "NA"
+        obj <- try(flowMerge::flowObj(fc, flowCore::flowFrame(clsDat)))
+        if ( class(obj)!="try-error" ) {
+            mrg <- try(flowMerge::merge(obj))
+            if ( class(mrg)!="try-error" ) {
+                mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
+                obj <- mrg[[mrg.cl]]
+                mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
+                mrg.id <- paste(K[best],"m",mrg.cl,sep="")
+            }
         }
+        cluster.matrix <- cbind(cluster.matrix, mcls)
+        colnames(cluster.matrix)[ncol(cluster.matrix)] <- mrg.id
+        all <- append(fcls,obj)
+    } else {
+        all <- fcls
     }
-    cluster.matrix <- cbind(cluster.matrix, mcls)
-    colnames(cluster.matrix)[ncol(cluster.matrix)] <- mrg.id
-
     ## collect centers, Pci and Ccc corelation matrices (see clusterTimeseries)
     ## TODO: TEST FOR SEGMENTATION (currently only used for final
     ## segment time series)
     ## -> is `mu' really the same as centers and are Ccc and Pci
     ## correct? 
-    all <- append(fcls,obj)
     centers <- Pci <- Ccc <- rep(list(NA),length(all))
     for ( i in 1:length(all) ) {
         if ( length(all) > 1 ) fc <- all[[i]]
         else fc <- all
-        centers[[i]] <- fc@mu
+
+        ## get cluster centers!
+        x <- fc@mu
+        rownames(x) <- 1:nrow(x)
+        colnames(x) <- colnames(clsDat)
+        
+        centers[[i]] <- x
         ## C(c,c) - cluster X cluster cross-correlation matrix
-        cr <- stats::cor(t(fc@mu))
+        cr <- stats::cor(t(x))
 
         Ccc[[i]] <- cr
         
@@ -349,6 +362,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, B=500, tol=1e-5, lambda=1,
 
         Pci[[i]] <- P
     }
+    colnames(cluster.matrix) <- names(centers) <-
+        names(Pci) <- names(Ccc) <- paste("K:",K,sep="")
     
     ## clustering data set for use in segmentCluster.batch 
     fcset <- list(clusters=cluster.matrix,
@@ -423,7 +438,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     if ( verb>0 ) {
         cat(paste("Timeseries N\t",N,"\n",sep=""))
         cat(paste("Used datapoints\t",sum(!rm.vals),"\n",sep=""))
-   }
+    }
     
     usedk <- K
     for ( k in 1:length(K) ) {
@@ -572,6 +587,8 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
     ## to cluster '1' is taken as the next cluster
     for ( k in 1:ncol(cset$clusters) ) {
         Ccc <- cset$Ccc[[k]]
+        #if ( is.null(colnames(Ccc)) )
+        #  colnames(Ccc) <- rownames(Ccc) <- 1:ncol(Ccc)
         sorting <- colnames(Ccc)
         remaining <- sorting
         cl <- remaining[1]
