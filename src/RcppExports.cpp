@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // myPearson
 double myPearson(NumericVector x, NumericVector y);
-RcppExport SEXP segmenTier_myPearson(SEXP xSEXP, SEXP ySEXP) {
+RcppExport SEXP _segmenTier_myPearson(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 // clusterCor_c
 NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters);
-RcppExport SEXP segmenTier_clusterCor_c(SEXP dataSEXP, SEXP clustersSEXP) {
+RcppExport SEXP _segmenTier_clusterCor_c(SEXP dataSEXP, SEXP clustersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,7 @@ END_RCPP
 }
 // clusterMaxCor_c
 NumericVector clusterMaxCor_c(NumericMatrix data, NumericMatrix clusters, float mincor, int warn);
-RcppExport SEXP segmenTier_clusterMaxCor_c(SEXP dataSEXP, SEXP clustersSEXP, SEXP mincorSEXP, SEXP warnSEXP) {
+RcppExport SEXP _segmenTier_clusterMaxCor_c(SEXP dataSEXP, SEXP clustersSEXP, SEXP mincorSEXP, SEXP warnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -45,7 +45,7 @@ END_RCPP
 }
 // icor
 double icor(int k, int j, int c, NumericVector seq, int M, NumericMatrix csim);
-RcppExport SEXP segmenTier_icor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
+RcppExport SEXP _segmenTier_icor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -61,7 +61,7 @@ END_RCPP
 }
 // ccor
 double ccor(int k, int j, int c, NumericVector seq, int M, NumericMatrix csim);
-RcppExport SEXP segmenTier_ccor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
+RcppExport SEXP _segmenTier_ccor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -77,7 +77,7 @@ END_RCPP
 }
 // calculateScore
 List calculateScore(NumericVector seq, NumericVector C, std::string score, NumericMatrix csim, int M, int Mn, String multi);
-RcppExport SEXP segmenTier_calculateScore(SEXP seqSEXP, SEXP CSEXP, SEXP scoreSEXP, SEXP csimSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP multiSEXP) {
+RcppExport SEXP _segmenTier_calculateScore(SEXP seqSEXP, SEXP CSEXP, SEXP scoreSEXP, SEXP csimSEXP, SEXP MSEXP, SEXP MnSEXP, SEXP multiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -94,12 +94,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"segmenTier_myPearson", (DL_FUNC) &segmenTier_myPearson, 2},
-    {"segmenTier_clusterCor_c", (DL_FUNC) &segmenTier_clusterCor_c, 2},
-    {"segmenTier_clusterMaxCor_c", (DL_FUNC) &segmenTier_clusterMaxCor_c, 4},
-    {"segmenTier_icor", (DL_FUNC) &segmenTier_icor, 6},
-    {"segmenTier_ccor", (DL_FUNC) &segmenTier_ccor, 6},
-    {"segmenTier_calculateScore", (DL_FUNC) &segmenTier_calculateScore, 7},
+    {"_segmenTier_myPearson", (DL_FUNC) &_segmenTier_myPearson, 2},
+    {"_segmenTier_clusterCor_c", (DL_FUNC) &_segmenTier_clusterCor_c, 2},
+    {"_segmenTier_clusterMaxCor_c", (DL_FUNC) &_segmenTier_clusterMaxCor_c, 4},
+    {"_segmenTier_icor", (DL_FUNC) &_segmenTier_icor, 6},
+    {"_segmenTier_ccor", (DL_FUNC) &_segmenTier_ccor, 6},
+    {"_segmenTier_calculateScore", (DL_FUNC) &_segmenTier_calculateScore, 7},
     {NULL, NULL, 0}
 };
 
