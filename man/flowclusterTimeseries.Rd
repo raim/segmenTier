@@ -4,8 +4,8 @@
 \alias{flowclusterTimeseries}
 \title{Cluster a processed time-series with \pkg{flowClust} & \pkg{flowMerge}.}
 \usage{
-flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
-  lambda = 1, nu = 4, nu.est = 0, trans = 1, ...)
+flowclusterTimeseries(tset, ncpu = 1, K = 10, merge = FALSE, B = 500,
+  tol = 1e-05, lambda = 1, nu = 4, nu.est = 0, trans = 1, ...)
 }
 \arguments{
 \item{tset}{processed time-series as provided by
@@ -15,6 +15,9 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, B = 500, tol = 1e-05,
 \pkg{flowClust}}
 
 \item{K}{the requested cluster numbers (vector of integers)}
+
+\item{merge}{logical indicating whether cluster merging with
+\pkg{flowMerge} should be attempted}
 
 \item{B}{max. num. of EM iterations}
 
