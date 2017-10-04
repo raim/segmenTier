@@ -383,6 +383,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, 
         else
             graphics::mtext("time points", 2, 2)
     }
+    ## TODO: provide this for function plot.clustering instead!
     #if ( "clusters" %in% plot ) {
     #    if ( missing(cset) )
     #      stop("Option `clusters' in plot requires a clustering;",
