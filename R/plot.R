@@ -319,12 +319,21 @@ image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ..
 #' or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
 #' in \code{\link{processTimeseries}}; `timeseries': plot the complete
 #' time-series as a heatmap, where time is plotted bottom-up on the y-axis
-#' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
+#' and the genomic coordinate is the x-axis;
+## `clusters': this requires
+## a clustering set from clusterTimeseries and plots average time-series
+## for clusters, independent of their genomic coordinate
+#' @param xaxis x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
 #' @param ylabh plot y-axis title horizontally
+## @param cset a clustering object for the time series in \code{x} from
+## \code{\link{clusterTimeseries}}, only required for option `clusters'
+## in argument \code{plot}
+## @param K a cluster number K to use in clustered time series plots,
+## only required for option `clusters' in argument \code{plot},
 #' @param ... additional arguments to plot of total signal
 #'@export
-plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,...) {
+plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, ...) {
     
     tset <- x
     
@@ -364,7 +373,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,.
             graphics::mtext("total signal", 2, 4, las=2, cex=1.25)
         else
             graphics::mtext("total signal", 2, 2)
-   }
+    }
     if ( "timeseries" %in% plot ) {
         segment.plotHeat(ts,coors=rel.coors,chrS=0,colors=colors0, colnorm=TRUE)
         axis(2,at=1:ncol(ts))
@@ -374,6 +383,18 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE,.
         else
             graphics::mtext("time points", 2, 2)
     }
+    #if ( "clusters" %in% plot ) {
+    #    if ( missing(cset) )
+    #      stop("Option `clusters' in plot requires a clustering;",
+    #           "see argument `cset'")
+    #    if ( missing(K) )
+    #      K <- cset$selected
+    #    if ( is.null(K) | ! K %in% colnames(cset$clusters) )
+    #      stop("No cluster selection found; use argument `selected'")
+    #    avg <- getClsAvg(x, cset$clusters[,K], q=.1)
+    #    plotClsAvg(avg, col=cset$colors[[K]])
+    #    
+    #}
 }
 
 

@@ -17,9 +17,10 @@ the time-points, and indicating the applied threshold \code{low.thresh};
 note that the total levels may have been transformed (e.g. by \code{log_1}
 or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
 in \code{\link{processTimeseries}}; `timeseries': plot the complete
-time-series as a heatmap, where time is plotted bottom-up on the y-axis}
+time-series as a heatmap, where time is plotted bottom-up on the y-axis
+and the genomic coordinate is the x-axis;}
 
-\item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
+\item{xaxis}{x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
 
 \item{ylabh}{plot y-axis title horizontally}

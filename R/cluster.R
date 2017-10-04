@@ -364,11 +364,15 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     }
     colnames(cluster.matrix) <- names(centers) <-
         names(Pci) <- names(Ccc) <- paste("K:",K,sep="")
+
+    ## best K selection
+    ## use K with max BIC
+    selected <- max.clb
     
     ## clustering data set for use in segmentCluster.batch 
     fcset <- list(clusters=cluster.matrix,
                   centers=centers, Pci=Pci, Ccc=Ccc,
-                  K=K, usedk=K, warn=NULL,
+                  K=K, usedk=K, selected=selected, warn=NULL,
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
                   max.clb=max.clb, max.cli=max.cli,
                   merged.K=mrg.cl, merged=mrg.id,
@@ -507,9 +511,16 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     colnames(clusters) <- names(centers) <-
         names(Pci) <- names(Ccc) <- paste("K:",K,sep="") #paste(id,"_K:",K,sep="")
 
+    ## best K?
+    ## unlike model-based clustering in flowClust
+    ## no "best K" selection is yet available for k-means
+    ## TODO: implement some selection, or eg. BIC calculation
+    selected <- NULL
+    
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
-                 K=K, usedk=usedk, warn=warn, ids=colnames(clusters),
+                 K=K, usedk=usedk, selected=selected,
+                 warn=warn, ids=colnames(clusters),
                  tsid=rep(id,ncol(clusters)))
     class(cset) <- "clustering"
 
