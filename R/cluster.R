@@ -194,16 +194,6 @@ processTimeseries <- function(ts, trafo="raw",
     if ( typeof(ts)=="list" )
         ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
      
-    ## processing ID - this will be inherited to clusters
-    ## and from there to segment ID and type
-    processing <- paste("T:",trafo,sep="")
-    if ( use.fft )
-      processing <- paste(processing,"_",
-                          paste("D:dft",paste(range(dft.range),collapse="-"),
-                                sep=""),".",
-                          paste("dc",dc.trafo,sep=""),".",
-                          ifelse(use.snr,"snr","raw"),
-                          sep="")
     
     tsd <-ts 
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
@@ -311,7 +301,18 @@ processTimeseries <- function(ts, trafo="raw",
                      low.thresh=low.thresh, 
                      smooth.space=smooth.space,
                      smooth.time=smooth.time)
-    
+
+    ## generate processing ID - this will be inherited to clusters
+    ## and from there to segment ID and type
+    processing <- paste("T:",trafo,sep="")
+    if ( use.fft )
+      processing <- paste(processing,"_",
+                          paste("D:dft",paste(range(dft.range),collapse="-"),
+                                sep=""),".",
+                          paste("dc",dc.trafo,sep=""),".",
+                          ifelse(use.snr,"snr","raw"),
+                          sep="")
+
     ## time-series data set for clustering in clusterTimeseries
     tset <- list(dat=dat, ts=tsd, dft=fft, pvalues=pvl, tot=tot,
                  zero.vals=zs, rm.vals=rm.vals, low.vals=low,
