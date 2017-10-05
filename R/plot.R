@@ -351,6 +351,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, 
       coors <- c(chr=1,start=min(xaxis), end=max(xaxis))
 
     ## timeseries heatmap colors
+    ## TODO: instead of adding white use start/end from gray.colors
     colors0 <- rev(grDevices::gray.colors(100)) 
     colors0[1] <- "#FFFFFF" ## replace minimal by white
 
