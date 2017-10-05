@@ -78,7 +78,7 @@ color_hue <- function(n) {
 #' @param degrees logical to indicate whether phases should be reported
 #' in degrees (0-360) or radians (-pi - +pi)
 #' @export
-getPhase <- function(x, cycles, degrees=TRUE) {
+phase <- function(x, cycles, degrees=TRUE) {
     if ( class(x)!="timeseries" ) {
         if ( class(x)!="matrix" )
             x <- data.matrix(x)
