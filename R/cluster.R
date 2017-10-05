@@ -79,6 +79,7 @@ color_hue <- function(n) {
 #' in degrees (0-360) or radians (-pi - +pi)
 #' @export
 phase <- function(x, cycles, degrees=TRUE) {
+
     if ( class(x)!="timeseries" ) {
         if ( class(x)!="matrix" )
             x <- data.matrix(x)
@@ -87,14 +88,16 @@ phase <- function(x, cycles, degrees=TRUE) {
     if ( missing(cycles) )
         cycles <- 2:ncol(x$dft)
     else cycles <- cycles +1
+
     phase <- x$dft[,cycles,drop=FALSE]
-    phase <- atan2(Im(phase),Re(phase))
+    ## TODO: check whether sign is correct?
+    phase <- - atan2(Im(phase),Re(phase))
 
     if ( degrees ) {
         phase <- phase * 180/pi
         ## adjust phase angles 
-        phase <- ifelse(phase<=  0,phase + 360, phase)
-        phase <- ifelse(phase> 360,phase - 360, phase)
+        phase <- ifelse(phase <=  0, phase + 360, phase)
+        phase <- ifelse(phase > 360, phase - 360, phase)
     }
     phase
 }
