@@ -4,8 +4,11 @@
 ## get Discrete Fourier Transformation
 get.fft <- function(x) {
     n <- floor(ncol(x)/2) +1 ## Nyquist-freq
-    fft <- t(stats::mvfft(t(x)))[,1:n]
-    colnames(fft) <- c("DC",as.character(1:(n-1)))
+    fft <- t(stats::mvfft(t(x)))[,1:n,drop=FALSE]
+    if ( n==1 )
+        colnames(fft) <- "DC"
+    else
+        colnames(fft) <- c("DC",as.character(1:(n-1)))
     fft
 }
 ## fourier permutation
@@ -64,7 +67,37 @@ color_hue <- function(n) {
   grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
 }
 
+#' calculate phase
+#' calculates the phases (in degrees: 0-360) via
+#' a Discrete Fourier Transformation
+#' @param x a time-series matrix with columns as time points,
+#' or a \code{timeseries} object as returned by \code{\link{processTimeseries}}
+#' @param cycle optional integer vector for the DFT components
+#' (number of cycles in the data) for which phases are to be calculated;
+#' all are returned if \code{cycle} is not specified
+#' @param degrees logical to indicate whether phases should be reported
+#' in degrees (0-360) or radians (-pi - +pi)
+#' @export
+getPhase <- function(x, cycles, degrees=TRUE) {
+    if ( class(x)!="timeseries" ) {
+        if ( class(x)!="matrix" )
+            x <- data.matrix(x)
+        x <- processTimeseries(x, use.fft=TRUE)
+    }
+    if ( missing(cycles) )
+        cycles <- 2:ncol(x$dft)
+    else cycles <- cycles +1
+    phase <- x$dft[,cycles,drop=FALSE]
+    phase <- atan2(Im(phase),Re(phase))
 
+    if ( degrees ) {
+        phase <- phase * 180/pi
+        ## adjust phase angles 
+        phase <- ifelse(phase<=  0,phase + 360, phase)
+        phase <- ifelse(phase> 360,phase - 360, phase)
+    }
+    phase
+}
 
 #' Process a time-series for \code{\link{segmenTier}}.
 #' 
