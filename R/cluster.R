@@ -85,7 +85,7 @@ phase <- function(x, cycles, degrees=TRUE) {
     if ( class(x)!="timeseries" ) {
         if ( class(x)!="matrix" )
             x <- data.matrix(x)
-        x <- processTimeseries(x, use.fft=TRUE)
+        x <- processTimeseries(x, use.fft=TRUE, use.snr=FALSE)
     }
     if ( missing(cycles) )
         cycles <- 2:ncol(x$dft)
