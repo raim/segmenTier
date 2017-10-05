@@ -109,7 +109,7 @@ phase <- function(x, cycles, degrees=TRUE) {
     phase
 }
 
-#' tests phase recovery by \link{\code{phase}}
+#' tests phase recovery by \code{\link{phase}}
 #'
 #' @param n number of cosines to generate
 #' @param cyc numbers of cycles to generate
