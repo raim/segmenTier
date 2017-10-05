@@ -108,6 +108,7 @@ phase <- function(x, cycles, degrees=TRUE) {
     if ( !degrees ) phase <- phase/360 * 2*pi
     phase
 }
+
 #' tests phase recovery by \link{\code{phase}}
 #'
 #' @param n number of cosines to generate
