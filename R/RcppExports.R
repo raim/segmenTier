@@ -7,7 +7,7 @@
 #' @details Simply calculates Pearson's product-moment correlation
 #' between vectors \code{x} and \code{y}. 
 myPearson <- function(x, y) {
-    .Call('segmenTier_myPearson', PACKAGE = 'segmenTier', x, y)
+    .Call('_segmenTier_myPearson', PACKAGE = 'segmenTier', x, y)
 }
 
 #' Calculates data-cluster similarity.
@@ -19,7 +19,7 @@ myPearson <- function(x, y) {
 #' scoring function "icor".
 #'@export
 clusterCor_c <- function(data, clusters) {
-    .Call('segmenTier_clusterCor_c', PACKAGE = 'segmenTier', data, clusters)
+    .Call('_segmenTier_clusterCor_c', PACKAGE = 'segmenTier', data, clusters)
 }
 
 #' Reports the maximally correlating cluster for each data point.
@@ -33,15 +33,15 @@ clusterCor_c <- function(data, clusters) {
 #' @inheritParams clusterCor_c
 #'@export
 clusterMaxCor_c <- function(data, clusters, mincor = 0.0, warn = 0L) {
-    .Call('segmenTier_clusterMaxCor_c', PACKAGE = 'segmenTier', data, clusters, mincor, warn)
+    .Call('_segmenTier_clusterMaxCor_c', PACKAGE = 'segmenTier', data, clusters, mincor, warn)
 }
 
 icor <- function(k, j, c, seq, M, csim) {
-    .Call('segmenTier_icor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
+    .Call('_segmenTier_icor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
 }
 
 ccor <- function(k, j, c, seq, M, csim) {
-    .Call('segmenTier_ccor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
+    .Call('_segmenTier_ccor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
 }
 
 #' dynamic programming routine 
@@ -90,6 +90,6 @@ ccor <- function(k, j, c, seq, M, csim) {
 #' phase.
 #' @export
 calculateScore <- function(seq, C, score, csim, M, Mn, multi = "max") {
-    .Call('segmenTier_calculateScore', PACKAGE = 'segmenTier', seq, C, score, csim, M, Mn, multi)
+    .Call('_segmenTier_calculateScore', PACKAGE = 'segmenTier', seq, C, score, csim, M, Mn, multi)
 }
 
