@@ -72,7 +72,7 @@ color_hue <- function(n) {
 #' a Discrete Fourier Transformation
 #' @param x a time-series matrix with columns as time points,
 #' or a \code{timeseries} object as returned by \code{\link{processTimeseries}}
-#' @param cycle optional integer vector for the DFT components
+#' @param cycles optional integer vector for the DFT components
 #' (number of cycles in the data) for which phases are to be calculated;
 #' all are returned if \code{cycle} is not specified
 #' @param degrees logical to indicate whether phases should be reported
