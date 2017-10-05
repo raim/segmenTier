@@ -124,7 +124,7 @@ testPhase <- function(n=10, cyc=6, T=24, res=6, xlim=c(-T/res,T+T/res)) {
 
     ## generate cosine waves where phase 0 means peak at origin t0
     phases <- seq(0,pi,length.out=n) # phase shift from time 0 in pi
-    amps <- abs(rnorm(n,1,.3)) # amplitude around 1
+    amps <- abs(stats::rnorm(n,1,.3)) # amplitude around 1
     
     y <- matrix(NA,ncol=length(time),nrow=length(phases))
     
