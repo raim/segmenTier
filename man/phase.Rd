@@ -2,9 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{phase}
 \alias{phase}
-\title{calculate phase
-calculates the phases (in degrees: 0-360) via
-a Discrete Fourier Transformation}
+\title{calculate peak phase}
 \usage{
 phase(x, cycles, degrees = TRUE)
 }
@@ -17,10 +15,10 @@ or a \code{timeseries} object as returned by \code{\link{processTimeseries}}}
 all are returned if \code{cycle} is not specified}
 
 \item{degrees}{logical to indicate whether phases should be reported
-in degrees (0-360) or radians (-pi - +pi)}
+in degrees (0 - 360) or radians (0 - 2*pi)}
 }
 \description{
-calculate phase
-calculates the phases (in degrees: 0-360) via
-a Discrete Fourier Transformation
+calculate phases via a Discrete Fourier Transformation, but starting
+at the first time point, such that phase 0/360 indicates peak
+at time 0, and phase 180 indicates peak at half of the cycle
 }

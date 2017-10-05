@@ -5,7 +5,7 @@
 \title{Process a time-series for \code{\link{segmenTier}}.}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
-  dft.range = 2:7, perm = 0, use.snr = TRUE, low.thresh = -Inf,
+  dft.range, perm = 0, use.snr = TRUE, low.thresh = -Inf,
   smooth.space = 1, smooth.time = 1, verb = 0)
 }
 \arguments{
