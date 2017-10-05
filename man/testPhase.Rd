@@ -4,7 +4,7 @@
 \alias{testPhase}
 \title{tests phase recovery by \code{\link{phase}}}
 \usage{
-testPhase(n = 10, cyc = 6, T = 24, res = 6, xlim = c(-T/res, T +
+testPhase(n = 5, cyc = 4, T = 24, res = 6, xlim = c(-T/res, T +
   T/res))
 }
 \arguments{
