@@ -67,16 +67,18 @@ color_hue <- function(n) {
   grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
 }
 
-#' calculate phase
-#' calculates the phases (in degrees: 0-360) via
-#' a Discrete Fourier Transformation
+#' calculate peak phase
+#' 
+#' calculate phases via a Discrete Fourier Transformation, but starting
+#' at the first time point, such that phase 0/360 indicates peak
+#' at time 0, and phase 180 indicates peak at half of the cycle
 #' @param x a time-series matrix with columns as time points,
 #' or a \code{timeseries} object as returned by \code{\link{processTimeseries}}
 #' @param cycles optional integer vector for the DFT components
 #' (number of cycles in the data) for which phases are to be calculated;
 #' all are returned if \code{cycle} is not specified
 #' @param degrees logical to indicate whether phases should be reported
-#' in degrees (0-360) or radians (-pi - +pi)
+#' in degrees (0 - 360) or radians (0 - 2*pi)
 #' @export
 phase <- function(x, cycles, degrees=TRUE) {
 
@@ -91,16 +93,53 @@ phase <- function(x, cycles, degrees=TRUE) {
 
     phase <- x$dft[,cycles,drop=FALSE]
     ## TODO: check whether sign is correct?
-    phase <- - atan2(Im(phase),Re(phase))
-
-    if ( degrees ) {
-        phase <- phase * 180/pi
-        ## adjust phase angles 
-        phase <- ifelse(phase <=  0, phase + 360, phase)
-        phase <- ifelse(phase > 360, phase - 360, phase)
-    }
+    ## atan2 gives phase shifts relative to a cosine, from -pi (delay)
+    ## to pi (advance) wrt peak
+    phase <- atan2(Im(phase),Re(phase)) * 180/pi
+    ## atan2: negative phase means shift to right
+    ## positive phase means shift to left
+    ## re-define to indicate peak time wrt time t0=0 to t=Period
+    ## 1) switch sign, positive means later!
+    phase <- - phase 
+    ## adjust phase angles,
+    ## such that 0 is at the beginning of data
+    phase <- ifelse(phase <=  0, phase + 360, phase)
+    phase <- ifelse(phase > 360, phase - 360, phase)
+    if ( !degrees ) phase <- phase/360 * 2*pi
     phase
 }
+#' tests phase recovery by \link{\code{phase}}
+#'
+#' @param n number of cosines to generate
+#' @param cyc numbers of cycles to generate
+#' @param T period
+#' @param res resolution: samples per period
+#' @param xlim x-axis range to show, defaults to one period
+#' @export
+testPhase <- function(n=10, cyc=6, T=24, res=6, xlim=c(-T/res,T+T/res)) {
+
+    ## time vector
+    time <- seq(0,cyc*T,T/res)
+
+    ## generate cosine waves where phase 0 means peak at origin t0
+    phases <- seq(0,pi,length.out=n) # phase shift from time 0 in pi
+    amps <- abs(rnorm(n,1,.3)) # amplitude around 1
+    
+    y <- matrix(NA,ncol=length(time),nrow=length(phases))
+    
+    for ( i in 1:nrow(y) )
+        y[i,] <- amps[i]*cos(2*pi*time/T - phases[i])
+     
+    ## phase(dat,cyc) vs. phases*180/pi
+    ## TODO: why is this slightly shifted (.75 degree) wrt original phases?
+    rephases <- phase(y,cyc)[,1]
+
+    matplot(time,t(y),type="l",col=1:nrow(y),xlim=xlim,lty=1)
+    abline(v=seq(0,cyc*T,T),lty=3,col="gray");abline(h=0,lty=3,col="gray") 
+    abline(v=rephases*T/360,col=1:nrow(y)) ## plot re-covered phases
+}
+
+
 
 #' Process a time-series for \code{\link{segmenTier}}.
 #' 
@@ -147,7 +186,7 @@ phase <- function(x, cycles, degrees=TRUE) {
 #'   @cite Machne2012 Lehmann2013
 #'@export
 processTimeseries <- function(ts, trafo="raw", 
-                              use.fft=TRUE, dc.trafo="raw", dft.range=2:7,
+                              use.fft=TRUE, dc.trafo="raw", dft.range,
                               perm=0, use.snr=TRUE, low.thresh=-Inf, 
                               smooth.space=1, smooth.time=1, verb=0) {
 
@@ -231,6 +270,8 @@ processTimeseries <- function(ts, trafo="raw",
             fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) # ash, log_1, etc
 
         ## filter selected components
+        if ( missing(dft.range) )
+            dft.range <- 1:ncol(fft)
         dat <- fft[,dft.range]
          
         ## get Real and Imaginary pars
