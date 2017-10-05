@@ -117,7 +117,7 @@ phase <- function(x, cycles, degrees=TRUE) {
 #' @param res resolution: samples per period
 #' @param xlim x-axis range to show, defaults to one period
 #' @export
-testPhase <- function(n=10, cyc=6, T=24, res=6, xlim=c(-T/res,T+T/res)) {
+testPhase <- function(n=5, cyc=4, T=24, res=6, xlim=c(-T/res,T+T/res)) {
 
     ## time vector
     time <- seq(0,cyc*T,T/res)
