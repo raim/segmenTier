@@ -197,8 +197,10 @@ processTimeseries <- function(ts, trafo="raw",
         colnames(re) <- paste("Re_",colnames(re),sep="")
         im <- Im(dat)
         colnames(im) <- paste("Im_",colnames(im),sep="")
-        if ( 1 %in% dft.range ) # rm 0 DC component from Im
-            im <- im[,-1]
+#        if ( 1 %in% dft.range ) # rm 0 DC component from Im
+#            im <- im[,-1]
+        ## filter 0 imaginary components: DC and Nyquist!
+        im <- im[,apply(im,2,function(x) any(x!=0))]
         dat <- cbind(re,im)
 
     }else {
