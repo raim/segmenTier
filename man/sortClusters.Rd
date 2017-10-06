@@ -21,5 +21,7 @@ cluster is the first cluster (lowest cluster number) with the highest
 similarity to cluster `1', and procedding from there. The final sorting is
 added as \code{sorting} to \code{cset} and the annotated
 \code{cset} is returned. This sorting is subsequently used to select
-cluster colors.
+cluster colors. This simply allows for more informative plots
+of the clustering underlying a segmentation but has no consequence
+on segmentation itself.
 }
