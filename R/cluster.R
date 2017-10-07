@@ -398,6 +398,14 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     tmp <- fcset
 }
 
+## AIC/BIC for kmeans
+## after Neal Fultz at https://stackoverflow.com/a/33202188
+## provide a log-likelihood for kmeans objects
+logLik.kmeans <- function(km)
+    structure(km$tot.withinss,
+              df = nrow(km$centers)*ncol(km$centers),
+              nobs = length(km$cluster))
+
 
 #' Cluster a processed time-series with k-means.
 #' 
@@ -453,12 +461,6 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     bic <- rep(NA, length(K))
     names(bic) <- as.character(K)
     aic <- bic
-    ## after Neal Fultz at https://stackoverflow.com/a/33202188
-    ## provide a log-likelihood for kmeans objects
-    logLik.kmeans <- function(km)
-        structure(km$tot.withinss,
-                  df = nrow(km$centers)*ncol(km$centers),
-                  nobs = length(km$cluster))
     
     if ( verb>0 ) {
         cat(paste("Timeseries N\t",N,"\n",sep=""))
