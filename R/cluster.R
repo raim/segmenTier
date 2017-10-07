@@ -409,8 +409,8 @@ kmeansBIC <- function(fit){
     n <- length(fit$cluster)
     k <- nrow(fit$centers)
     D <- fit$tot.withinss
-    return(data.frame(AIC = D + 2*m*k,
-                      BIC = D + log(n)*m*k))
+    return(c(AIC = D + 2*m*k,
+             BIC = D + log(n)*m*k))
 }
 
 #' Cluster a processed time-series with k-means.
