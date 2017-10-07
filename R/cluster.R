@@ -398,10 +398,15 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     tmp <- fcset
 }
 
-## AIC/BIC for kmeans
-## after Neal Fultz at https://stackoverflow.com/a/33202188
-## provide a log-likelihood for kmeans objects, also in stackoverflow package
-## https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R
+#' AIC/BIC for kmeans
+#'
+#' provides a log-likelihood method for \code{kmeans} results,
+#' after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
+#' also available via the 
+#' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}
+#' @param object a \code{kmeans} object
+#' @param ... unused
+#' @export
 logLik.kmeans <- function(object, ...)
     structure(object$tot.withinss,
               df = nrow(object$centers)*ncol(object$centers),
