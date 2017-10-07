@@ -351,9 +351,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, 
       coors <- c(chr=1,start=min(xaxis), end=max(xaxis))
 
     ## timeseries heatmap colors
-    ## TODO: instead of adding white use start/end from gray.colors
-    colors0 <- rev(grDevices::gray.colors(100)) 
-    colors0[1] <- "#FFFFFF" ## replace minimal by white
+    colors0 <- gray.colors(100, end=0, start=1)
 
     ## settings
     low.thresh <- tset$settings$low.thresh
@@ -565,9 +563,8 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
     }
     
     ## colors for S1 heatmap
-    colors0 <- rev(grDevices::gray.colors(100)) 
-    colors0[1] <- "#FFFFFF" ## replace minimal by white
-
+    colors0 <- gray.colors(100, end=0, start=1)
+    
     if ( any(c("S","S1") %in% plot) ) {
 
         if ( !"SK"%in%names(sset) )
