@@ -351,7 +351,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, 
       coors <- c(chr=1,start=min(xaxis), end=max(xaxis))
 
     ## timeseries heatmap colors
-    colors0 <- gray.colors(100, end=0, start=1)
+    colors0 <- gray(seq(1,0,length.out=100))
 
     ## settings
     low.thresh <- tset$settings$low.thresh
@@ -563,7 +563,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
     }
     
     ## colors for S1 heatmap
-    colors0 <- gray.colors(100, end=0, start=1)
+    colors0 <- gray(seq(1,0,length.out=100))
     
     if ( any(c("S","S1") %in% plot) ) {
 
