@@ -547,9 +547,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 
     ## max BIC and ICL
     max.bic <- max(bic, na.rm=T)
-    max.clb <- K[which(bic==max.bic)]
+    max.clb <- K[which(bic==max.bic)[1]]
     max.aic <- max(aic, na.rm=T)
-    max.cla <- K[which(aic==max.aic)]
+    max.cla <- K[which(aic==max.aic)[1]]
     ## best K selection
     ## use K with max BIC
     selected <- max.clb
