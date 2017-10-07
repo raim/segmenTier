@@ -398,20 +398,6 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     tmp <- fcset
 }
 
-## Akaike Information Criterion AIC and
-## Bayesian Information Criterion BIC
-## calculate kmeans AIC/BIC after
-## from https://stackoverflow.com/questions/15839774/how-to-calculate-bic-for-k-means-clustering-in-r after
-## http://sherrytowers.com/2013/10/24/k-means-clustering/
-kmeansBIC <- function(fit){
-
-    m <- ncol(fit$centers)
-    n <- length(fit$cluster)
-    k <- nrow(fit$centers)
-    D <- fit$tot.withinss
-    return(c(AIC = D + 2*m*k,
-             BIC = D + log(n)*m*k))
-}
 
 #' Cluster a processed time-series with k-means.
 #' 
@@ -467,7 +453,13 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     bic <- rep(NA, length(K))
     names(bic) <- as.character(K)
     aic <- bic
-        
+    ## after Neal Fultz at https://stackoverflow.com/a/33202188
+    ## provide a log-likelihood for kmeans objects
+    logLik.kmeans <- function(km)
+        structure(km$tot.withinss,
+                  df = nrow(km$centers)*ncol(km$centers),
+                  nobs = length(km$cluster))
+    
     if ( verb>0 ) {
         cat(paste("Timeseries N\t",N,"\n",sep=""))
         cat(paste("Used datapoints\t",sum(!rm.vals),"\n",sep=""))
@@ -515,9 +507,8 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         Pci[[k]] <- P
 
         ## calculate BIC/AIC
-        ba <- kmeansBIC(km)
-        bic[k] <- ba["BIC"]
-        aic[k] <- ba["AIC"]
+        bic[k] <- stats::BIC(km)
+        aic[k] <- stats::AIC(km)
     }
 
     ## re-assign by correlation threshold
