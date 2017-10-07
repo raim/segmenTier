@@ -317,7 +317,9 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     max.clb <- K[which(bic==max.bic)]
     max.icl <- max(icl, na.rm=T)
     max.cli <- K[which(icl==max.icl)]
-   
+    ## best K selection
+    ## use K with max BIC
+    selected <- max.clb
 
     ## MERGE CLUSTERS, starting from best BIC by flowMerge
     mrg.cl <- mrg.id <- obj <- NULL
@@ -373,18 +375,16 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     colnames(cluster.matrix) <- names(centers) <-
         names(Pci) <- names(Ccc) <- paste("K:",K,sep="")
 
-    ## best K selection
-    ## use K with max BIC
-    selected <- max.clb
     
     ## clustering data set for use in segmentCluster.batch 
     fcset <- list(clusters=cluster.matrix,
                   centers=centers, Pci=Pci, Ccc=Ccc,
                   K=K, usedk=K, selected=selected, warn=NULL,
+                  bic=bic, icl=icl,
+                  ids=colnames(clusters), tsid=rep(id,ncol(clusters)),
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
                   max.clb=max.clb, max.cli=max.cli,
-                  merged.K=mrg.cl, merged=mrg.id,
-                  bic=bic, icl=icl)
+                  merged.K=mrg.cl, merged=mrg.id)
     class(fcset) <- "clustering" 
 
     ## add cluster colors
@@ -395,6 +395,19 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     
     ## silent return
     tmp <- fcset
+}
+
+## calculate kmeans AIC/BIC after
+## from https://stackoverflow.com/questions/15839774/how-to-calculate-bic-for-k-means-clustering-in-r after
+## http://sherrytowers.com/2013/10/24/k-means-clustering/
+kmeansBIC <- function(fit){
+
+    m <- ncol(fit$centers)
+    n <- length(fit$cluster)
+    k <- nrow(fit$centers)
+    D <- fit$tot.withinss
+    return(data.frame(AIC = D + 2*m*k,
+                      BIC = D + log(n)*m*k))
 }
 
 #' Cluster a processed time-series with k-means.
@@ -446,7 +459,12 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     ## stored data
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(K))
     centers <- Pci <- Ccc <- rep(list(NA), length(K))
-    
+
+    ## BIC/AIC for kmeans
+    bic <- rep(NA, length(K))
+    names(bic) <- as.character(K)
+    aic <- bic
+        
     if ( verb>0 ) {
         cat(paste("Timeseries N\t",N,"\n",sep=""))
         cat(paste("Used datapoints\t",sum(!rm.vals),"\n",sep=""))
@@ -492,6 +510,11 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         P[!rm.vals,] <- clusterCor_c(dat[!rm.vals,], km$centers)
 
         Pci[[k]] <- P
+
+        ## calculate BIC/AIC
+        ba <- kmeansBIC(km)
+        bic[k] <- ba["BIC"]
+        aic[k] <- ba["AIC"]
     }
 
     ## re-assign by correlation threshold
@@ -519,15 +542,20 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     colnames(clusters) <- names(centers) <-
         names(Pci) <- names(Ccc) <- paste("K:",K,sep="") #paste(id,"_K:",K,sep="")
 
-    ## best K?
-    ## unlike model-based clustering in flowClust
-    ## no "best K" selection is yet available for k-means
-    ## TODO: implement some selection, or eg. BIC calculation
-    selected <- NULL
+    ## max BIC and ICL
+    max.bic <- max(bic, na.rm=T)
+    max.clb <- K[which(bic==max.bic)]
+    max.aic <- max(aic, na.rm=T)
+    max.cla <- K[which(aic==max.aic)]
+    ## best K selection
+    ## use K with max BIC
+    selected <- max.clb
     
     ## clustering data set for use in segmentCluster.batch 
     cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
                  K=K, usedk=usedk, selected=selected,
+                 bic=bic, aic=aic, 
+                 max.clb=max.clb, max.cla=max.cla,
                  warn=warn, ids=colnames(clusters),
                  tsid=rep(id,ncol(clusters)))
     class(cset) <- "clustering"
