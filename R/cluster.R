@@ -382,7 +382,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
                   K=K, usedk=K, selected=selected, warn=NULL,
                   bic=bic, icl=icl,
                   ids=colnames(cluster.matrix),
-                  tsid=rep(id,ncol(cluster.matrix)),
+                  tsid=rep(tset$id,ncol(cluster.matrix)),
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
                   max.clb=max.clb, max.cli=max.cli,
                   merged.K=mrg.cl, merged=mrg.id)
