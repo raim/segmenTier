@@ -400,11 +400,13 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
 
 ## AIC/BIC for kmeans
 ## after Neal Fultz at https://stackoverflow.com/a/33202188
-## provide a log-likelihood for kmeans objects
-logLik.kmeans <- function(km)
-    structure(km$tot.withinss,
-              df = nrow(km$centers)*ncol(km$centers),
-              nobs = length(km$cluster))
+## provide a log-likelihood for kmeans objects, also in stackoverflow package
+## https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R
+logLik.kmeans <- function(object, ...)
+    structure(object$tot.withinss,
+              df = nrow(object$centers)*ncol(object$centers),
+              nobs = length(object$cluster),
+              class = 'logLik')
 
 
 #' Cluster a processed time-series with k-means.
