@@ -381,7 +381,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
                   centers=centers, Pci=Pci, Ccc=Ccc,
                   K=K, usedk=K, selected=selected, warn=NULL,
                   bic=bic, icl=icl,
-                  ids=colnames(clusters), tsid=rep(id,ncol(clusters)),
+                  ids=colnames(cluster.matrix),
+                  tsid=rep(id,ncol(cluster.matrix)),
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
                   max.clb=max.clb, max.cli=max.cli,
                   merged.K=mrg.cl, merged=mrg.id)
@@ -397,6 +398,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     tmp <- fcset
 }
 
+## Akaike Information Criterion AIC and
+## Bayesian Information Criterion BIC
 ## calculate kmeans AIC/BIC after
 ## from https://stackoverflow.com/questions/15839774/how-to-calculate-bic-for-k-means-clustering-in-r after
 ## http://sherrytowers.com/2013/10/24/k-means-clustering/
