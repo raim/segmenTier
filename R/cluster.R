@@ -77,14 +77,6 @@ color_hue <- function(n) {
 #' @param ts the timeseries as a matrix, where columns are the timepoints
 #' and rows individual measurements (e.g., genomic positions for transcriptome
 #' data)
-#' @param smooth.space integer, if set a moving average is calculated for
-#' each time-point between adjacent data points using stats
-#' package's \code{link[stats:smooth]{smooth}} with span \code{smooth.space}
-#' @param smooth.time integer, if set the time-series will be smoothed
-#' using stats package's \code{link[stats:filter]{filter}} to calculate a
-#' moving average with span \code{smooth.time} and
-#' \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
-#' and last time-points (again using span \code{smooth.time})
 #' @param trafo prior data transformation, pass any function name, e.g.,
 #' "log", or the package functions "ash" (\code{asinh = ln(x + sqrt(x^2+1))})
 #' or "log_1" for (\code{ln(ts+1)}) 
@@ -102,7 +94,15 @@ color_hue <- function(n) {
 #' which is similar to a signal-to-noise ratio (SNR)
 #' @param dc.trafo data transformation for the first (DC) component of
 #' the DFT, pass any function name, e.g., "log", or the package functions
-#' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})
+#' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}).
+#' @param smooth.space integer, if set a moving average is calculated for
+#' each time-point between adjacent data points using stats
+#' package's \code{link[stats:smooth]{smooth}} with span \code{smooth.space}
+#' @param smooth.time integer, if set the time-series will be smoothed
+#' using stats package's \code{link[stats:filter]{filter}} to calculate a
+#' moving average with span \code{smooth.time} and
+#' \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
+#' and last time-points (again using span \code{smooth.time})
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
