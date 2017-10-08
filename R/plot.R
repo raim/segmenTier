@@ -489,7 +489,7 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ylabh=TRU
 #'@export
 plot.segments <- function(x, plot=c("S","segments"),  types, params, xaxis, show.fused=FALSE, ...) {
     for ( pl in plot ) 
-        plotSegments(x, plot, types, params, xaxis, show.fused, ...)
+        plotSegments(x, pl, types, params, xaxis, show.fused, ...)
 }
 ## above public wrapper allows to sort the plots by the order in plots
 plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, show.fused=FALSE, ...) {
