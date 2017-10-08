@@ -2,16 +2,6 @@
 
 # Similarity-Based Segmentation of Multi-Dimensional Signals
 
-## Quick Guide
-
-```R
-library(devtools)
-install_github("raim/segmenTier")
-library(segmenTier)
-demo("segment_test") # direct algorithm interface and plotting
-demo("segment_data") # time-series processing, clustering and batch segmentation
-```
-
 ## Theory
 
 The theory behind the package is outlined in
@@ -26,9 +16,27 @@ install_github("raim/segmenTier")
 
 ## Usage
 
-Usage of the package is demonstrated in two R demos.
+### Quick Guide
 
-### Direct Interface to Algorithm
+```R
+library(segmenTier)
+
+data(primseg436) # RNA-seq time-series data
+
+## cluster timeseries:
+tset <- processTimeseries(ts=tsd, dc.trafo="ash", dft.range=1:7)
+cset <- clusterTimeseries(tset, K=16, nui.thresh=0.6)
+## and segment it:
+segments <- segmentClusters(seq=cset, M=150, E=2, nui=3, S="icor")
+## and inspect results:
+plotSegmentation(tset,cset,segments
+```
+
+### Demos
+
+Usage of the package is further demonstrated in two R demos:
+
+#### Direct Interface to Algorithm
 
 The main low level interface to the algorithm, function `segmentClusters`,
 is demonstrated in the file [demo/segment_test.R](demo/segment_test.R). 
@@ -41,7 +49,7 @@ library(segmenTier)
 demo("segment_test", package = "segmenTier")
 ```
 
-### Interfaces to Time-Series Processing, Clustering and Batch Segmentation 
+#### Interfaces to Time-Series Processing, Clustering and Batch Segmentation 
 
 A real-life data set is processed, clustered and 
 segmented with varying parameters in 
