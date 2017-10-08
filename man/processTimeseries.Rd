@@ -21,7 +21,7 @@ or "log_1" for (\code{ln(ts+1)})}
 
 \item{dc.trafo}{data transformation for the first (DC) component of
 the DFT, pass any function name, e.g., "log", or the package functions
-"ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)})}
+"ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}).}
 
 \item{dft.range}{a vector of integers, giving the components of the
 Discrete Fourier Transform to be used where 1 is the first component (DC)
