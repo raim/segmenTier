@@ -189,6 +189,8 @@ processTimeseries <- function(ts, trafo="raw",
 
         ## filter selected components
         if ( missing(dft.range) )
+            dfr.range <- NULL
+        if ( is.null(dfr.range) ) # allows passing NULL to use auto
             dft.range <- 1:ncol(fft)
         dat <- fft[,dft.range]
          
