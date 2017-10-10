@@ -467,6 +467,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     ## CLUSTERING
     ## stored data
     clusters <- matrix(NA, nrow=nrow(dat), ncol=length(K))
+    rownames(clusters) <- rownames(dat)
     centers <- Pci <- Ccc <- rep(list(NA), length(K))
 
     ## BIC/AIC for kmeans
@@ -579,13 +580,15 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 #' 
 #' Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 #' assigns colors to each cluster in each clustering along
-#' the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
-#' if \code{cset} contains a sorting (see
+#' the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2}.
+#' If \code{cset} contains a sorting (see
 #' \code{clusterSort}), this sorting will be used to assing colors along
-#' the color wheel, otherwise a sorting will be calculated first;
+#' the color wheel, otherwise a sorting will be calculated first.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
+#' @param colf a function that generates \code{n} colors
+#' @param ... arguments to color function \code{colf}
 #'@export
-colorClusters <- function(cset) {
+colorClusters <- function(cset, colf) {
 
     ## each column in the clustering matrix is one clustering
     cset$colors <- rep(list(NA), ncol(cset$clusters))
@@ -597,7 +600,9 @@ colorClusters <- function(cset) {
 
     ## generate colors; use gray for nuissance
     for ( k in 1:ncol(cset$clusters) ) {
-        cols <- c("#888888", color_hue(ncol(cset$Ccc[[k]])))
+        if ( missing(colf) )
+            colf <- color_hue # internal function
+        cols <- c("#888888", colf(ncol(cset$Ccc[[k]])))
         names(cols) <- c("0", cset$sorting[[k]])
         cset$colors[[k]] <- cols
     }
