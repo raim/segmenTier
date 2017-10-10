@@ -304,6 +304,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     ## collect clusterings
     cluster.matrix <- matrix(0, nrow=nrow(dat), ncol=length(K))
     colnames(cluster.matrix) <- as.character(K)
+    rownames(cluster.matrix) <- rownames(dat)
     bic <- rep(NA, length(K))
     names(bic) <- as.character(K)
     icl <- bic
