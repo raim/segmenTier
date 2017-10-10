@@ -4,16 +4,20 @@
 \alias{colorClusters}
 \title{Assign colors to clusters.}
 \usage{
-colorClusters(cset)
+colorClusters(cset, colf)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
+
+\item{colf}{a function that generates \code{n} colors}
+
+\item{...}{arguments to color function \code{colf}}
 }
 \description{
 Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 assigns colors to each cluster in each clustering along
-the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2};
-if \code{cset} contains a sorting (see
+the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2}.
+If \code{cset} contains a sorting (see
 \code{clusterSort}), this sorting will be used to assing colors along
-the color wheel, otherwise a sorting will be calculated first;
+the color wheel, otherwise a sorting will be calculated first.
 }
