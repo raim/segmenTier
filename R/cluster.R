@@ -151,6 +151,8 @@ processTimeseries <- function(ts, trafo="raw",
         tsd <- get(trafo, mode="function")(tsd) # ash, log_1, etc
     
     ## get DFT
+    if ( missing(dft.range) )
+        dft.range <- NULL
     fft <- pvl <- NULL
     if ( use.fft ) {
 
@@ -190,8 +192,6 @@ processTimeseries <- function(ts, trafo="raw",
             fft[,1] <- get(dc.trafo,mode="function")(fft[,1]) # ash, log_1, etc
 
         ## filter selected components
-        if ( missing(dft.range) )
-            dft.range <- NULL
         if ( is.null(dft.range) ) # allows passing NULL to use auto
             dft.range <- 1:ncol(fft)
         dat <- fft[,dft.range,drop=FALSE]
