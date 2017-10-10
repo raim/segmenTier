@@ -157,8 +157,10 @@ processTimeseries <- function(ts, trafo="raw",
         ## get DFT
         tmp <- get.fft(tsd[!zs,])
         fft <- matrix(NA, ncol=ncol(tmp), nrow=nrow(tsd))
+        rownames(fft) <- rownames(tsd)
         colnames(fft) <- colnames(tmp)
         fft[!zs,] <- tmp
+        
 
         ## do DFT on permuted time-series to obtain p-values
         ## TODO: include amplitude and DC scaling in permutation?
@@ -192,7 +194,7 @@ processTimeseries <- function(ts, trafo="raw",
             dft.range <- NULL
         if ( is.null(dft.range) ) # allows passing NULL to use auto
             dft.range <- 1:ncol(fft)
-        dat <- fft[,dft.range]
+        dat <- fft[,dft.range,drop=FALSE]
          
         ## get Real and Imaginary pars
         re <- Re(dat)
