@@ -103,6 +103,8 @@ color_hue <- function(n) {
 #' moving average with span \code{smooth.time} and
 #' \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 #' and last time-points (again using span \code{smooth.time})
+#' @param circular.time logical value indicating whether time can be treated
+#' as circular in smoothing
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
@@ -116,7 +118,9 @@ color_hue <- function(n) {
 processTimeseries <- function(ts, trafo="raw", 
                               use.fft=TRUE, dc.trafo="raw", dft.range,
                               perm=0, use.snr=TRUE, low.thresh=-Inf, 
-                              smooth.space=1, smooth.time=1, verb=0) {
+                              smooth.space=1,
+                              smooth.time=1, circular.time=FALSE,
+                              verb=0) {
 
     if ( typeof(ts)=="list" )
         ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
@@ -136,7 +140,7 @@ processTimeseries <- function(ts, trafo="raw",
     ## currently used only in clustering final segment time series
     ## NOTE/TODO: smooth.time must be ODD for smoothEnds
     if ( smooth.time>1 ) {
-        tsm <- t(apply(tsd[!zs,], 1, ma, n=smooth.time, circular=FALSE))
+        tsm <- t(apply(tsd[!zs,], 1, ma, n=smooth.time, circular=circular.time))
         ends <- stats::smoothEnds(tsd[!zs,], k=smooth.time)
         tsd[!zs,] <- tsm
         tsd[!zs,c(1,ncol(tsd))] <- ends[,c(1,ncol(tsd))]
