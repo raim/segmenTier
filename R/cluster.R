@@ -602,8 +602,10 @@ colorClusters <- function(cset, colf) {
     for ( k in 1:ncol(cset$clusters) ) {
         if ( missing(colf) )
             colf <- color_hue # internal function
-        cols <- c("#888888", colf(ncol(cset$Ccc[[k]])))
-        names(cols) <- c("0", cset$sorting[[k]])
+        srt <- cset$sorting[[k]]
+        srt <- srt[srt!="0"]
+        cols <- c("#888888", colf(length(srt)))
+        names(cols) <- c("0", srt)
         cset$colors[[k]] <- cols
     }
     names(cset$colors) <- colnames(cset$clusters)
