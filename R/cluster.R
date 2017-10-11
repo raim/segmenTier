@@ -301,7 +301,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     options(cores=ncpu)
 
     fcls <- flowClust::flowClust(clsDat, K=K, B=B, tol=tol, lambda=lambda,
-                                 nu=nu, nu.est=nu.est, trans=trans, mc.cores=ncpu...)
+                                 nu=nu, nu.est=nu.est, trans=trans, mc.cores=ncpu,...)
 
     ## collect clusterings
     cluster.matrix <- matrix(0, nrow=nrow(dat), ncol=length(K))
