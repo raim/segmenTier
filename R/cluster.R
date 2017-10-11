@@ -219,8 +219,10 @@ processTimeseries <- function(ts, trafo="raw",
     }
 
     ## store which are NA and set to 0
-    na.rows <- rowSums(is.na(dat))==ncol(dat)
-    ##dat[is.na(dat)] <- 0 ## shouldn't happen?
+     # na.rows <- rowSums(is.na(dat))==ncol(dat)
+   
+	na.rows<-is.na(rowSums(dat))# consider now all rows where NA is present
+	##dat[is.na(dat)] <- 0 ## shouldn't happen?
 
     ## remove data rows: NA or low
     rm.vals <- na.rows | low
