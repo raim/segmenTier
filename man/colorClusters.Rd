@@ -4,7 +4,7 @@
 \alias{colorClusters}
 \title{Assign colors to clusters.}
 \usage{
-colorClusters(cset, colf)
+colorClusters(cset, colf, ...)
 }
 \arguments{
 \item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
