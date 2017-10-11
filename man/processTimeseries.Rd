@@ -6,7 +6,7 @@
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
   dft.range, perm = 0, use.snr = TRUE, low.thresh = -Inf,
-  smooth.space = 1, smooth.time = 1, verb = 0)
+  smooth.space = 1, smooth.time = 1, circular.time = FALSE, verb = 0)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the timepoints
@@ -46,6 +46,9 @@ using stats package's \code{link[stats:filter]{filter}} to calculate a
 moving average with span \code{smooth.time} and
 \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 and last time-points (again using span \code{smooth.time})}
+
+\item{circular.time}{logical value indicating whether time can be treated
+as circular in smoothing}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
