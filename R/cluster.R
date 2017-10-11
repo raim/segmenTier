@@ -588,7 +588,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 #' @param colf a function that generates \code{n} colors
 #' @param ... arguments to color function \code{colf}
 #'@export
-colorClusters <- function(cset, colf) {
+colorClusters <- function(cset, colf, ...) {
 
     ## each column in the clustering matrix is one clustering
     cset$colors <- rep(list(NA), ncol(cset$clusters))
@@ -604,7 +604,7 @@ colorClusters <- function(cset, colf) {
             colf <- color_hue # internal function
         srt <- cset$sorting[[k]]
         srt <- srt[srt!="0"]
-        cols <- c("#888888", colf(length(srt)))
+        cols <- c("#888888", colf(length(srt)),...)
         names(cols) <- c("0", srt)
         cset$colors[[k]] <- cols
     }
