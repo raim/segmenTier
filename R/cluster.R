@@ -126,8 +126,11 @@ processTimeseries <- function(ts, trafo="raw",
         ts <- as.matrix(ts) # smoothEnds causes problems for data.frames!?
      
     
-    tsd <-ts 
+    tsd <-ts
+    ## TODO: document this behaviour!!
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
+    ## TODO: is this documented?
+    ## AVOID! check if all are 0!!
     zs <- apply(tsd,1,sum)==0 # remember all zeros
 
     ## smooth time-points between adjacent positions
@@ -222,21 +225,22 @@ processTimeseries <- function(ts, trafo="raw",
         low <- tot < low.thresh
     }
 
+    ## NA can come from init of fft matrix
     ## complete time series are NA 
     na.rows <- rowSums(is.na(dat))==ncol(dat)
 
     ## only some fields are NA
     na.fields <- is.na(rowSums(dat,na.rm=FALSE)) 
-    chk <- sum(na.fields & !na.rows)
-    if ( chk>0 )
-        warn(chk, " rows have individual NA fields and are removed;",
-             "please manually set those if they are to be retained")
+#    chk <- sum(na.fields & !na.rows)
+#    if ( chk>0 )
+#        warn(chk, " rows have individual NA fields and are removed;",
+#             "please manually set those if they are to be retained")
     
     ## check 0 variance
-    no.var <- apply(dat, 1, var)==0
+    ##no.var <- apply(dat, 1, var)==0
 
     ## remove data rows: NA or low, or 0 variance
-    rm.vals <- (na.rows|na.fields) | (low | no.var) 
+    rm.vals <- (na.rows|na.fields) | (low)# | no.var) 
 
     settings <- list(trafo=trafo, 
                      use.fft=use.fft,
