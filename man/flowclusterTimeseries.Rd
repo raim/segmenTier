@@ -12,7 +12,11 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, merge = FALSE, B = 500,
 \code{\link{processTimeseries}}}
 
 \item{ncpu}{number of cores available for parallel mode of
-\pkg{flowClust}}
+\pkg{flowClust}. NOTE: parallel mode of
+\code{\link[flowClust:flowClust]{flowClust}} is often non-functional.
+For some installations the option \code{mc.cores=ncpu} can
+be passed on to \code{\link[flowClust:flowClust]{flowClust}} to run
+the algorithm in parallel mode.}
 
 \item{K}{the requested cluster numbers (vector of integers)}
 
@@ -38,7 +42,9 @@ A wrapper for \pkg{flowClust}, clustering
 a time-series object \code{tset} provided by \code{\link{processTimeseries}},
 where specifically the DFT of a time-series and requested data
 transformation were calculated. The clustering is performed
-on the \code{tset$dat} matrix. This currently only used for
+on the matrix \code{tset$dat}. This is currently only used for
 clustering of final segment time-series; it could in principle also
 be used for segmentation, but that has not been tested.
+Please see option \code{ncpu} on how to use parallel mode, which
+does not work on some installations.
 }
