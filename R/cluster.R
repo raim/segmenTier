@@ -286,15 +286,13 @@ processTimeseries <- function(ts, trafo="raw",
 #' clustering of final segment time-series; it could in principle also
 #' be used for segmentation, but that has not been tested.
 #' Please see option \code{ncpu} on how to use parallel mode, which
-#' does not work on some installations.
+#' does not work on some installations.  
 #' @param tset processed time-series as provided by
 #' \code{\link{processTimeseries}}
 #' @param ncpu number of cores available for parallel mode of
 #' \pkg{flowClust}. NOTE: parallel mode of
 #' \code{\link[flowClust:flowClust]{flowClust}} is often non-functional.
-#' For some installations the option \code{mc.cores=ncpu} can
-#' be passed on to \code{\link[flowClust:flowClust]{flowClust}} to run
-#' the algorithm in parallel mode.
+#' Alternatively, you can set \code{options(mc.cores=ncpu)} directly.
 #' @param K the requested cluster numbers (vector of integers)
 #' @param merge logical indicating whether cluster merging with
 #' \pkg{flowMerge} should be attempted
@@ -317,9 +315,10 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     rm.vals <- tset$rm.vals
     clsDat <- dat[!rm.vals,]
 
-    ##if ( ncpu>1 ) # TODO: how to avoid parallel mode?
-    oldcpu <- unlist(options("cores"))
-    options(cores=ncpu)
+    if ( ncpu>1 ) {
+        oldcpu <- unlist(options("mc.cores"))
+        options(mc.cores=ncpu)
+    }
 
     ## NOTE: passing mc.cores=ncpu to flowClust (via ...)
     ## works on some installations!
@@ -422,7 +421,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     fcset <- colorClusters(fcset)
 
     if ( ncpu>1 )
-      options(cores=oldcpu)
+      options(mc.cores=oldcpu)
     
     ## silent return
     tmp <- fcset
