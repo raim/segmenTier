@@ -224,7 +224,10 @@ processTimeseries <- function(ts, trafo="raw",
 
     ## store which are NA and set to 0
      # na.rows <- rowSums(is.na(dat))==ncol(dat)
-   
+
+    ## TODO: print warning if this happens, because actual
+    ## data (in non NA fields) can be lost!! user may want to
+    ## treat NA (e.g. set to 0)
 	na.rows<-is.na(rowSums(dat))# consider now all rows where NA is present
 	##dat[is.na(dat)] <- 0 ## shouldn't happen?
 
@@ -271,13 +274,19 @@ processTimeseries <- function(ts, trafo="raw",
 #' a time-series object \code{tset} provided by \code{\link{processTimeseries}},
 #' where specifically the DFT of a time-series and requested data
 #' transformation were calculated. The clustering is performed
-#' on the \code{tset$dat} matrix. This currently only used for
+#' on the matrix \code{tset$dat}. This is currently only used for
 #' clustering of final segment time-series; it could in principle also
 #' be used for segmentation, but that has not been tested.
+#' Please see option \code{ncpu} on how to use parallel mode, which
+#' does not work on some installations.
 #' @param tset processed time-series as provided by
 #' \code{\link{processTimeseries}}
 #' @param ncpu number of cores available for parallel mode of
-#' \pkg{flowClust}
+#' \pkg{flowClust}. NOTE: parallel mode of
+#' \code{\link[flowClust:flowClust]{flowClust}} is often non-functional.
+#' For some installations the option \code{mc.cores=ncpu} can
+#' be passed on to \code{\link[flowClust:flowClust]{flowClust}} to run
+#' the algorithm in parallel mode.
 #' @param K the requested cluster numbers (vector of integers)
 #' @param merge logical indicating whether cluster merging with
 #' \pkg{flowMerge} should be attempted
@@ -304,8 +313,10 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     oldcpu <- unlist(options("cores"))
     options(cores=ncpu)
 
+    ## NOTE: passing mc.cores=ncpu to flowClust (via ...)
+    ## works on some installations!
     fcls <- flowClust::flowClust(clsDat, K=K, B=B, tol=tol, lambda=lambda,
-                                 nu=nu, nu.est=nu.est, trans=trans, mc.cores=ncpu,...)
+                                 nu=nu, nu.est=nu.est, trans=trans,...)
 
     ## collect clusterings
     cluster.matrix <- matrix(0, nrow=nrow(dat), ncol=length(K))
