@@ -222,17 +222,21 @@ processTimeseries <- function(ts, trafo="raw",
         low <- tot < low.thresh
     }
 
-    ## store which are NA and set to 0
-     # na.rows <- rowSums(is.na(dat))==ncol(dat)
+    ## complete time series are NA 
+    na.rows <- rowSums(is.na(dat))==ncol(dat)
 
-    ## TODO: print warning if this happens, because actual
-    ## data (in non NA fields) can be lost!! user may want to
-    ## treat NA (e.g. set to 0)
-	na.rows<-is.na(rowSums(dat))# consider now all rows where NA is present
-	##dat[is.na(dat)] <- 0 ## shouldn't happen?
+    ## only some fields are NA
+    na.fields <- is.na(rowSums(dat,na.rm=FALSE)) 
+    chk <- sum(na.fields & !na.rows)
+    if ( chk>0 )
+        warn(chk, " rows have individual NA fields and are removed;",
+             "please manually set those if they are to be retained")
+    
+    ## check 0 variance
+    no.var <- apply(dat, 1, var)==0
 
-    ## remove data rows: NA or low
-    rm.vals <- na.rows | low
+    ## remove data rows: NA or low, or 0 variance
+    rm.vals <- (na.rows|na.fields) | (low | no.var) 
 
     settings <- list(trafo=trafo, 
                      use.fft=use.fft,
