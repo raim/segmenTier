@@ -299,7 +299,8 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param B max. num. of EM iterations 
 #' @param tol tolerance for EM convergence
 #' @param lambda intial Box-Cox trafo
-#' @param nu initial Box-Cox trafo, Inf for pure Gaussian
+#' @param nu degrees of freedom used for the t distribution, Inf for
+#' pure Gaussian
 #' @param nu.est 0: no, 1: non-specific, 2: cluster-specific estimation of nu
 #' @param trans 0: no, 1: non-specific, 2: cluster-specific estim. of lambda
 #' @param ... further parameter to \code{flowClust}
