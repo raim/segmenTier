@@ -5,7 +5,7 @@
 \title{Process a time-series for \code{\link{segmenTier}}.}
 \usage{
 processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
-  dft.range, perm = 0, use.snr = TRUE, low.thresh = -Inf,
+  dft.range, perm = 0, use.snr = TRUE, lambda = 1, low.thresh = -Inf,
   smooth.space = 1, smooth.time = 1, circular.time = FALSE, verb = 0)
 }
 \arguments{
@@ -33,6 +33,9 @@ correspondong to 2:n full cycles in the data}
 \item{use.snr}{use a scaled amplitude, where each component of the
 Discrete Fourier Transform is divided by the mean of all other components,
 which is similar to a signal-to-noise ratio (SNR)}
+
+\item{lambda}{parameter lambda for Box-Cox transformation of
+DFT amplitudes (experimental; not tested)}
 
 \item{low.thresh}{use this threshold to cut-off data, which will be
 added to the absent/nuissance cluster later}
