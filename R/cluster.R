@@ -92,6 +92,8 @@ color_hue <- function(n) {
 #' @param use.snr use a scaled amplitude, where each component of the
 #' Discrete Fourier Transform is divided by the mean of all other components,
 #' which is similar to a signal-to-noise ratio (SNR)
+#' @param lambda parameter lambda for Box-Cox transformation of
+#' DFT amplitudes (experimental; not tested)
 #' @param dc.trafo data transformation for the first (DC) component of
 #' the DFT, pass any function name, e.g., "log", or the package functions
 #' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}).
@@ -117,7 +119,8 @@ color_hue <- function(n) {
 #'@export
 processTimeseries <- function(ts, trafo="raw", 
                               use.fft=TRUE, dc.trafo="raw", dft.range,
-                              perm=0, use.snr=TRUE, low.thresh=-Inf, 
+                              perm=0, use.snr=TRUE, lambda=1,
+                              low.thresh=-Inf, 
                               smooth.space=1,
                               smooth.time=1, circular.time=FALSE,
                               verb=0) {
@@ -187,6 +190,24 @@ processTimeseries <- function(ts, trafo="raw",
           for ( a in 2:ncol(fft) )
             snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
           fft <- snr
+        }
+
+        ## experimental: amplitude Box-Cox transformation
+        ## box-cox trafo for negative values (Bickel and Doksum 1981)
+        ## as used in flowclust
+        bc <- function(x,lambda) (sign(x)*abs(x)^lambda-1)/lambda
+        ## amplitude box-cox trafo for complex polar coordinates 
+        bcdft <- function(x, lambda) {
+            if ( class(x)=="matrix" )
+                return(apply(x,2, bcdft, lambda))
+            ## Box-Cox transform amplitude
+            y <- bc(abs(x), lambda)
+            ## amplitude scaling factor
+            sf <- (y-min(y,na.rm=T))/abs(x)
+            x*sf
+        }
+        if ( lambda!=1 ) {
+            fft <- bcdft(fft, lambda=lambda)
         }
         
         ## PREPARE DATA FOR CLUSTERING
