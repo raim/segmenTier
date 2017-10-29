@@ -14,9 +14,7 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, merge = FALSE, B = 500,
 \item{ncpu}{number of cores available for parallel mode of
 \pkg{flowClust}. NOTE: parallel mode of
 \code{\link[flowClust:flowClust]{flowClust}} is often non-functional.
-For some installations the option \code{mc.cores=ncpu} can
-be passed on to \code{\link[flowClust:flowClust]{flowClust}} to run
-the algorithm in parallel mode.}
+Alternatively, you can set \code{options(mc.cores=ncpu)} directly.}
 
 \item{K}{the requested cluster numbers (vector of integers)}
 
@@ -29,7 +27,8 @@ the algorithm in parallel mode.}
 
 \item{lambda}{intial Box-Cox trafo}
 
-\item{nu}{initial Box-Cox trafo, Inf for pure Gaussian}
+\item{nu}{degrees of freedom used for the t distribution, Inf for
+pure Gaussian}
 
 \item{nu.est}{0: no, 1: non-specific, 2: cluster-specific estimation of nu}
 
