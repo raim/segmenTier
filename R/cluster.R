@@ -339,7 +339,10 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     clsDat <- dat[!rm.vals,]
 
     ##if ( ncpu>1 ) {
-        oldcpu <- unlist(options("mc.cores"))
+    ## TODO: when is which required?
+        oldcpu <- unlist(options("cores"))
+        oldcpu2 <- unlist(options("mc.cores"))
+        options(cores=ncpu)
         options(mc.cores=ncpu)
     ##}
 
@@ -444,7 +447,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     fcset <- colorClusters(fcset)
 
     ##if ( ncpu>1 )
-    options(mc.cores=oldcpu)
+    options(cores=oldcpu)
+    options(mc.cores=oldcpu2)
     
     ## silent return
     tmp <- fcset
