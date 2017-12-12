@@ -377,13 +377,13 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     selected <- max.clb
 
     ## MERGE CLUSTERS, starting from best BIC by flowMerge
-    mrg.cl <- mrg.id <- obj <- NULL
+    mrg.cl <- mrg.id <-  mrg.nm <- obj <- NULL
     if ( merge ) {
         best <- which(K==max.clb)
         if ( length(fcls) > 1 ) fc <- fcls[[best]]
         else fc <- fcls
         mcls <- rep(0, nrow(dat))
-        mrg.id <- mrg.cl <- "NA"
+        mrg.id <- mrg.nm <- mrg.cl <- "NA"
         obj <- try(flowMerge::flowObj(fc, flowCore::flowFrame(clsDat)))
         if ( class(obj)!="try-error" ) {
             mrg <- try(flowMerge::merge(obj))
@@ -391,7 +391,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
                 mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
                 obj <- mrg[[mrg.cl]]
                 mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
-                mrg.id <- paste(K[best],"m",mrg.cl,sep="")
+                mrg.id <- paste0(K[best],"m",mrg.cl)
+                mrg.nm <- paste0("K:",K[best],"m",mrg.cl) # final column name
             }
         }
         cluster.matrix <- cbind(cluster.matrix, mcls)
@@ -400,6 +401,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     } else {
         all <- fcls
     }
+    colnames(cluster.matrix) <- paste0("K:",colnames(cluster.matrix))
+
     ## collect centers, Pci and Ccc corelation matrices (see clusterTimeseries)
     ## TODO: TEST FOR SEGMENTATION (currently only used for final
     ## segment time series)
@@ -427,8 +430,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
 
         Pci[[i]] <- P
     }
-    colnames(cluster.matrix) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste("K:",K,sep="")
+    names(centers) <- names(Pci) <- names(Ccc) <- colnames(cluster.matrix)
 
     
     ## clustering data set for use in segmentCluster.batch 
@@ -440,7 +442,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
                   tsid=rep(tset$id,ncol(cluster.matrix)),
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
                   max.clb=max.clb, max.cli=max.cli,
-                  merged.K=mrg.cl, merged=mrg.id)
+                  merged.K=mrg.cl, merged=mrg.nm)
     class(fcset) <- "clustering" 
 
     ## add cluster colors
