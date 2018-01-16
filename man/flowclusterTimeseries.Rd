@@ -4,8 +4,9 @@
 \alias{flowclusterTimeseries}
 \title{Cluster a processed time-series with \pkg{flowClust} & \pkg{flowMerge}.}
 \usage{
-flowclusterTimeseries(tset, ncpu = 1, K = 10, merge = FALSE, B = 500,
-  tol = 1e-05, lambda = 1, nu = 4, nu.est = 0, trans = 1, ...)
+flowclusterTimeseries(tset, ncpu = 1, K = 10, selected, merge = FALSE,
+  B = 500, tol = 1e-05, lambda = 1, nu = 4, nu.est = 0, trans = 1,
+  ...)
 }
 \arguments{
 \item{tset}{processed time-series as provided by
@@ -17,6 +18,10 @@ flowclusterTimeseries(tset, ncpu = 1, K = 10, merge = FALSE, B = 500,
 Alternatively, you can set \code{options(mc.cores=ncpu)} directly.}
 
 \item{K}{the requested cluster numbers (vector of integers)}
+
+\item{selected}{a pre-selected cluster number  which is then
+used as a start clustering for \code{flowMerge} (if option
+\code{merge==TRUE})}
 
 \item{merge}{logical indicating whether cluster merging with
 \pkg{flowMerge} should be attempted}

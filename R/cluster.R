@@ -318,6 +318,9 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param K the requested cluster numbers (vector of integers)
 #' @param merge logical indicating whether cluster merging with
 #' \pkg{flowMerge} should be attempted
+#' @param selected a pre-selected cluster number  which is then
+#' used as a start clustering for \code{flowMerge} (if option
+#' \code{merge==TRUE})
 #' @param B max. num. of EM iterations 
 #' @param tol tolerance for EM convergence
 #' @param lambda intial Box-Cox trafo
@@ -327,7 +330,7 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param trans 0: no, 1: non-specific, 2: cluster-specific estim. of lambda
 #' @param ... further parameter to \code{flowClust}
 #' @export
-flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
+flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
                                   B=500, tol=1e-5, lambda=1,
                                   nu=4, nu.est=0, trans=1, ...) {
 
@@ -375,13 +378,14 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     max.icl <- max(icl, na.rm=T)
     max.cli <- K[which(icl==max.icl)]
     ## best K selection
-    ## use K with max BIC
-    selected <- max.clb
+    ## use K with max BIC, unless specified in argument
+    if ( missing(selected) )
+      selected <- max.clb
 
     ## MERGE CLUSTERS, starting from best BIC by flowMerge
     mrg.cl <- mrg.id <-  mrg.nm <- obj <- NULL
     if ( merge ) {
-        best <- which(K==max.clb)
+        best <- which(K==selected)
         if ( length(fcls) > 1 ) fc <- fcls[[best]]
         else fc <- fcls
         mcls <- rep(0, nrow(dat))
