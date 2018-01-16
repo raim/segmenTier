@@ -331,8 +331,10 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
                                   B=500, tol=1e-5, lambda=1,
                                   nu=4, nu.est=0, trans=1, ...) {
 
-    if ( !requireNamespace("flowMerge", quietly = TRUE) )
-      stop("`flowclusterTimeseries' requires the bioconductor package `flowMerge' (incl. its dependencies  `flowCore' and `flowClust'")
+    if ( !requireNamespace("flowClust", quietly = TRUE) )
+      stop("`flowclusterTimeseries' requires the bioconductor package `flowClust'")
+    if ( merge & !requireNamespace("flowMerge", quietly = TRUE) )
+      stop("option `merge' requires the bioconductor package `flowMerge'")
     
     dat <- tset$dat
     rm.vals <- tset$rm.vals
@@ -435,6 +437,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, merge=FALSE,
     
     ## clustering data set for use in segmentCluster.batch 
     fcset <- list(clusters=cluster.matrix,
+                  N=sum(!rm.vals), # number of clustered data
+                  M=ncol(dat), # dimension of clustered data
                   centers=centers, Pci=Pci, Ccc=Ccc,
                   K=K, usedk=K, selected=selected, warn=NULL,
                   bic=bic, icl=icl,
@@ -614,7 +618,10 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     selected <- max.clb
     
     ## clustering data set for use in segmentCluster.batch 
-    cset <- list(clusters=clusters, centers=centers, Pci=Pci, Ccc=Ccc,
+    cset <- list(clusters=clusters, 
+                 N=sum(!rm.vals), # number of clustered data
+                 M=ncol(dat), # dimension of clustered data
+                 centers=centers, Pci=Pci, Ccc=Ccc,
                  K=K, usedk=usedk, selected=selected,
                  bic=bic, aic=aic, 
                  max.clb=max.clb, max.cla=max.cla,
