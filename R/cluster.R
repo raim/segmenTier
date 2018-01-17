@@ -381,6 +381,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
     ## use K with max BIC, unless specified in argument
     if ( missing(selected) )
       selected <- max.clb
+    if ( selected==0 )
+      selected <- max.clb
 
     ## MERGE CLUSTERS, starting from best BIC by flowMerge
     mrg.cl <- mrg.id <-  mrg.nm <- obj <- NULL
