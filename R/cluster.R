@@ -385,7 +385,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
       selected <- max.clb
 
     ## MERGE CLUSTERS, starting from best BIC by flowMerge
-    mrg.cl <- mrg.id <-  mrg.nm <- obj <- NULL
+    mrg.orig <- mrg.cl <- mrg.id <-  mrg.nm <- obj <- NULL
     if ( merge ) {
         best <- which(K==selected)
         if ( length(fcls) > 1 ) fc <- fcls[[best]]
@@ -399,7 +399,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
                 mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
                 obj <- mrg[[mrg.cl]]
                 mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
-                mrg.id <- paste0(K[best],"m",mrg.cl)
+                mrg.orig <- K[best] # source K
+                mrg.id <- paste0(K[best],"m",mrg.cl) # merged K
                 mrg.nm <- paste0("K:",K[best],"m",mrg.cl) # final column name
             }
         }
@@ -452,7 +453,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
                   tsid=rep(tset$id,ncol(cluster.matrix)),
                   flowClust=fcls, flowMerge=obj, # flowClust/flowMerge results
                   max.clb=max.clb, max.cli=max.cli,
-                  merged.K=mrg.cl, merged=mrg.nm)
+                  merged.origK=mrg.orig, merged.K=mrg.cl, merged=mrg.nm)
     class(fcset) <- "clustering" 
 
     ## add cluster colors
