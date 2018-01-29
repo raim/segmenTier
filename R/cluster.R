@@ -605,7 +605,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         sel <- paste(K,".1",sep="")
         cnt <- 2
         while( sum(duplicated(sel)) ) {
-            sel[duplicated(sel)] <- sub("\\..*",paste(".",cnt,sep=""),
+            sel[duplicated(sel)] <- sub("\\..*",paste0(".",cnt),
                                         sel[duplicated(sel)])
             cnt <- cnt+1
         }
@@ -613,7 +613,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     }
     ## name all results by K, will be used!
     colnames(clusters) <- names(centers) <-
-        names(Pci) <- names(Ccc) <- paste("K:",K,sep="") #paste(id,"_K:",K,sep="")
+        names(Pci) <- names(Ccc) <- paste0("K:",K) #paste(id,"_K:",K,sep="")
 
     ## max BIC and ICL
     max.bic <- max(bic, na.rm=T)
