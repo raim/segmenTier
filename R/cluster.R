@@ -134,7 +134,7 @@ processTimeseries <- function(ts, trafo="raw",
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
     ## TODO: is this documented?
     ## AVOID! check if all are 0!!
-    zs <- apply(tsd,1,sum)==0 # remember all zeros
+    zs <- apply(tsd==0,1,sum)==ncol(tsd) # remember all zeros
 
     ## smooth time-points between adjacent positions
     ## currently not used, doesn't help to avoid fragmentation!
