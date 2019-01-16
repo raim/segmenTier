@@ -52,7 +52,9 @@ segment.plotFeatures <- function(data, coors, types, strand,
                          names=FALSE, legend=FALSE, axis1=FALSE, ylab=NA,
                          args,line=1,ycx=1,tcx=1,tpos=NULL,
                          columns=c(name="name",chr="chr",strand="strand",
-                           start="start",end="end",type="type",color="color"), ...) {
+                                   start="start",end="end",type="type",
+                                   color="color"),
+                         ...) {
 
   ## parse arguments, which will also override other 
   if ( !missing(args) ) {    
@@ -179,7 +181,9 @@ segment.plotFeatures <- function(data, coors, types, strand,
 
 ## plot 3D genomeData as a heatmap; kept private since official version
 ## of this function is maintained in package genomeBrowser
-segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, ylab="", axes=FALSE, axis2=FALSE, colnorm=FALSE, chrS, coor, args) {
+segment.plotHeat <- function(data, coors, orig.idx, breaks, colors,
+                             orig.col, ylab="", axes=FALSE, axis2=FALSE,
+                             colnorm=FALSE, chrS, coor, args) {
   
   ## parse arguments, which will also override other 
   if ( !missing(args) ) {    
@@ -266,7 +270,8 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors, orig.col, yl
 
 ## plot a matrix as seen in R; kept private since official version
 ## of this function is maintained in package segmenTools
-image_matrix <- function(dat, text, text.col, axis=1:2, axis1.col, axis2.col, ...) {
+image_matrix <- function(dat, text, text.col,
+                         axis=1:2, axis1.col, axis2.col, ...) {
 
     ## reverse columns and transpose
     if ( nrow(dat)>1 )

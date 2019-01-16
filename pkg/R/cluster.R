@@ -64,7 +64,7 @@ ci95 <- function(data,na.rm=FALSE) {
 ## cluster/segment colors; function derived from scale_colour_hue in ggplot2
 ## TODO: describe better
 color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
+  hues <- seq(15, 375, length = n + 1)
   grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
 }
 
@@ -203,7 +203,7 @@ processTimeseries <- function(ts, trafo="raw",
             ## Box-Cox transform amplitude
             y <- bc(abs(x), lambda)
             ## amplitude scaling factor
-            sf <- (y-min(y,na.rm=T))/abs(x)
+            sf <- (y-min(y,na.rm=TRUE))/abs(x)
             x*sf
         }
         if ( lambda!=1 ) {
@@ -335,7 +335,8 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
                                   nu=4, nu.est=0, trans=1, ...) {
 
     if ( !requireNamespace("flowClust", quietly = TRUE) )
-      stop("`flowclusterTimeseries' requires the bioconductor package `flowClust'")
+        stop("`flowclusterTimeseries' requires the bioconductor package ",
+             "`flowClust'")
     if ( merge & !requireNamespace("flowMerge", quietly = TRUE) )
       stop("option `merge' requires the bioconductor package `flowMerge'")
     
@@ -367,15 +368,15 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
       if ( length(fcls) > 1 ) fc <- fcls[[i]]
       else fc <- fcls
       cl.num <- as.character(fc@K)
-      cluster <- flowClust::Map(fc,rm.outliers=F)
+      cluster <- flowClust::Map(fc,rm.outliers=FALSE)
       cluster.matrix[!rm.vals, cl.num] <- cluster
       bic[cl.num] <- fc@BIC
       icl[cl.num] <- fc@ICL
     }
     ## max BIC and ICL
-    max.bic <- max(bic, na.rm=T)
+    max.bic <- max(bic, na.rm=TRUE)
     max.clb <- K[which(bic==max.bic)]
-    max.icl <- max(icl, na.rm=T)
+    max.icl <- max(icl, na.rm=TRUE)
     max.cli <- K[which(icl==max.icl)]
     ## best K selection
     ## use K with max BIC, unless specified in argument
@@ -398,7 +399,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
             if ( class(mrg)!="try-error" ) {
                 mrg.cl <- flowMerge::fitPiecewiseLinreg(mrg)
                 obj <- mrg[[mrg.cl]]
-                mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=F)
+                mcls[!rm.vals] <- flowClust::Map(obj, rm.outliers=FALSE)
                 mrg.orig <- K[best] # source K
                 mrg.id <- paste0(K[best],"m",mrg.cl) # merged K
                 mrg.nm <- paste0("K:",K[best],"m",mrg.cl) # final column name
@@ -561,7 +562,8 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
             km <- stats::kmeans(dat[!rm.vals,], Kused,
                                 iter.max=iter.max,nstart=nstart,
                                 algorithm="MacQueen")
-            warn <- "quick-transfer error in kmeans algorithm Hartigan-Wong, taking MacQueen"
+            warn <- paste("quick-transfer error in kmeans algorithm",
+                          "Hartigan-Wong, taking MacQueen")
             warning(warn)
         }
         
@@ -616,9 +618,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         names(Pci) <- names(Ccc) <- paste0("K:",K) #paste(id,"_K:",K,sep="")
 
     ## max BIC and ICL
-    max.bic <- max(bic, na.rm=T)
+    max.bic <- max(bic, na.rm=TRUE)
     max.clb <- K[which(bic==max.bic)[1]]
-    max.aic <- max(aic, na.rm=T)
+    max.aic <- max(aic, na.rm=TRUE)
     max.cla <- K[which(aic==max.aic)[1]]
     ## best K selection
     ## use K with max BIC
