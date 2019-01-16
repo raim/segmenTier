@@ -17,7 +17,7 @@ vignette: >
 # Theory
 
 `segmenTier` is a dynamic programing solution to segmentation based on maximization of 
-arbitrary similarity measures within segments.
+arbitrary similarity measures within segments [@Machne2017].
 
 Its input is a clustering $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
 `segmenTier` then solves the recursion:
@@ -25,7 +25,7 @@ Its input is a clustering $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\
 \begin{equation}
   S_{k,\alpha} =
   \max_{j\le k} \max_{\beta\ne\alpha}
-                 S_{j-1,\beta} + s(j,k,\alpha) - M\;
+                 S_{j-1,\beta} + s(j,k,\alpha) - M\;,
 \label{eq:01}
 \end{equation}
 
@@ -41,7 +41,7 @@ available for clustering the Fourier-transform of oscillatory RNA-seq time-serie
 ("circadian or metabolic oscillations"). See **Quick Guide**.
  
 
-The theory behind the package is outlined in @Machne2017. 
+The theory behind the package is detailed in @Machne2017. 
 
 # Usage
 
@@ -89,7 +89,7 @@ To run it as a demo in R simply type:
 demo("segment_test", package = "segmenTier")
 ```
 
-## Demo: Time-Series Clustering & Batch Segmentation 
+## Demo II: Time-Series Clustering & Batch Segmentation 
 
 A real-life data set is processed, clustered and 
 segmented with varying parameters in 
