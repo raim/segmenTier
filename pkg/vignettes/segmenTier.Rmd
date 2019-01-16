@@ -1,6 +1,6 @@
 ---
 title: "segmenTier: similarity-based segmentation of multi-dimensional signals"
-author: "Rainer Machne, Peter F. Stadler"
+author: "Rainer Machne, Douglas B. Murray, Peter F. Stadler"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
