@@ -286,9 +286,9 @@ image_matrix <- function(dat, text, text.col,
         if ( missing(text.col) )
             text.col <- rep(1, length(c(text)))
         text(x=rep(seq_len(ncol(dat)),nrow(dat)),
-             y=rep(rev(seq_len(nrow(dat)),each=ncol(dat)),
+             y=rep(rev(seq_len(nrow(dat))),each=ncol(dat)),
              paste(t(text)),col=t(text.col))
-    }
+        }
     
     ## add axes
     ## TODO : handle axes=FALSE
