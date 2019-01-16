@@ -1,14 +1,13 @@
 Package: segmenTier
 Type: Package
-Title: Segmentation of Clustered Sequences
+Title: segmenTier: similarity-based segmentation of multidimensional signals
 Version: 0.1.2
 Date: 2016-10-28
 Author: Rainer Machne, Douglas B. Murray, Peter F. Stadler
 URL: https://github.com/raim/segmenTier
 BugReports: https://github.com/raim/segmenTier/issues
 Maintainer: Rainer Machne <raim@tbi.univie.ac.at>
-Description: segmenTier is a dynamic programing algorithm to define segments of
-    similar items in a sequence of clustered items.
+Description: segmenTier is a dynamic programing solution to segmentation based on maximization of arbitrary similarity measures within segments.
 License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.12.7)

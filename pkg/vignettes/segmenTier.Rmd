@@ -16,7 +16,7 @@ vignette: >
 
 # Theory
 
-`segmenTier` is a dynamic programing solution to segmentation based maximization of a
+`segmenTier` is a dynamic programing solution to segmentation based on maximization of 
 arbitrary similarity measures within segments.
 
 Its input is a clustering $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
@@ -32,7 +32,7 @@ Its input is a clustering $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\
 where $s(j,k,\alpha)$ is a scoring function that provides similarity of a segment
 from position $j$ to $k$ to clusters $\mathcal{C}_\alpha$, *e.g.* based on Pearson correlation
 to cluster centers, and $M$ is a penalty incurred
-by the use of a new segment, a fixed cost for each jump that allows to set 
+by the use of a new segment, a fixed cost for each jump that allows to 
 fine-tune minimal segment lengths. Backtracing the maximal scores $S(k,\alpha)$ then
 provides both segment borders and segment cluster association.
 
@@ -86,7 +86,6 @@ manuscript.
 To run it as a demo in R simply type:
 
 ```{r, eval=FALSE}
-library(segmenTier)
 demo("segment_test", package = "segmenTier")
 ```
 
