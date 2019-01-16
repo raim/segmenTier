@@ -222,7 +222,7 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors,
     x <- xlim[1]:xlim[2] # start:end - chrS[chr]
   ##  x <- coor[idx,"coor"]
   dat <- as.matrix(dat[,firstcol:ncol(data),drop=FALSE])
-  y <- 1:ncol(dat)
+  y <- seq_len(ncol(dat))
 
   if ( length(x)==0 | !any(!is.na(dat)) ) {  ## empty?
     plot(1,xlim=xlim,col=NA,axes=FALSE,xlab="chromosome position",ylab=ylab)
@@ -279,13 +279,14 @@ image_matrix <- function(dat, text, text.col,
         imgdat <- t(apply(dat, 2, rev))
     else
         imgdat <- t(dat)
-    image(x=1:ncol(dat), y=1:nrow(dat), z=imgdat, axes=FALSE, ...)
+    image(x=seq_len(ncol(dat)), y=seq_len(nrow(dat)), z=imgdat, axes=FALSE, ...)
 
     ## add text
     if ( !missing(text) ) {
         if ( missing(text.col) )
             text.col <- rep(1, length(c(text)))
-        text(x=rep(1:ncol(dat),nrow(dat)), y=rep(nrow(dat):1,each=ncol(dat)),
+        text(x=rep(seq_len(ncol(dat)),nrow(dat)),
+             y=rep(rev(seq_len(nrow(dat)),each=ncol(dat)),
              paste(t(text)),col=t(text.col))
     }
     
@@ -294,20 +295,20 @@ image_matrix <- function(dat, text, text.col,
     if ( !missing(axis) ) {
         if ( 1 %in% axis ) 
             if ( !missing(axis1.col) ) # colored ticks
-                for ( i in 1:ncol(dat) )
+                for ( i in seq_len(ncol(dat)) )
                     axis(1, at=i,colnames(dat)[i],
                          col.axis=axis1.col[i], col=axis1.col[i],
                          las=2, cex.axis=1.5, lwd=2)
             else
-                axis(1, at=1:ncol(dat), labels=colnames(dat), las=2)
+                axis(1, at=seq_len(ncol(dat)), labels=colnames(dat), las=2)
         if ( 2 %in% axis )
             if ( !missing(axis2.col) ) # colored ticks
-                for ( i in 1:nrow(dat) )
+                for ( i in seq_len(nrow(dat)) )
                         axis(2, at=nrow(dat)-i+1, rownames(dat)[i],
                              col.axis=axis2.col[i], col=axis2.col[i],
                              las=2, cex.axis=1.5, lwd=2)
             else
-                axis(2, at=nrow(dat):1, rownames(dat),las=2)        
+                axis(2, at=rev(seq_len(nrow(dat))), rownames(dat),las=2)        
     }
 } 
 
@@ -382,7 +383,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"),
     }
     if ( "timeseries" %in% plot ) {
         segment.plotHeat(ts,coors=rel.coors,chrS=0,colors=colors0, colnorm=TRUE)
-        axis(2,at=1:ncol(ts))
+        axis(2,at=seq_len(ncol(ts)))
         #axis(1)
         if ( ylabh )
             graphics::mtext("time points", 2, 4, las=2, cex=1.25)
@@ -434,7 +435,7 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis,
     cset <- x
     
     if ( missing(k) ) 
-        k <- 1:ncol(cset$clusters)
+        k <- seq_len(ncol(cset$clusters))
 
     ## cluster sorting via Ccc (cluster-cluster correlation)
     if ( !"sorting" %in% names(cset) )
@@ -624,7 +625,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
 
             ## x-axis: x can be passed to use real coordinates
             if ( missing(xaxis) )
-              xaxis <- 1:nrow(S)
+              xaxis <- seq_len(nrow(S))
             xlim <- range(xaxis)             
 
             xrng <- stats::quantile(xaxis,c(.05,.95))
@@ -686,13 +687,13 @@ plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
     ## NOTE that clusterings are sorted (by their similarity matrix `Ccc`)
     ## and colored along a color-wheel
     if ( !split ) {
-        for ( k in 1:ncol(cset$clusters) )
+        for ( k in seq_len(ncol(cset$clusters)) )
             plot(cset, k, ...)
         plot <- "segments"
         if ( plot.matrix ) plot <- c("segments","S","S1")
         plot(sset, plot=plot, ...)
     } else
-        for ( k in 1:ncol(cset$clusters) ) {
+        for ( k in seq_len(ncol(cset$clusters)) ) {
             ## plot clustering
             plot(cset, k, ...)
             ## SEGMENTATION PLOT UTILITY

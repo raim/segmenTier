@@ -4,11 +4,11 @@
 ## get Discrete Fourier Transformation
 get.fft <- function(x) {
     n <- floor(ncol(x)/2) +1 ## Nyquist-freq
-    fft <- t(stats::mvfft(t(x)))[,1:n,drop=FALSE]
+    fft <- t(stats::mvfft(t(x)))[,seq_along(n),drop=FALSE]
     if ( n==1 )
         colnames(fft) <- "DC"
     else
-        colnames(fft) <- c("DC",as.character(1:(n-1)))
+        colnames(fft) <- c("DC",as.character(seq_along(n-1)))
     fft
 }
 ## fourier permutation
@@ -20,11 +20,11 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
     pvl <- matrix(0,nrow=nrow(fft), ncol=ncol(fft))
     dimnames(pvl) <- dimnames(fft)
     ## TODO: use apply and parallel!
-    for ( i in 1:perm ) {
+    for ( i in seq_along(perm) ) {
         if ( verb>0 & i%%round(perm/10)==0 )
           cat(paste(round(i/perm,2)*100,"%, "))
         ## randomize columns and get fourier
-        rft <- get.fft(x[,sample(1:ncol(x))])
+        rft <- get.fft(x[,sample(seq_len(ncol(x)))])
         ram <- abs(rft)/N
         pvl <- pvl + as.numeric(ram >= xam)
     }
@@ -65,7 +65,7 @@ ci95 <- function(data,na.rm=FALSE) {
 ## TODO: describe better
 color_hue <- function(n) {
   hues <- seq(15, 375, length = n + 1)
-  grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+  grDevices::hcl(h = hues, l = 65, c = 100)[seq_along(n)]
 }
 
 
@@ -221,7 +221,7 @@ processTimeseries <- function(ts, trafo="raw",
 
         ## filter selected components
         if ( is.null(dft.range) ) # allows passing NULL to use auto
-            dft.range <- 1:ncol(fft)
+            dft.range <- seq_len(ncol(fft))
         dat <- fft[,dft.range,drop=FALSE]
          
         ## get Real and Imaginary pars
@@ -425,7 +425,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
 
         ## get cluster centers!
         x <- fc@mu
-        rownames(x) <- 1:nrow(x)
+        rownames(x) <- seq_len(nrow(x))
         colnames(x) <- colnames(clsDat)
         
         centers[[i]] <- x
@@ -594,9 +594,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 
     ## re-assign by correlation threshold
     ## NOTE: this only affects scoring function ccor
-    for ( k in 1:ncol(clusters) ) {
+    for ( k in seq_len(ncol(clusters)) ) {
         cls <- clusters[,k]
-        for ( p in 1:nrow(Pci[[k]]) )
+        for ( p in seq_len(nrow(Pci[[k]])) )
             if ( !any(Pci[[k]][p,] > nui.thresh, na.rm=TRUE) )
                 cls[p] <- 0
         clusters[,k] <- cls
@@ -668,7 +668,7 @@ colorClusters <- function(cset, colf, ...) {
         cset <- sortClusters(cset, sort=TRUE)
 
     ## generate colors; use gray for nuissance
-    for ( k in 1:ncol(cset$clusters) ) {
+    for ( k in seq_len(ncol(cset$clusters)) ) {
         if ( missing(colf) )
             colf <- color_hue # internal function
         srt <- cset$sorting[[k]]
@@ -705,7 +705,7 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
     ## merely generate numerical sorting if sort is FALS
     if ( !sort ) {
         sorting <- NULL
-        for ( k in 1:ncol(cset$clusters) ) 
+        for ( k in seq_len(ncol(cset$clusters)) ) 
             sorting[[k]] <- sort(unique(cset$clusters[,k]))
         sorting <- lapply(sorting, function(x) x[x!=0])
         names(sorting) <- colnames(cset$clusters)
@@ -718,10 +718,10 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
     ## here we use it to get a rough sorting, simply starting with
     ## cluster '1'; the first cluster with the highest similarity
     ## to cluster '1' is taken as the next cluster
-    for ( k in 1:ncol(cset$clusters) ) {
+    for ( k in seq_len(ncol(cset$clusters)) ) {
         Ccc <- cset$Ccc[[k]]
         #if ( is.null(colnames(Ccc)) )
-        #  colnames(Ccc) <- rownames(Ccc) <- 1:ncol(Ccc)
+        #  colnames(Ccc) <- rownames(Ccc) <- seq_len(ncol(Ccc)
         sorting <- colnames(Ccc)
         remaining <- sorting
         cl <- remaining[1]
@@ -844,8 +844,8 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
                                  nrow=prod(sapply(vS,length))))
     colnames(params) <- names(vS)
     ## fill parameter matrix
-    for ( j in 1:ncol(params) ) 
-        params[,j] <- rep(rep(vS[[j]],prod(rL[1:(j)])),
+    for ( j in seq_len(ncol(params)) ) 
+        params[,j] <- rep(rep(vS[[j]],prod(rL[seq_along(j)])),
                           each=prod(rL[(j+2):length(rL)]))
 
     ## TODO: add time-series processing info
@@ -909,7 +909,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
     
     ## TODO: convert this loop to lapply and try parallel use!
     ## TODO: redirect messages to msgfile or store in results
-    for ( i in 1:nrow(params) ) {
+    for ( i in seq_len(nrow(params)) ) {
 
         ## construct segment type name  
         sgtype <- paste(paste(type.name,
@@ -982,7 +982,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
                 colors <- cset$colors[[K]][as.character(seg$segments[,"CL"])]
 
             ##close <- rep(FALSE, nrow(seg$segments))
-            sgids <- paste(sgtype, 1:nrow(seg$segments),sep="_")
+            sgids <- paste(sgtype, seq_len(nrow(seg$segments)),sep="_")
             segs <- data.frame(ID=sgids,
                                type=rep(sgtype,length(sgids)),
                                seg$segments,
@@ -1000,7 +1000,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
         cat(paste("Total segments\t",nrow(allsegs),"\n",sep=""))
         ## OVERRIDE ID
         if ( !missing(id) ) 
-            allsegs[,"ID"] <- paste(id, 1:nrow(allsegs), sep="_")
+            allsegs[,"ID"] <- paste(id, seq_len(nrow(allsegs)), sep="_")
     }
 
     ## name all stored data!
