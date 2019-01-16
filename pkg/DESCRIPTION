@@ -7,7 +7,7 @@ Author: Rainer Machne, Douglas B. Murray, Peter F. Stadler
 URL: https://github.com/raim/segmenTier
 BugReports: https://github.com/raim/segmenTier/issues
 Maintainer: Rainer Machne <raim@tbi.univie.ac.at>
-Description: This package implements a dynamic programing solution to segmentation based on maximization of arbitrary similarity measures within segments.
+Description: A dynamic programing solution to segmentation based on maximization of arbitrary similarity measures within segments.
 License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.12.7)
