@@ -11,7 +11,7 @@ The theory behind the package is outlined in
 
 ```R
 library(devtools)
-install_github("raim/segmenTier")
+install_github("raim/segmenTier", subdir = "pkg")
 ```
 
 ## Usage

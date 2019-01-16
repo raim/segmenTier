@@ -51,7 +51,7 @@ The development version can be obtained from github:
 
 ```{r, eval=FALSE}
 library(devtools)
-install_github("raim/segmenTier")
+install_github("raim/segmenTier", subdir = "pkg")
 ```
 
 
@@ -104,3 +104,4 @@ demo("segment_data", package = "segmenTier")
 ```
 
 # Citation
+
