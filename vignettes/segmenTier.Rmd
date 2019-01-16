@@ -1,0 +1,107 @@
+---
+title: "segmenTier: similarity-based segmentation of multi-dimensional signals"
+author: "Rainer Machne, Peter F. Stadler"
+date: "`r Sys.Date()`"
+output: 
+    rmarkdown::html_vignette:
+      toc: true
+bibliography: segmenTier.bib
+vignette: >
+  %\VignetteIndexEntry{segmenTier}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+![](logo.png) 
+
+# Theory
+
+`segmenTier` is a dynamic programing solution to segmentation based maximization of a
+arbitrary similarity measures within segments.
+
+Its input is a clustering $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
+`segmenTier` then solves the recursion:
+
+\begin{equation}
+  S_{k,\alpha} =
+  \max_{j\le k} \max_{\beta\ne\alpha}
+                 S_{j-1,\beta} + s(j,k,\alpha) - M\;
+\label{eq:01}
+\end{equation}
+
+where $s(j,k,\alpha)$ is a scoring function that provides similarity of a segment
+from position $j$ to $k$ to clusters $\mathcal{C}_\alpha$, *e.g.* based on Pearson correlation
+to cluster centers, and $M$ is a penalty incurred
+by the use of a new segment, a fixed cost for each jump that allows to set 
+fine-tune minimal segment lengths. Backtracing the maximal scores $S(k,\alpha)$ then
+provides both segment borders and segment cluster association.
+
+Clustering tools are provided in the package, and a full pipeline is
+available for clustering the Fourier-transform of oscillatory RNA-seq time-series,
+("circadian or metabolic oscillations"). See **Quick Guide**.
+ 
+
+The theory behind the package is outlined in @Machne2017. 
+
+# Usage
+
+## Installation
+
+The development version can be obtained from github:
+
+```{r, eval=FALSE}
+library(devtools)
+install_github("raim/segmenTier")
+```
+
+
+
+## Quick Guide
+
+```{r, fig.width=7, fig.height=3}
+library(segmenTier)
+
+data(primseg436) # RNA-seq time-series data
+
+# fourier-transform and cluster timeseries:
+tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+cset <- clusterTimeseries(tset)
+# ... segment it:
+segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
+# and inspect results:
+plotSegmentation(tset,cset,segments)
+```
+
+
+
+Usage of the package is further demonstrated in two R demos.
+
+## Demo I: Direct Interface to Algorithm
+
+The main low level interface to the algorithm, function `segmentClusters`,
+is demonstrated in the file `demo/segment_test.R`. 
+It produces Supplemental Figure S1 of the preprint 
+manuscript.
+
+To run it as a demo in R simply type:
+
+```{r, eval=FALSE}
+library(segmenTier)
+demo("segment_test", package = "segmenTier")
+```
+
+## Demo: Time-Series Clustering & Batch Segmentation 
+
+A real-life data set is processed, clustered and 
+segmented with varying parameters in 
+`demo/segment_data.R`.
+
+This demo runs quite long, since it calculates many 
+segmentations. It produces Figure 3 and Supplemental Figures
+S4a and S4b of [@Machne2017].
+
+```{r, eval=FALSE}
+demo("segment_data", package = "segmenTier")
+```
+
+# Citation
