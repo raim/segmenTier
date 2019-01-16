@@ -183,7 +183,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     map <- sort(unique(seqr)) # clusters
     map <- map[map!=0]        #  nuissance cluster
     names(map) <- map
-    map[] <- 1:length(map)
+    map[] <- seq_along(map)
   
     seqr <- map[as.character(seq)]
     seqr[seq==0] <- 0      # original nuissance clusters

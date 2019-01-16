@@ -364,7 +364,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
     bic <- rep(NA, length(K))
     names(bic) <- as.character(K)
     icl <- bic
-    for ( i in 1:length(fcls) ) {
+    for ( i in seq_along(fcls) ) {
       if ( length(fcls) > 1 ) fc <- fcls[[i]]
       else fc <- fcls
       cl.num <- as.character(fc@K)
@@ -419,7 +419,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
     ## -> is `mu' really the same as centers and are Ccc and Pci
     ## correct? 
     centers <- Pci <- Ccc <- rep(list(NA),length(all))
-    for ( i in 1:length(all) ) {
+    for ( i in seq_along(all) ) {
         if ( length(all) > 1 ) fc <- all[[i]]
         else fc <- all
 
@@ -546,7 +546,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     }
     
     usedk <- K
-    for ( k in 1:length(K) ) {
+    for ( k in seq_along(K) ) {
         
         ## get cluster number K
         Kused <- min(c(K[k],sum(!duplicated(dat[!rm.vals,]))))
@@ -857,7 +857,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
         cltab <- data.frame(matrix(NA, nrow=length(cset$tsid),
                                    ncol=length(clid)))
         colnames(cltab) <- clid
-        for ( i in 1:length(cllst) ) {
+        for ( i in seq_along(cllst) ) {
             tmp <- strsplit(cllst[[i]],":")
             class <- unlist(lapply(tmp, function(x) x[2]))
             names(class) <- unlist(lapply(tmp, function(x) x[1]))

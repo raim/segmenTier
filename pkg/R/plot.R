@@ -58,7 +58,7 @@ segment.plotFeatures <- function(data, coors, types, strand,
 
   ## parse arguments, which will also override other 
   if ( !missing(args) ) {    
-    for ( i in 1:length(args) )       
+    for ( i in seq_along(args) )       
       assign(names(args)[i],args[[i]])
   }
 
@@ -187,7 +187,7 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors,
   
   ## parse arguments, which will also override other 
   if ( !missing(args) ) {    
-    for ( i in 1:length(args) )       
+    for ( i in seq_along(args) )       
       assign(names(args)[i],args[[i]])
   }
 
@@ -254,7 +254,8 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors,
   if ( !missing(orig.idx) ) {
     if ( missing(orig.col) ) orig.col <- 2
     # cat(paste("plotting original data locations\n"))
-    axis(1,at=x[which(orig.idx)],labels=NA,tcl=.2,col=NA,col.ticks=orig.col,lwd.ticks=1)
+    axis(1,at=x[which(orig.idx)],labels=NA,tcl=.2,
+         col=NA,col.ticks=orig.col,lwd.ticks=1)
   }
   if ( axes ) {
     axis(1)
@@ -338,7 +339,8 @@ image_matrix <- function(dat, text, text.col,
 ## only required for option `clusters' in argument \code{plot},
 #' @param ... additional arguments to plot of total signal
 #'@export
-plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, ...) {
+plot.timeseries <- function(x, plot=c("total","timeseries"),
+                            xaxis, ylabh=TRUE, ...) {
     
     tset <- x
     
@@ -426,7 +428,8 @@ plot.timeseries <- function(x, plot=c("total","timeseries"), xaxis, ylabh=TRUE, 
 #' @return returns the input "clustering" object with (potentially new)
 #' cluster sorting and colors as in shown in the plot
 #'@export
-plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ylabh=TRUE, ...) {
+plot.clustering <- function(x, k, sort=FALSE, xaxis,
+                            axes=1:2, pch=16, ylabh=TRUE, ...) {
 
     cset <- x
     
@@ -449,8 +452,8 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ylabh=TRU
         seq <- as.character(cset$clusters[,i])
         cls.srt <- cset$sorting[[i]]
         if ( missing(xaxis) )
-          xaxis <- 1:length(seq)
-        y <- 1:length(cls.srt)
+          xaxis <- seq_along(seq)
+        y <- seq_along(cls.srt)
         names(y) <- cls.srt
         cols <- cset$colors[[i]]
         ## plot original clustering
@@ -492,12 +495,14 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis, axes=1:2, pch=16, ylabh=TRU
 #' matrix \code{S(i,c)} for all \code{c}
 #' @param ... currently unused additional arguments to plot
 #'@export
-plot.segments <- function(x, plot=c("S","segments"),  types, params, xaxis, show.fused=FALSE, ...) {
+plot.segments <- function(x, plot=c("S","segments"),  types, params,
+                          xaxis, show.fused=FALSE, ...) {
     for ( pl in plot ) 
         plotSegments(x, pl, types, params, xaxis, show.fused, ...)
 }
 ## above public wrapper allows to sort the plots by the order in plots
-plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis, show.fused=FALSE, ...) {
+plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
+                         xaxis, show.fused=FALSE, ...) {
     sset <- x
 
     ## sub-types to be plotted
@@ -505,7 +510,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
     if ( is.null(types) ) {
         if ( !missing(params) ) {
             if ( "settings"%in% names(sset) ) { 
-                for ( i in 1:length(params) ) {
+                for ( i in seq_along(params) ) {
                     pid <- names(params)[i]
                     p <- params[i]
                     typ <- sset$settings[,pid] == p
@@ -586,7 +591,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params, xaxis,
         sk.col <- sset$colors[types]
 
         ## one plot for each segmentation!
-        for ( j in 1:length(SK) ) {
+        for ( j in seq_along(SK) ) {
 
             ## cluster sorting
             srt <- as.character(sk.srt[[j]])
