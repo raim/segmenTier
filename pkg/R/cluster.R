@@ -4,11 +4,11 @@
 ## get Discrete Fourier Transformation
 get.fft <- function(x) {
     n <- floor(ncol(x)/2) +1 ## Nyquist-freq
-    fft <- t(stats::mvfft(t(x)))[,seq_along(n),drop=FALSE]
+    fft <- t(stats::mvfft(t(x)))[,seq_len(n),drop=FALSE]
     if ( n==1 )
         colnames(fft) <- "DC"
     else
-        colnames(fft) <- c("DC",as.character(seq_along(n-1)))
+        colnames(fft) <- c("DC",as.character(seq_len(n-1)))
     fft
 }
 ## fourier permutation
@@ -20,7 +20,7 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
     pvl <- matrix(0,nrow=nrow(fft), ncol=ncol(fft))
     dimnames(pvl) <- dimnames(fft)
     ## TODO: use apply and parallel!
-    for ( i in seq_along(perm) ) {
+    for ( i in seq_len(perm) ) {
         if ( verb>0 & i%%round(perm/10)==0 )
           cat(paste(round(i/perm,2)*100,"%, "))
         ## randomize columns and get fourier
@@ -65,7 +65,7 @@ ci95 <- function(data,na.rm=FALSE) {
 ## TODO: describe better
 color_hue <- function(n) {
   hues <- seq(15, 375, length = n + 1)
-  grDevices::hcl(h = hues, l = 65, c = 100)[seq_along(n)]
+  grDevices::hcl(h = hues, l = 65, c = 100)[seq_len(n)]
 }
 
 
@@ -845,7 +845,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
     colnames(params) <- names(vS)
     ## fill parameter matrix
     for ( j in seq_len(ncol(params)) ) 
-        params[,j] <- rep(rep(vS[[j]],prod(rL[seq_along(j)])),
+        params[,j] <- rep(rep(vS[[j]],prod(rL[seq_len(j)])),
                           each=prod(rL[(j+2):length(rL)]))
 
     ## TODO: add time-series processing info
