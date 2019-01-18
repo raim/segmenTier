@@ -14,12 +14,22 @@ vignette: >
 
 ![](logo.png) 
 
+`segmenTier` is a dynamic programming solution to segmentation based
+on maximization of arbitrary similarity measures within segments
+[@Machne2017]. In addition to the core algorithm, this package
+provides time-series processing and clustering functions as described
+in the publication. These are generally applicable where a `kmeans`
+clustering yields meaningful results, and have been specifically
+developed for clustering of the Discrete Fourier Transform of periodic
+gene expression data ("circadian" or "yeast metabolic
+oscillations"). This clustering approach is outlined in the
+supplemental material of [@Machne2012], and here is used as a basis of
+segment similarity measures.
+
 # Theory
 
-`segmenTier` is a dynamic programing solution to segmentation based on maximization of 
-arbitrary similarity measures within segments [@Machne2017].
-
-Its input is a clustering $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
+`segmenTier`'s input is a clustering
+$\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
 `segmenTier` then solves the recursion:
 
 \begin{equation}
@@ -46,6 +56,10 @@ The theory behind the package is detailed in @Machne2017.
 # Usage
 
 ## Installation
+
+```{r, eval=FALSE}
+install.packages("segmenTier")
+```
 
 The development version can be obtained from github:
 
@@ -103,5 +117,5 @@ S4a and S4b of [@Machne2017].
 demo("segment_data", package = "segmenTier")
 ```
 
-# Citation
+# References
 
