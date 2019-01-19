@@ -620,7 +620,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
 
             ## get matrix and sort according to cluster sorting
             ## TODO: plot by segment; highlight winning segment!!
-            S <- SK[[j]]$S[,srt]
+            S <- SK[[j]]$S[,srt, drop=FALSE]
             dS <- apply(S,2,function(x) c(0,diff(x)))
 
             ## x-axis: x can be passed to use real coordinates
@@ -628,9 +628,9 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
               xaxis <- seq_len(nrow(S))
             xlim <- range(xaxis)             
 
-            xrng <- stats::quantile(xaxis,c(.05,.95))
+            xrng <- stats::quantile(xaxis,c(.05,.95), na.rm=TRUE)
             xidx <- which(xaxis>xrng[1]&xaxis<xrng[2]) #x%in%xrng[1]:xrng[2]
-            ylim <- stats::quantile(ash(dS[xidx,]),c(0,1))
+            ylim <- stats::quantile(ash(dS[xidx,]),c(0,1), na.rm=TRUE)
             plot(-1,col=NA,ylim=ylim,xlim=xlim,
                  ylab=expression(ash(Delta~S(i,c))))
             lines(xaxis,ash(dS[,1]),lwd=7,col="#00000015") # NUI: BACKGROUND 

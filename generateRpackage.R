@@ -1,8 +1,12 @@
 
+pkg <- "~/programs/segmenTier/pkg"
+
+## generate vignette
+
+rmarkdown::render(file.path(pkg,"vignettes","segmenTier.Rmd"))
 
 
 ## generate documentation build/check package
-pkg <- "~/programs/segmenTier/pkg"
 library(devtools)
 
 document(pkg) # 
@@ -11,3 +15,5 @@ build(pkg) # generate .tar.gz
 
 library(goodpractice)
 g <- gp(pkg)
+
+
