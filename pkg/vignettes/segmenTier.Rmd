@@ -16,7 +16,7 @@ vignette: >
 
 `segmenTier` is a dynamic programming solution to segmentation based
 on maximization of arbitrary similarity measures within segments
-[@Machne2017]. In addition to the core algorithm, this package
+[@Machne2017]. In addition to the core algorithm, the package
 provides time-series processing and clustering functions as described
 in the publication. These are generally applicable where a `kmeans`
 clustering yields meaningful results, and have been specifically
@@ -77,7 +77,7 @@ library(segmenTier)
 
 data(primseg436) # RNA-seq time-series data
 
-# fourier-transform and cluster timeseries:
+# Fourier-transform and cluster time-series:
 tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
 cset <- clusterTimeseries(tset)
 # ... segment it:
@@ -94,8 +94,7 @@ Usage of the package is further demonstrated in two R demos.
 
 The main low level interface to the algorithm, function `segmentClusters`,
 is demonstrated in the file `demo/segment_test.R`. 
-It produces Supplemental Figure S1 of the preprint 
-manuscript.
+It produces Supplemental Figure S1 of  [@Machne2017].
 
 To run it as a demo in R simply type:
 

@@ -11,7 +11,7 @@ Description: A dynamic programming solution to segmentation based on
         maximization of arbitrary similarity measures within segments.
 	The general idea, theory and this implementation are described in
 	Machne, Murray & Stadler (2017) <doi:10.1038/s41598-017-12401-8>.
-	In addition to the core algorithm, this package provides
+	In addition to the core algorithm, the package provides
 	time-series processing and clustering functions as described in
 	the publication. These are generally applicable where a `kmeans`
 	clustering yields meaningful results, and have been specifically
