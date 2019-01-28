@@ -149,6 +149,18 @@ clusterSegments <- function() {}
 #' is the cluster assignment and colums 2 and 3 are start and end position
 #' of the segments; if cluster colors were available a 4th column contains
 #' the colors assigned to those clusters for convenient quick plotting.
+#' @examples
+#' data(primseg436) # RNA-seq time-series data
+#'
+#' # 1) Fourier-transform time series:
+#' tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+#' # 2) cluster time-series:
+#' cset <- clusterTimeseries(tset)
+#' # 3) ... segment it:
+#' segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
+#' # 4) and inspect results:
+#' plotSegmentation(tset, cset,segments)
+#' 
 #' @export
 segmentClusters <- function(seq, k=1, csim, E=1,
                             S="ccor", M=175, Mn=20, a=-2, nui=1,
@@ -436,6 +448,6 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
 #' transcriptome time series data from a region encompassing
 #' four genes and regulatory upstream non-coding RNA in budding yeast.
 #'
-#' @name tsd
+#' @name primseg436
 #' @docType data
 NULL

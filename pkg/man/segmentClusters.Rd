@@ -92,3 +92,16 @@ followed by the  back-tracing step to find segments.
 Some more details of the algorithm can be tuned, but these usually
 have little effect on real-life data sets.
 }
+\examples{
+data(primseg436) # RNA-seq time-series data
+
+# 1) Fourier-transform time series:
+tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+# 2) cluster time-series:
+cset <- clusterTimeseries(tset)
+# 3) ... segment it:
+segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
+# 4) and inspect results:
+plotSegmentation(tset, cset,segments)
+
+}
