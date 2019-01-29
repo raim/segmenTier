@@ -47,7 +47,7 @@ ccor <- function(k, j, c, seq, M, csim) {
 #' segmenTier's dynamic programming routine 
 #' @details This is \code{\link{segmenTier}}'s core dynamic programing
 #' routine. It constructs the total score matrix S(i,c), based on
-#' the passed scoring function ("icor" or "ccor")
+#' the passed scoring function ("icor" or "ccor").
 #' Scoring function "icor" calculates the sum of similarities of
 #' data at positions k:i to cluster centers c over all k and i.
 #' The similarities are calculated e.g., as a (Pearson) correlation between
