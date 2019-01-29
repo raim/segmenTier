@@ -92,63 +92,89 @@ clusterSegments <- function() {}
 #' for the indicated parameters. In contrast, the function
 #' \code{\link{segmentCluster.batch}} allows for multiple runs over
 #' different parameters or input-clusterings.
-#' @param seq either a numeric vector providing a clustering
-#' sequence, or a structure of class 'clustering' as returned by
-#' \code{\link{clusterTimeseries}}. The only strict requirement for the
-#' first option is that nuissance clusters (which will not be segmented)
-#' have to be '0' (zero).
+#'
+#' This is the main R wrapper function for the `segmenTier'
+#' segmentation algorithm. It takes an ordered sequence of clusterings
+#' and returns segments of consistent clusters. Its input (argument
+#' \code{seq}) is either an integer vector of cluster associations or
+#' a "clustering" object returned by
+#' \code{\link{clusterTimeseries}}. It runs the dynamic programing
+#' algorithm for a selected scoring function and an according cluster
+#' similarity matrix, followed by the back-tracing step to find
+#' segments.  Some more details of the algorithm can be tuned, but
+#' these usually have little effect on real-life data sets.
+#'
+#' In the first scenario, when the input is a simple clustering,
+#' cluster-cluster or cluster-position similarities can be
+#' additionally provided via option \code{csim} for scoring functions
+#' "ccor" and "icor", respectively.  Or, if \code{csim} is missing and
+#' scoring function is "ccls", cluster similarities are constructed
+#' from arguments \code{a} and \code{nui}.  A nuissance cluster must
+#' be "0".  In the second scenario, when the input is of class
+#' "clustering" produced by \code{\link{clusterTimeseries}}, all this
+#' information is already present.  The function returns a list (class
+#' "segments") comprising of the main result (list item "segments"),
+#' and "warnings" from the dynamic programing and back-tracing phases,
+#' the used similarity matrix \code{csim}, extended for nuissance
+#' clusters; and optionally (see option \code{save.matrix}) the
+#' scoring vectors \code{S1(i,c)}, the total score matrix
+#' \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.  It will
+#' further contain additional parameters like cluster colors and
+#' sortings if argument \code{seq} was of class 'clustering'.  The
+#' main result structure "segments" is a 3-column matrix, where column
+#' 1 is the cluster assignment and colums 2 and 3 are start and end
+#' position of the segments; if cluster colors were available a 4th
+#' column contains the colors assigned to those clusters for
+#' convenient quick plotting.  A plot method exists that allows to
+#' plot segments aligned to "timeseries" and "clustering" plots.
+#' @param seq either a numeric vector providing a clustering sequence,
+#'     or a structure of class 'clustering' as returned by
+#'     \code{\link{clusterTimeseries}}. The only strict requirement
+#'     for the first option is that nuissance clusters (which will not
+#'     be segmented) have to be '0' (zero).
 #' @param k if argument \code{seq} is of class 'clustering' the kth
-#' clustering will be used; defaults to 1
+#'     clustering will be used; defaults to 1
 #' @param csim the cluster-cluster or position-cluster similarity
-#' matrix for scoring functions "ccor" and "icor" (option \code{S}),
-#' respectively; where \code{csim} MUST be provided if argument
-#' \code{seq} is a simple vector of clusters; if \code{seq} is of
-#' class 'clustering' \code{csim} will override the similarity matrix
-#' potentially present in \code{seq}. Finally, for scoring
-#' function "ccls" the argument \code{csim} will be ignored and the matrix
-#' instead automatically constructed from argument
-#' \code{a}, and using argument \code{nui} for the nuissance cluster.
-#' @param E exponent to scale similarity matrices, must be odd
-#' to maintain negative correlations!
+#'     matrix for scoring functions "ccor" and "icor" (option
+#'     \code{S}), respectively; where \code{csim} MUST be provided if
+#'     argument \code{seq} is a simple vector of clusters; if
+#'     \code{seq} is of class 'clustering' \code{csim} will override
+#'     the similarity matrix potentially present in
+#'     \code{seq}. Finally, for scoring function "ccls" the argument
+#'     \code{csim} will be ignored and the matrix instead
+#'     automatically constructed from argument \code{a}, and using
+#'     argument \code{nui} for the nuissance cluster.
+#' @param E exponent to scale similarity matrices, must be odd to
+#'     maintain negative correlations!
 #' @param S the scoring function to be used: "ccor", "icor" or "cls"
 #' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
+#'     cut-off but defined as a penalty that must be "overcome" by
+#'     good score.
+#' @param Mn minimal sequence length for nuissance cluster, Mn<M will
+#'     allow shorter distances between segments; only used in scoring
+#'     functions "ccor" and "icor"
 #' @param a an additional penalty only used for pure cluster-based
-#' scoring w/o cluster similarity measures in scoring function "cls"
-#' @param nui the similarity score to be used for nuissance clusters in the
-#' cluster similarity matrices
-#' @param nextmax go backwards while score is increasing before openening a
-#' new segment, default is TRUE
-#' @param multi handling of multiple k with max. score in forward phase,
-#' either "min" (default) or "max"
-#' @param multib handling of multiple k with max. score in back-trace phase,
-#' either "min" (default), "max" or "skip"
+#'     scoring w/o cluster similarity measures in scoring function
+#'     "cls"
+#' @param nui the similarity score to be used for nuissance clusters
+#'     in the cluster similarity matrices
+#' @param nextmax go backwards while score is increasing before
+#'     openening a new segment, default is TRUE
+#' @param multi handling of multiple k with max. score in forward
+#'     phase, either "min" (default) or "max"
+#' @param multib handling of multiple k with max. score in back-trace
+#'     phase, either "min" (default), "max" or "skip"
 #' @param rm.nui remove nuissance cluster segments from final results
-#' @param save.matrix store the total score matrix \code{S(i,c)} and the
-#' backtracing matrix \code{K(i,c)}; useful in testing stage or for
-#' debugging or illustration of the algorithm;
+#' @param save.matrix store the total score matrix \code{S(i,c)} and
+#'     the backtracing matrix \code{K(i,c)}; useful in testing stage
+#'     or for debugging or illustration of the algorithm;
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @details This is the main R wrapper function for the segmentation algorithm.
-#' It takes a sequence of clusterings and returns segments of
-#' consistent clusters. It runs the dynamic programing algorithm for
-#' a selected scoring function and an according cluster similarity matrix,
-#' followed by the  back-tracing step to find segments.
-#' Some more details of the algorithm can be tuned, but these usually
-#' have little effect on real-life data sets.
-#' @return Returns a list containing the main result ("segments"), "warnings"
-#' from the dynamic programing and back-tracing phases, the used similarity
-#' matrix \code{csim}, extended for nuissance clusters; ; and optionally (see
-#' option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the total
-#' score matrix \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.
-#' It will further contain additional parameters like cluster colors and
-#' sortings if argument \code{seq} was of class 'clustering'.
-#' The main result structure "segments" is a 3-column matrix, where column 1
-#' is the cluster assignment and colums 2 and 3 are start and end position
-#' of the segments; if cluster colors were available a 4th column contains
-#' the colors assigned to those clusters for convenient quick plotting.
+#' @return Returns a list (class "segments") containing the main
+#'     result (list item "segments"), and additional information (see
+#'     `Details'). A plot method exists that allows to plot clusters
+#'     aligned to time-series and segmentation plots.
+#' @references Machne, Murray & Stadler (2017)
+#'     <doi:10.1038/s41598-017-12401-8>
 #' @examples
 #' data(primseg436) # RNA-seq time-series data
 #'

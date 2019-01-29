@@ -20,7 +20,10 @@ Description: A dynamic programming solution to segmentation based on
 	oscillations'). This clustering approach is outlined in the
 	supplemental material of 
 	Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>),
-	and here is used as a basis of segment similarity measures.
+	and here is used as a basis of segment similarity measures. Notably,
+	the time-series processing and clustering functions can also
+	be used as stand-alone tools, independent of segmentation, eg.
+	for transcriptome data already mapped to genes.
 License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.12.7)

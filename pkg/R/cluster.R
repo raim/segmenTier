@@ -71,9 +71,28 @@ color_hue <- function(n) {
 
 #' Process a time-series for \code{\link{segmenTier}}.
 #' 
-#' Performs the requested data transformations, including a Discrete
+#' Prepares the time-series for subsequent clustering, and performs
+#' requested data transformations, including a Discrete
 #' Fourier Transform (DFT) of the time-series as direct input for 
-#' the clustering wrapper \code{\link{clusterTimeseries}}.
+#' the clustering wrapper \code{\link{clusterTimeseries}}. It can also be used
+#' as a stand-alone function equipped especially for analysis of oscillatory
+#' time-series, including phases and p-values for requested DFT components.
+#' 
+#' @details This function exemplifies the processing of an oscillatory
+#' transcriptome time-series data as used in the establishment of this
+#' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
+#' (PLoS ONE 2012) and Lehmann et al. (BMC Bioinformatics 2014) a Discrete
+#' Fourier Transform of time-series data allows to cluster time-series by
+#' their change pattern. Additional data transformations can be applied (see
+#' documentation of options and example).
+#' 
+#' This time-series processing and subsequent clustering can also be used
+#' without segmentation, eg. for conventional microarray data or RNA-seq
+#' data already mapped to genes. The option \code{perm} allows to
+#' perform a permutation test (\code{perm} times) and
+#' returns a matrix of empirical p-values for all DFT components, ie. the
+#' fraction of \code{perm} where amplitude was higher then the amplitude
+#' of the randomized time-series.
 #' @param ts the timeseries as a matrix, where columns are the timepoints
 #' and rows individual measurements (e.g., genomic positions for transcriptome
 #' data)
@@ -108,17 +127,35 @@ color_hue <- function(n) {
 #' @param circular.time logical value indicating whether time can be treated
 #' as circular in smoothing
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @details This function exemplifies the processing of an oscillatory
-#' transcriptome time-series data as used in the establishment of this
-#' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
-#' (PLoS ONE 2012) and Lehmann et al. (BMC Bioinformatics 2014) a Discrete
-#' Fourier Transform of time-series data allows to cluster time-series by
-#' their change pattern.
+#' @return Returns a list of class "time-series" which comprises of the
+#' transformed time-series and additional information, such as the total
+#' signal, and positions of rows with only NA/0 values. Note that NA values
+#' are interpreted as 0.
 #' @references 
-#'   @cite Machne2012 Lehmann2013
+#'   Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>
+#'   Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
+#' @examples
+#' data(primseg436)
+#' ## The input data is a matrix with time points in columns
+#' ## and a 1D order, here 7624 genome positions, is reflected in rows,
+#' ## if the time-series should be segmented.
+#' nrow(tsd)
+#' ## Time-series processing prepares the data for clustering,
+#' ## the example data is periodic, and we will cluster its Discrete Fourier
+#' ## Transform (DFT) rather then the original data. Specifically we will
+#' ## only use components 1 to 7 of the DFT (dft.range) and also apply
+#' ## a signal/noise ratio normalization, where each component is
+#' ## divided by the mean of all other components. To de-emphasize
+#' ## total levels the first component (DC for "direct current") of the
+#' ## DFT will be separately arcsinh transformed. This peculiar combination
+#' ## proofed best for our data:
+#' tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+#'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+#' ## a plot method exists for the returned time-series class:
+#' plot(tset)
 #'@export
 processTimeseries <- function(ts, trafo="raw", 
-                              use.fft=TRUE, dc.trafo="raw", dft.range,
+                              use.fft=TRUE, dc.trafo="ash", dft.range,
                               perm=0, use.snr=TRUE, lambda=1,
                               low.thresh=-Inf, 
                               smooth.space=1,
@@ -486,21 +523,66 @@ logLik.kmeans <- function(object, ...)
 
 #' Cluster a processed time-series with k-means.
 #' 
-#' A wrapper for \code{\link[stats:kmeans]{kmeans}}, clustering
-#' a time-series object \code{tset} provided by \code{\link{processTimeseries}},
-#' where specifically the DFT of a time-series and requested data
-#' transformation were calculated. The clustering is performed
-#' on the \code{tset$dat} matrix.
-#' @param tset a timeseries processed by \code{\link{processTimeseries}}
-#' @param K selected cluster numbers, the argument \code{centers}
-#' of \code{\link[stats:kmeans]{kmeans}} 
+#' Performs \code{\link[stats:kmeans]{kmeans}} clustering of a
+#' time-series object \code{tset} provided by
+#' \code{\link{processTimeseries}}, where specifically the DFT of a
+#' time-series (and additional requested data transformations) can be
+#' calculated.
+#'
+#' @details This function performs one or more time-series clusterings using
+#' \code{\link[stats:kmeans]{kmeans}}, and the output of
+#' \code{\link{processTimeseries}} as input. It further calculates
+#' cluster centers, cluster-cluster and cluster-position similarity
+#' matrices (Pearson correlation) that will be used by the main function
+#' of this package, \code{\link{segmentClusters}}, to split the cluster
+#' association sequence into segments, and assigns each segment to
+#' one of the input clusters. The clusters will be sorted by similarity
+#' and cluster colors assigned for convenient data inspection with the plot
+#' methods available for each data processing step (see examples).
+#'
+#' Note that the function, in conjuction with
+#' \code{\link{processTimeseries}}, can also be used as a stand-alone
+#' tool for time-series clusterings, specifically implementing the
+#' strategy of cluster the Discrete Fourier Transform of period
+#' time-series developed by Machne & Murray (2012)
+#' <doi:10.1371/journal.pone.0037906>, and further analyzed in Lehmann
+#' et al. (2013) <doi:10.1186/1471-2105-14-133>, such as transcriptome
+#' data from circadian or yeast respiratory oscillation systems.
+#' @param tset a "timeseries" object returned by
+#'     \code{\link{processTimeseries}}
+#' @param K selected cluster numbers, the argument \code{centers} of
+#'     \code{\link[stats:kmeans]{kmeans}}
 #' @param iter.max the maximum number of iterations allowed in
-#' \code{\link[stats:kmeans]{kmeans}}, see there
+#'     \code{\link[stats:kmeans]{kmeans}}, see there
 #' @param nstart initialization \code{\link[stats:kmeans]{kmeans}}:
-#' "how many random sets should be chosen?", see there
-#' @param nui.thresh threshold correlation of a data point to a cluster
-#' center; if below the data point will be added to nuissance cluster 0
+#'     "how many random sets should be chosen?", see there
+#' @param nui.thresh threshold correlation of a data point to a
+#'     cluster center; if below the data point will be added to
+#'     nuissance cluster 0
 #' @param verb level of verbosity, 0: no output, 1: progress messages
+#' @return Returns a list of class "clustering" comprising of a matrix
+#'     of clusterings, lists of cluster centers, cluster-cluster and
+#'     cluster-position similarity matrices (Pearson correlation) used
+#'     by \code{\link{segmentClusters}}, and additional information
+#'     such as a cluster sorting by similarity and cluster colors that
+#'     allow to track clusters in plots. A plot method exists that
+#'     allows to plot clusters aligned to "timeseries" and "segment"
+#'     plots.
+#' @references Machne & Murray (2012)
+#'     <doi:10.1371/journal.pone.0037906>, and Lehmann et al. (2013)
+#'     <doi:10.1186/1471-2105-14-133>
+#' @examples
+#' data(primseg436)
+#' ## Discrete Fourier Transform of the time-series, see
+#' ## help for ?processTimeseries for details
+#' tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+#'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+#' ## ... and cluster the transformed time-series
+#' cset <- clusterTimeseries(tset)
+#' ## plot methods for both returned objects allow aligned plots
+#' par(mfcol=c(3,1))
+#' plot(tset)
+#' plot(cset)
 #'@export
 clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
                               nui.thresh=-Inf, verb=1) {
@@ -790,6 +872,13 @@ setVarySettings <- function(E=c(1,3),
 #' multiple segmentation parameters. It additionally allows to
 #' tag adjacent segments to be potentially fused due to similarity
 #' of their clusters.
+#' 
+#' @details This is a high-level wrapper for \code{\link{segmentClusters}}
+#' which allows segmentation over multiple clusterings as provided by the
+#' function \code{\link{clusterTimeseries}} and over multiple segmentation
+#' parameters. Each parameter in the list \code{varySettings} can be
+#' a vector and ALL combinations of the passed parameter values will
+#' be used for one run of \code{\link{segmentClusters}}.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param varySettings list of settings where each entry can be a vector;
 #' the function will construct a matrix of all possible combinations of
@@ -815,16 +904,10 @@ setVarySettings <- function(E=c(1,3),
 #' segment types, are replaced by this
 #' @param save.matrix store the total score matrix \code{S(i,c)} and the
 #' backtracing matrix \code{K(i,c)}; useful in testing stage or for
-#' debugging or illustration of the algorithm
+#' debugging or illustration of the algorithm;
 #' TODO: save.matrix is currently not implemented, since batch function
 #' returns a matrix only
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @details This is a high-level wrapper for \code{\link{segmentClusters}}
-#' which allows segmentation over multiple clusterings as provided by the
-#' function \code{\link{clusterTimeseries}} and over multiple segmentation
-#' parameters. Each parameter in the list \code{varySettings} can be
-#' a vector and ALL combinations of the passed parameter values will
-#' be used for one run of \code{\link{segmentClusters}}.
 #'@export
 segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
                                  fuse.threshold=0.2, rm.nui=TRUE, 

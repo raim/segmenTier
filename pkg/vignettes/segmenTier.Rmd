@@ -16,15 +16,21 @@ vignette: >
 
 `segmenTier` is a dynamic programming solution to segmentation based
 on maximization of arbitrary similarity measures within segments
-[@Machne2017]. In addition to the core algorithm, the package
-provides time-series processing and clustering functions as described
-in the publication. These are generally applicable where a `k-means`
+as developed in [@Machne2017].
+
+In addition to the core algorithm, the package provides time-series
+processing and clustering functions as described in the
+publication. These are generally applicable where a `k-means`
 clustering yields meaningful results, and have been specifically
 developed for clustering of the Discrete Fourier Transform of periodic
-gene expression data ("circadian" or "yeast metabolic
-oscillations"). This clustering approach is outlined in the
-supplemental material of [@Machne2012], and here is used as a basis of
-segment similarity measures.
+gene expression data ("circadian" or "yeast metabolic oscillations").
+
+This clustering approach is outlined in the supplemental material of
+[@Machne2012] and [@Lehmann2013], and here is used as a basis of
+segment similarity measures.  Note, that the functions
+`processTimeseries` and `clusterTimeseries`, can also be used as
+stand-alone tools for periodic time-series analysis and clustering.
+
 
 # Theory
 

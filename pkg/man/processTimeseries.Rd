@@ -4,7 +4,7 @@
 \alias{processTimeseries}
 \title{Process a time-series for \code{\link{segmenTier}}.}
 \usage{
-processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "raw",
+processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "ash",
   dft.range, perm = 0, use.snr = TRUE, lambda = 1, low.thresh = -Inf,
   smooth.space = 1, smooth.time = 1, circular.time = FALSE, verb = 0)
 }
@@ -55,10 +55,19 @@ as circular in smoothing}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
+\value{
+Returns a list of class "time-series" which comprises of the
+transformed time-series and additional information, such as the total
+signal, and positions of rows with only NA/0 values. Note that NA values
+are interpreted as 0.
+}
 \description{
-Performs the requested data transformations, including a Discrete
+Prepares the time-series for subsequent clustering, and performs
+requested data transformations, including a Discrete
 Fourier Transform (DFT) of the time-series as direct input for 
-the clustering wrapper \code{\link{clusterTimeseries}}.
+the clustering wrapper \code{\link{clusterTimeseries}}. It can also be used
+as a stand-alone function equipped especially for analysis of oscillatory
+time-series, including phases and p-values for requested DFT components.
 }
 \details{
 This function exemplifies the processing of an oscillatory
@@ -66,8 +75,38 @@ transcriptome time-series data as used in the establishment of this
 algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
 (PLoS ONE 2012) and Lehmann et al. (BMC Bioinformatics 2014) a Discrete
 Fourier Transform of time-series data allows to cluster time-series by
-their change pattern.
+their change pattern. Additional data transformations can be applied (see
+documentation of options and example).
+
+This time-series processing and subsequent clustering can also be used
+without segmentation, eg. for conventional microarray data or RNA-seq
+data already mapped to genes. The option \code{perm} allows to
+perform a permutation test (\code{perm} times) and
+returns a matrix of empirical p-values for all DFT components, ie. the
+fraction of \code{perm} where amplitude was higher then the amplitude
+of the randomized time-series.
+}
+\examples{
+data(primseg436)
+## The input data is a matrix with time points in columns
+## and a 1D order, here 7624 genome positions, is reflected in rows,
+## if the time-series should be segmented.
+nrow(tsd)
+## Time-series processing prepares the data for clustering,
+## the example data is periodic, and we will cluster its Discrete Fourier
+## Transform (DFT) rather then the original data. Specifically we will
+## only use components 1 to 7 of the DFT (dft.range) and also apply
+## a signal/noise ratio normalization, where each component is
+## divided by the mean of all other components. To de-emphasize
+## total levels the first component (DC for "direct current") of the
+## DFT will be separately arcsinh transformed. This peculiar combination
+## proofed best for our data:
+tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+                          use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+## a plot method exists for the returned time-series class:
+plot(tset)
 }
 \references{
-@cite Machne2012 Lehmann2013
+Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>
+  Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 }

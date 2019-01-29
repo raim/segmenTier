@@ -8,10 +8,11 @@ clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
   nui.thresh = -Inf, verb = 1)
 }
 \arguments{
-\item{tset}{a timeseries processed by \code{\link{processTimeseries}}}
+\item{tset}{a "timeseries" object returned by
+\code{\link{processTimeseries}}}
 
-\item{K}{selected cluster numbers, the argument \code{centers}
-of \code{\link[stats:kmeans]{kmeans}}}
+\item{K}{selected cluster numbers, the argument \code{centers} of
+\code{\link[stats:kmeans]{kmeans}}}
 
 \item{iter.max}{the maximum number of iterations allowed in
 \code{\link[stats:kmeans]{kmeans}}, see there}
@@ -19,15 +20,65 @@ of \code{\link[stats:kmeans]{kmeans}}}
 \item{nstart}{initialization \code{\link[stats:kmeans]{kmeans}}:
 "how many random sets should be chosen?", see there}
 
-\item{nui.thresh}{threshold correlation of a data point to a cluster
-center; if below the data point will be added to nuissance cluster 0}
+\item{nui.thresh}{threshold correlation of a data point to a
+cluster center; if below the data point will be added to
+nuissance cluster 0}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
+\value{
+Returns a list of class "clustering" comprising of a matrix
+    of clusterings, lists of cluster centers, cluster-cluster and
+    cluster-position similarity matrices (Pearson correlation) used
+    by \code{\link{segmentClusters}}, and additional information
+    such as a cluster sorting by similarity and cluster colors that
+    allow to track clusters in plots. A plot method exists that
+    allows to plot clusters aligned to "timeseries" and "segment"
+    plots.
+}
 \description{
-A wrapper for \code{\link[stats:kmeans]{kmeans}}, clustering
-a time-series object \code{tset} provided by \code{\link{processTimeseries}},
-where specifically the DFT of a time-series and requested data
-transformation were calculated. The clustering is performed
-on the \code{tset$dat} matrix.
+Performs \code{\link[stats:kmeans]{kmeans}} clustering of a
+time-series object \code{tset} provided by
+\code{\link{processTimeseries}}, where specifically the DFT of a
+time-series (and additional requested data transformations) can be
+calculated.
+}
+\details{
+This function performs one or more time-series clusterings using
+\code{\link[stats:kmeans]{kmeans}}, and the output of
+\code{\link{processTimeseries}} as input. It further calculates
+cluster centers, cluster-cluster and cluster-position similarity
+matrices (Pearson correlation) that will be used by the main function
+of this package, \code{\link{segmentClusters}}, to split the cluster
+association sequence into segments, and assigns each segment to
+one of the input clusters. The clusters will be sorted by similarity
+and cluster colors assigned for convenient data inspection with the plot
+methods available for each data processing step (see examples).
+
+Note that the function, in conjuction with
+\code{\link{processTimeseries}}, can also be used as a stand-alone
+tool for time-series clusterings, specifically implementing the
+strategy of cluster the Discrete Fourier Transform of period
+time-series developed by Machne & Murray (2012)
+<doi:10.1371/journal.pone.0037906>, and further analyzed in Lehmann
+et al. (2013) <doi:10.1186/1471-2105-14-133>, such as transcriptome
+data from circadian or yeast respiratory oscillation systems.
+}
+\examples{
+data(primseg436)
+## Discrete Fourier Transform of the time-series, see
+## help for ?processTimeseries for details
+tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+                          use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+## ... and cluster the transformed time-series
+cset <- clusterTimeseries(tset)
+## plot methods for both returned objects allow aligned plots
+par(mfcol=c(3,1))
+plot(tset)
+plot(cset)
+}
+\references{
+Machne & Murray (2012)
+    <doi:10.1371/journal.pone.0037906>, and Lehmann et al. (2013)
+    <doi:10.1186/1471-2105-14-133>
 }
