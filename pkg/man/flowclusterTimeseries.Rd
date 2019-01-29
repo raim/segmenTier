@@ -4,9 +4,9 @@
 \alias{flowclusterTimeseries}
 \title{Cluster a processed time-series with \pkg{flowClust} & \pkg{flowMerge}.}
 \usage{
-flowclusterTimeseries(tset, ncpu = 1, K = 10, selected, merge = FALSE,
-  B = 500, tol = 1e-05, lambda = 1, nu = 4, nu.est = 0, trans = 1,
-  ...)
+flowclusterTimeseries(tset, ncpu = 1, K = 10, selected,
+  merge = FALSE, B = 500, tol = 1e-05, lambda = 1, nu = 4,
+  nu.est = 0, trans = 1, ...)
 }
 \arguments{
 \item{tset}{processed time-series as provided by

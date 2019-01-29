@@ -4,9 +4,9 @@
 \alias{segmentClusters}
 \title{Run the \code{segmenTier} algorithm.}
 \usage{
-segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175, Mn = 20,
-  a = -2, nui = 1, nextmax = TRUE, multi = "max", multib = "max",
-  rm.nui = TRUE, save.matrix = FALSE, verb = 1)
+segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175,
+  Mn = 20, a = -2, nui = 1, nextmax = TRUE, multi = "max",
+  multib = "max", rm.nui = TRUE, save.matrix = FALSE, verb = 1)
 }
 \arguments{
 \item{seq}{Either an integer vector of cluster labels,

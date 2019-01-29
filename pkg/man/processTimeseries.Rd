@@ -4,9 +4,10 @@
 \alias{processTimeseries}
 \title{Process a time-series for \code{\link{segmenTier}}.}
 \usage{
-processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "ash",
-  dft.range, perm = 0, use.snr = TRUE, lambda = 1, low.thresh = -Inf,
-  smooth.space = 1, smooth.time = 1, circular.time = FALSE, verb = 0)
+processTimeseries(ts, trafo = "raw", use.fft = TRUE,
+  dc.trafo = "ash", dft.range, perm = 0, use.snr = TRUE,
+  lambda = 1, low.thresh = -Inf, smooth.space = 1, smooth.time = 1,
+  circular.time = FALSE, verb = 0)
 }
 \arguments{
 \item{ts}{the timeseries as a matrix, where columns are the

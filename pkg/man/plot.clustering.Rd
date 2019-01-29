@@ -4,8 +4,8 @@
 \alias{plot.clustering}
 \title{Plot method for the "clustering" object.}
 \usage{
-\method{plot}{clustering}(x, k, sort = FALSE, xaxis, axes = 1:2, pch = 16,
-  ylabh = TRUE, ...)
+\method{plot}{clustering}(x, k, sort = FALSE, xaxis, axes = 1:2,
+  pch = 16, ylabh = TRUE, ...)
 }
 \arguments{
 \item{x}{a "clustering" object as returned by
