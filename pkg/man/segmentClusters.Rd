@@ -75,7 +75,7 @@ Returns a list (class "segments") containing the main
 \description{
 segmenTier's main wrapper interface, calculates segments from a
 clustering sequence. This will run the segmentation algorithm once
-for the indicated parameters. In contrast, the function
+for the indicated parameters. The function
 \code{\link{segmentCluster.batch}} allows for multiple runs over
 different parameters or input-clusterings.
 }
@@ -86,10 +86,14 @@ and returns segments of consistent clusters. Its input (argument
 \code{seq}) is either an integer vector of cluster associations or
 a "clustering" object returned by
 \code{\link{clusterTimeseries}}. It runs the dynamic programing
-algorithm for a selected scoring function and an according cluster
-similarity matrix, followed by the back-tracing step to find
-segments.  Some more details of the algorithm can be tuned, but
-these usually have little effect on real-life data sets.
+algorithm (\code{\link{calculateScore}} for a selected scoring
+function and an according cluster similarity matrix, followed by the
+back-tracing step (\code{\link{backtrace}}) to find
+segments.
+As shown in the publication, the parameters \code{M}, \code{E} and
+\code{nui} have the strongest impact on resulting segment borders.
+Other parameters can be fine-tuned but had little impact on our
+test data set.
 
 In the first scenario, when the input is a simple clustering,
 cluster-cluster or cluster-position similarities can be
@@ -97,9 +101,13 @@ additionally provided via option \code{csim} for scoring functions
 "ccor" and "icor", respectively.  Or, if \code{csim} is missing and
 scoring function is "ccls", cluster similarities are constructed
 from arguments \code{a} and \code{nui}.  A nuissance cluster must
-be "0".  In the second scenario, when the input is of class
+be indicated by cluster label "0".
+
+In the second scenario, when the input is of class
 "clustering" produced by \code{\link{clusterTimeseries}}, all this
-information is already present.  The function returns a list (class
+information is already present.
+
+The function returns a list (class
 "segments") comprising of the main result (list item "segments"),
 and "warnings" from the dynamic programing and back-tracing phases,
 the used similarity matrix \code{csim}, extended for nuissance
@@ -107,13 +115,15 @@ clusters; and optionally (see option \code{save.matrix}) the
 scoring vectors \code{S1(i,c)}, the total score matrix
 \code{S(i,c)} and the backtracing matrix \code{K(i,c)}.  It will
 further contain additional parameters like cluster colors and
-sortings if argument \code{seq} was of class 'clustering'.  The
-main result structure "segments" is a 3-column matrix, where column
-1 is the cluster assignment and colums 2 and 3 are start and end
-position of the segments; if cluster colors were available a 4th
-column contains the colors assigned to those clusters for
-convenient quick plotting.  A plot method exists that allows to
-plot segments aligned to "timeseries" and "clustering" plots.
+sortings if argument \code{seq} was of class 'clustering' for convenient
+inspection of all data processing steps with the plot methods.
+
+The main result structure, list item "segments," is a 3-column matrix,
+where column 1 is the cluster assignment and colums 2 and 3 are start and
+end positions of the segments. If cluster colors were available in the
+input \code{seq}, a 4th column contains the colors assigned to those
+clusters for convenient inspection in plot.  A plot method exists that
+allows to plot segments aligned to "timeseries" and "clustering" plots.
 }
 \examples{
 data(primseg436) # RNA-seq time-series data

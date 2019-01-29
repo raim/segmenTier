@@ -11,14 +11,17 @@ clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
 \item{tset}{a "timeseries" object returned by
 \code{\link{processTimeseries}}}
 
-\item{K}{selected cluster numbers, the argument \code{centers} of
-\code{\link[stats:kmeans]{kmeans}}}
+\item{K}{the number of clusters to be calculated, ie. the argument
+\code{centers} of \code{\link[stats:kmeans]{kmeans}}, but here
+multiple clusterings can be calculated, ie. \code{K} can be an
+integer vector}
 
 \item{iter.max}{the maximum number of iterations allowed in
-\code{\link[stats:kmeans]{kmeans}}, see there}
+\code{\link[stats:kmeans]{kmeans}}}
 
-\item{nstart}{initialization \code{\link[stats:kmeans]{kmeans}}:
-"how many random sets should be chosen?", see there}
+\item{nstart}{number of randomized initializations of
+\code{\link[stats:kmeans]{kmeans}}: "how many random sets should
+be chosen?"}
 
 \item{nui.thresh}{threshold correlation of a data point to a
 cluster center; if below the data point will be added to
@@ -39,9 +42,9 @@ Returns a list of class "clustering" comprising of a matrix
 \description{
 Performs \code{\link[stats:kmeans]{kmeans}} clustering of a
 time-series object \code{tset} provided by
-\code{\link{processTimeseries}}, where specifically the DFT of a
-time-series (and additional requested data transformations) can be
-calculated.
+\code{\link{processTimeseries}}, and calculates cluster-cluster
+and cluster-position similarity matrices as required for
+\code{\link{segmentClusters}}.
 }
 \details{
 This function performs one or more time-series clusterings using
