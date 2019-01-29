@@ -2,6 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Pearson product-moment correlation coefficient
+#'
+#' Incremental calculation of the Pearson correlation coefficient between
+#' two vectors for calculation within Rcpp functions
+#' \code{\link{clusterCor_c}}.
 #' @param x numeric vector
 #' @param y numeric vector
 #' @details Simply calculates Pearson's product-moment correlation
@@ -27,6 +31,7 @@ clusterCor_c <- function(data, clusters) {
 #' to clusters and report the (first!) cluster which had max correlation.
 #' Note that this can lead to amibiguities since several clusters may
 #' reach the same maximum.
+#' TODO: this seems not be used anywhere, remove?
 #' @param mincor minimal correlation to be considered
 #' @param warn if set to 1/TRUE then the occurence of multiple maxima
 #' is tested and a warning issued
@@ -44,27 +49,29 @@ ccor <- function(k, j, c, seq, M, csim) {
     .Call('_segmenTier_ccor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
 }
 
-#' segmenTier's dynamic programming routine 
+#' segmenTier's dynamic programming routine
+#' 
 #' @details This is \code{\link{segmenTier}}'s core dynamic programing
 #' routine. It constructs the total score matrix S(i,c), based on
-#' the passed scoring function ("icor" or "ccor").
+#' the passed scoring function ("icor" or "ccor"), and length penalty
+#' \code{M}. "Nuissance" cluster "0" can have a smaller penalty \code{Mn}
+#' to allow for shorter distance between "real" segments.
+#'
 #' Scoring function "icor" calculates the sum of similarities of
 #' data at positions k:i to cluster centers c over all k and i.
 #' The similarities are calculated e.g., as a (Pearson) correlation between
 #' the data at individual positions and the tested cluster c center.
-#' Note the difference to "ccor" where the cluster centers are compared
-#' instead of original data at positions k and i with a cluster.
+#'
 #' Scoring function "ccor" calculates the sum of similarities
 #' between the clusters at positions k:i to cluster c over all k and i.
-#' Note the difference to "icor" where real data from positions are
-#' compared to cluster centers, while here two cluster centers are compared.
+#'
 #' Scoring function "ccls" is a special case of "ccor" and is NOT handled
 #' here, but is reflected in the cluster similarity matrix \code{csim}. It
 #' is handled and automatically constructed in the R wrapper 
 #' \code{\link{segmentClusters}}, and merely counts the 
 #' number of clusters in sequence k:i, over all k and i, that are identical
-#' to the tested cluster \code{c}, and sub-tracts a minimal size penality
-#' and a penalty the for the count of non-identical clusters.
+#' to the tested cluster \code{c}, and sub-tracts 
+#' a penalty for the count of non-identical clusters.
 #' @param seq the cluster sequence (where clusters at positions k:i are
 #' considered). Note, that unlike the R wrapper, clustering numbers
 #' here are 0-based, where 0 is the nuissance cluster.
@@ -75,7 +82,8 @@ ccor <- function(k, j, c, seq, M, csim) {
 #' be handled via the similarity function (matrix) "csim" as e.g. done
 #' by the R wrapper function \code{\link{segmentClusters}}. See "details".
 #' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
+#' cut-off but defined as an accumulating penalty that must be
+#' "overcome" by good score.
 #' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
 #' shorter distances between segments
 #' @param csim a matrix, providing either the cluster-cluster (scoring 
@@ -88,6 +96,8 @@ ccor <- function(k, j, c, seq, M, csim) {
 #' \code{K(i,c)} which stores the position \code{k} which delivered
 #' the maximal score at position \code{i}. This is used in the back-tracing
 #' phase.
+#' @references Machne, Murray & Stadler (2017)
+#'     <doi:10.1038/s41598-017-12401-8>
 #' @export
 calculateScore <- function(seq, C, score, csim, M, Mn, multi = "max") {
     .Call('_segmenTier_calculateScore', PACKAGE = 'segmenTier', seq, C, score, csim, M, Mn, multi)

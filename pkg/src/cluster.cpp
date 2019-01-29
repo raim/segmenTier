@@ -3,6 +3,10 @@ using namespace Rcpp;
 
 /// TODO: how to use R's cor function here?
 //' Pearson product-moment correlation coefficient
+//'
+//' Incremental calculation of the Pearson correlation coefficient between
+//' two vectors for calculation within Rcpp functions
+//' \code{\link{clusterCor_c}}.
 //' @param x numeric vector
 //' @param y numeric vector
 //' @details Simply calculates Pearson's product-moment correlation
@@ -66,11 +70,13 @@ NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters) {
   }
   return clCor;
 }
+
 //' Reports the maximally correlating cluster for each data point.
 //' @details Calculates Pearson's product-moment correlation of each data
 //' to clusters and report the (first!) cluster which had max correlation.
 //' Note that this can lead to amibiguities since several clusters may
 //' reach the same maximum.
+//' TODO: this seems not be used anywhere, remove?
 //' @param mincor minimal correlation to be considered
 //' @param warn if set to 1/TRUE then the occurence of multiple maxima
 //' is tested and a warning issued

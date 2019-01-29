@@ -24,4 +24,5 @@ Calculates Pearson's product-moment correlation of each data
 to clusters and report the (first!) cluster which had max correlation.
 Note that this can lead to amibiguities since several clusters may
 reach the same maximum.
+TODO: this seems not be used anywhere, remove?
 }

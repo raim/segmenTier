@@ -12,7 +12,9 @@ myPearson(x, y)
 \item{y}{numeric vector}
 }
 \description{
-Pearson product-moment correlation coefficient
+Incremental calculation of the Pearson correlation coefficient between
+two vectors for calculation within Rcpp functions
+\code{\link{clusterCor_c}}.
 }
 \details{
 Simply calculates Pearson's product-moment correlation
