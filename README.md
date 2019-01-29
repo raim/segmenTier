@@ -45,9 +45,11 @@ tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
 cset <- clusterTimeseries(tset)
 ## and segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
-## and inspect results:
+## inspect results:
 print(segments)
 plotSegmentation(tset,cset,segments)
+## and get segment border table for further processing
+segments(segments)
 ```
 
 ### Demos
