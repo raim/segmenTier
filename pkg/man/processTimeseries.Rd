@@ -42,12 +42,12 @@ added to the absent/nuissance cluster later}
 
 \item{smooth.space}{integer, if set a moving average is calculated for
 each time-point between adjacent data points using stats
-package's \code{link[stats:smooth]{smooth}} with span \code{smooth.space}}
+package's \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}}
 
 \item{smooth.time}{integer, if set the time-series will be smoothed
-using stats package's \code{link[stats:filter]{filter}} to calculate a
+using stats package's \code{\link[stats:filter]{filter}} to calculate a
 moving average with span \code{smooth.time} and
-\code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
+\code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 and last time-points (again using span \code{smooth.time})}
 
 \item{circular.time}{logical value indicating whether time can be treated
@@ -107,6 +107,6 @@ tset <- processTimeseries(ts=tsd, dc.trafo="ash",
 plot(tset)
 }
 \references{
-Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>
+Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
   Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 }

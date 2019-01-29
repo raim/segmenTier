@@ -18,8 +18,11 @@ basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 }
 
 \references{
-@bibliography segmenTier.bib
+Machne, Murray & Stadler (2017) <doi:10.1038/s41598-017-12401-8>,
+Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
+Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 }
 \author{
-Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
+Rainer Machne \email{raim@tbi.univie.ac.at}, Douglas B. Murray,
+Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
 }

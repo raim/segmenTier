@@ -118,11 +118,11 @@ color_hue <- function(n) {
 #' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}).
 #' @param smooth.space integer, if set a moving average is calculated for
 #' each time-point between adjacent data points using stats
-#' package's \code{link[stats:smooth]{smooth}} with span \code{smooth.space}
+#' package's \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}
 #' @param smooth.time integer, if set the time-series will be smoothed
-#' using stats package's \code{link[stats:filter]{filter}} to calculate a
+#' using stats package's \code{\link[stats:filter]{filter}} to calculate a
 #' moving average with span \code{smooth.time} and
-#' \code{link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
+#' \code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 #' and last time-points (again using span \code{smooth.time})
 #' @param circular.time logical value indicating whether time can be treated
 #' as circular in smoothing
@@ -132,7 +132,7 @@ color_hue <- function(n) {
 #' signal, and positions of rows with only NA/0 values. Note that NA values
 #' are interpreted as 0.
 #' @references 
-#'   Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>
+#'   Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
 #'   Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 #' @examples
 #' data(primseg436)

@@ -1,6 +1,7 @@
 #' segmenTier : cluster-based segmentation
 #' from a sequential clustering
-#'@author Rainer Machne \email{raim@tbi.univie.ac.at}, Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
+#'@author Rainer Machne \email{raim@tbi.univie.ac.at}, Douglas B. Murray,
+#' Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
 #'@docType package
 #'@name segmenTier
 #'@section Dependencies: The package strictly depends only on
@@ -8,7 +9,9 @@
 #' All other dependencies are usually present in a
 #' basic installation (\code{stats}, \code{graphics}, \code{grDevices})).
 #' @references
-#'   @bibliography segmenTier.bib
+#' Machne, Murray & Stadler (2017) <doi:10.1038/s41598-017-12401-8>,
+#' Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
+#' Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 #'@importFrom Rcpp evalCpp
 #'@importFrom stats qt sd var BIC AIC
 #'@importFrom graphics image axis par plot matplot points lines legend arrows strheight strwidth text mtext abline polygon
