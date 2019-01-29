@@ -57,8 +57,8 @@ XPtr<scorefun> getScorefun(std::string fstr) {
 // then in the wrapper interfaces and MUST be a sequence of positive
 // integers
 
-//' dynamic programming routine 
-//' @details: This is \code{\link{segmenTier}}'s core dynamic programing
+//' segmenTier's dynamic programming routine 
+//' @details This is \code{\link{segmenTier}}'s core dynamic programing
 //' routine. It constructs the total score matrix S(i,c), based on
 //' the passed scoring function ("icor" or "ccor")
 //' Scoring function "icor" calculates the sum of similarities of

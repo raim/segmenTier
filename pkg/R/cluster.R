@@ -32,16 +32,20 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
     Re(pvl/perm)
 }
 
-#' asinh data transformation
+#' \code{asinh} data transformation
 #'
-#' The asinh trafo, an alternative to log transformation that has less
-#' (compressing) effects on the extreme values (low and high values),
-#' and naturally handles negative numbers and 0.
+#' The asinh transformation, (\code{ash(x) = log(x + sqrt(x^2+1))}), is
+#' an alternative to log transformation that has less (compressing) effects
+#' on the extreme values (low and high values), and naturally handles
+#' negative numbers and 0.
 #' @param x a numeric vector
 #' @export
 ash <- function(x) log(x+sqrt(x^2+1))
 
-#' log trafo handling zeros by adding 1
+#' log transformation handling zeros by adding 1
+#'
+#' A conventional approach to handle 0 in log transformation is to simply
+#' add 1 to all data, \code{log_1(x) = log(x+1)}
 #' @param x a numeric vector
 #' @export
 log_1 <- function(x) log(x+1)
@@ -86,21 +90,22 @@ color_hue <- function(n) {
 #' their change pattern. Additional data transformations can be applied (see
 #' documentation of options and example).
 #' 
-#' This time-series processing and subsequent clustering can also be used
-#' without segmentation, eg. for conventional microarray data or RNA-seq
-#' data already mapped to genes. The option \code{perm} allows to
-#' perform a permutation test (\code{perm} times) and
-#' returns a matrix of empirical p-values for all DFT components, ie. the
-#' fraction of \code{perm} where amplitude was higher then the amplitude
-#' of the randomized time-series.
-#' @param ts the timeseries as a matrix, where columns are the timepoints
-#' and rows individual measurements (e.g., genomic positions for transcriptome
-#' data)
-#' @param trafo prior data transformation, pass any function name, e.g.,
-#' "log", or the package functions "ash" (\code{asinh = ln(x + sqrt(x^2+1))})
-#' or "log_1" for (\code{ln(ts+1)}) 
+#' This time-series processing and subsequent clustering can also be
+#' used without segmentation, eg. for conventional microarray data or
+#' RNA-seq data already mapped to genes. The option \code{perm} allows
+#' to perform a permutation test (\code{perm} times) and returns a
+#' matrix of empirical p-values for all DFT components, ie. the
+#' fraction of \code{perm} where amplitude was higher then the
+#' amplitude of the randomized time-series.
+#' @param ts the timeseries as a matrix, where columns are the
+#'     timepoints and rows individual measurements (e.g., genomic
+#'     positions for transcriptome data)
+#' @param trafo prior data transformation, pass any function name,
+#'     e.g., "log", or the package functions "ash" (asinh:
+#'     \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" 
+#'     (\code{log(ts+1)})
 #' @param low.thresh use this threshold to cut-off data, which will be
-#' added to the absent/nuissance cluster later
+#'     added to the absent/nuissance cluster later
 #' @param perm number of permutations of the data set, to obtain
 #" p-values for the oscillation
 #' @param use.fft use the Discrete Fourier Transform of the data
@@ -111,29 +116,29 @@ color_hue <- function(n) {
 #' @param use.snr use a scaled amplitude, where each component of the
 #' Discrete Fourier Transform is divided by the mean of all other components,
 #' which is similar to a signal-to-noise ratio (SNR)
-#' @param lambda parameter lambda for Box-Cox transformation of
-#' DFT amplitudes (experimental; not tested)
-#' @param dc.trafo data transformation for the first (DC) component of
-#' the DFT, pass any function name, e.g., "log", or the package functions
-#' "ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}).
+#' @param lambda parameter lambda for Box-Cox transformation of DFT
+#' amplitudes (experimental; not tested)
+#' @param dc.trafo data transformation for the first (DC) component of the DFT,
+#' pass any function name, e.g., "log", or the package functions "ash"
+#' (asinh: \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" 
+#' (\code{log(x+1)}).
 #' @param smooth.space integer, if set a moving average is calculated for
-#' each time-point between adjacent data points using stats
-#' package's \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}
-#' @param smooth.time integer, if set the time-series will be smoothed
-#' using stats package's \code{\link[stats:filter]{filter}} to calculate a
-#' moving average with span \code{smooth.time} and
+#' each time-point between adjacent data points using stats package's
+#' \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}
+#' @param smooth.time integer, if set the time-series will be smoothed using
+#' stats package's \code{\link[stats:filter]{filter}} to calculate a moving
+#' average with span \code{smooth.time} and
 #' \code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 #' and last time-points (again using span \code{smooth.time})
-#' @param circular.time logical value indicating whether time can be treated
-#' as circular in smoothing
+#' @param circular.time logical value indicating whether time can be
+#' treated as circular in smoothing
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @return Returns a list of class "time-series" which comprises of the
 #' transformed time-series and additional information, such as the total
 #' signal, and positions of rows with only NA/0 values. Note that NA values
 #' are interpreted as 0.
-#' @references 
-#'   Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
-#'   Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
+#' @references Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
+#' Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 #' @examples
 #' data(primseg436)
 #' ## The input data is a matrix with time points in columns

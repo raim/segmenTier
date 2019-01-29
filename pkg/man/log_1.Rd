@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{log_1}
 \alias{log_1}
-\title{log trafo handling zeros by adding 1}
+\title{log transformation handling zeros by adding 1}
 \usage{
 log_1(x)
 }
@@ -10,5 +10,6 @@ log_1(x)
 \item{x}{a numeric vector}
 }
 \description{
-log trafo handling zeros by adding 1
+A conventional approach to handle 0 in log transformation is to simply
+add 1 to all data, \code{log_1(x) = log(x+1)}
 }

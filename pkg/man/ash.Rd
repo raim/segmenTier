@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{ash}
 \alias{ash}
-\title{asinh data transformation}
+\title{\code{asinh} data transformation}
 \usage{
 ash(x)
 }
@@ -10,7 +10,8 @@ ash(x)
 \item{x}{a numeric vector}
 }
 \description{
-The asinh trafo, an alternative to log transformation that has less
-(compressing) effects on the extreme values (low and high values),
-and naturally handles negative numbers and 0.
+The asinh transformation, (\code{ash(x) = log(x + sqrt(x^2+1))}), is
+an alternative to log transformation that has less (compressing) effects
+on the extreme values (low and high values), and naturally handles
+negative numbers and 0.
 }

@@ -9,19 +9,21 @@ processTimeseries(ts, trafo = "raw", use.fft = TRUE, dc.trafo = "ash",
   smooth.space = 1, smooth.time = 1, circular.time = FALSE, verb = 0)
 }
 \arguments{
-\item{ts}{the timeseries as a matrix, where columns are the timepoints
-and rows individual measurements (e.g., genomic positions for transcriptome
-data)}
+\item{ts}{the timeseries as a matrix, where columns are the
+timepoints and rows individual measurements (e.g., genomic
+positions for transcriptome data)}
 
-\item{trafo}{prior data transformation, pass any function name, e.g.,
-"log", or the package functions "ash" (\code{asinh = ln(x + sqrt(x^2+1))})
-or "log_1" for (\code{ln(ts+1)})}
+\item{trafo}{prior data transformation, pass any function name,
+e.g., "log", or the package functions "ash" (asinh:
+\code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" 
+(\code{log(ts+1)})}
 
 \item{use.fft}{use the Discrete Fourier Transform of the data}
 
-\item{dc.trafo}{data transformation for the first (DC) component of
-the DFT, pass any function name, e.g., "log", or the package functions
-"ash" (\code{asinh= ln(x + sqrt(x^2+1))}) or "log_1" for (\code{ln(ts+1)}).}
+\item{dc.trafo}{data transformation for the first (DC) component of the DFT,
+pass any function name, e.g., "log", or the package functions "ash"
+(asinh: \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" 
+(\code{log(x+1)}).}
 
 \item{dft.range}{a vector of integers, giving the components of the
 Discrete Fourier Transform to be used where 1 is the first component (DC)
@@ -34,24 +36,24 @@ correspondong to 2:n full cycles in the data}
 Discrete Fourier Transform is divided by the mean of all other components,
 which is similar to a signal-to-noise ratio (SNR)}
 
-\item{lambda}{parameter lambda for Box-Cox transformation of
-DFT amplitudes (experimental; not tested)}
+\item{lambda}{parameter lambda for Box-Cox transformation of DFT
+amplitudes (experimental; not tested)}
 
 \item{low.thresh}{use this threshold to cut-off data, which will be
 added to the absent/nuissance cluster later}
 
 \item{smooth.space}{integer, if set a moving average is calculated for
-each time-point between adjacent data points using stats
-package's \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}}
+each time-point between adjacent data points using stats package's
+\code{\link[stats:smooth]{smooth}} with span \code{smooth.space}}
 
-\item{smooth.time}{integer, if set the time-series will be smoothed
-using stats package's \code{\link[stats:filter]{filter}} to calculate a
-moving average with span \code{smooth.time} and
+\item{smooth.time}{integer, if set the time-series will be smoothed using
+stats package's \code{\link[stats:filter]{filter}} to calculate a moving
+average with span \code{smooth.time} and
 \code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
 and last time-points (again using span \code{smooth.time})}
 
-\item{circular.time}{logical value indicating whether time can be treated
-as circular in smoothing}
+\item{circular.time}{logical value indicating whether time can be
+treated as circular in smoothing}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
@@ -78,13 +80,13 @@ Fourier Transform of time-series data allows to cluster time-series by
 their change pattern. Additional data transformations can be applied (see
 documentation of options and example).
 
-This time-series processing and subsequent clustering can also be used
-without segmentation, eg. for conventional microarray data or RNA-seq
-data already mapped to genes. The option \code{perm} allows to
-perform a permutation test (\code{perm} times) and
-returns a matrix of empirical p-values for all DFT components, ie. the
-fraction of \code{perm} where amplitude was higher then the amplitude
-of the randomized time-series.
+This time-series processing and subsequent clustering can also be
+used without segmentation, eg. for conventional microarray data or
+RNA-seq data already mapped to genes. The option \code{perm} allows
+to perform a permutation test (\code{perm} times) and returns a
+matrix of empirical p-values for all DFT components, ie. the
+fraction of \code{perm} where amplitude was higher then the
+amplitude of the randomized time-series.
 }
 \examples{
 data(primseg436)
@@ -108,5 +110,5 @@ plot(tset)
 }
 \references{
 Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
-  Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
+Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 }

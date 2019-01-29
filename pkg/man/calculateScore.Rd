@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateScore}
 \alias{calculateScore}
-\title{dynamic programming routine}
+\title{segmenTier's dynamic programming routine}
 \usage{
 calculateScore(seq, C, score, csim, M, Mn, multi = "max")
 }
@@ -40,10 +40,10 @@ the maximal score at position \code{i}. This is used in the back-tracing
 phase.
 }
 \description{
-dynamic programming routine
+segmenTier's dynamic programming routine
 }
 \details{
-: This is \code{\link{segmenTier}}'s core dynamic programing
+This is \code{\link{segmenTier}}'s core dynamic programing
 routine. It constructs the total score matrix S(i,c), based on
 the passed scoring function ("icor" or "ccor")
 Scoring function "icor" calculates the sum of similarities of
