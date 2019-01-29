@@ -143,11 +143,12 @@ clusterSegments <- function() {}
 #' end indices of the segments. If cluster colors were available in the
 #' input, \code{seq}, a 4th column contains the colors assigned to those
 #' clusters.  
-#' @param seq either a numeric vector providing a clustering sequence,
+#' @param seq either an integer vector of cluster labels,
 #'     or a structure of class 'clustering' as returned by
 #'     \code{\link{clusterTimeseries}}. The only strict requirement
-#'     for the first option is that nuissance clusters (which will not
-#'     be segmented) have to be '0' (zero).
+#'     for the first option is that nuissance clusters (which will be
+#'     treated specially during the dynamic programming routine) have to
+#'     be '0' (zero).
 #' @param k if argument \code{seq} is of class 'clustering' the kth
 #'     clustering will be used; defaults to 1
 #' @param csim the cluster-cluster or position-cluster similarity

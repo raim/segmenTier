@@ -49,13 +49,13 @@ ccor <- function(k, j, c, seq, M, csim) {
     .Call('_segmenTier_ccor', PACKAGE = 'segmenTier', k, j, c, seq, M, csim)
 }
 
-#' segmenTier's dynamic programming routine
+#' segmenTier's core dynamic programming routine in Rcpp
 #' 
 #' @details This is \code{\link{segmenTier}}'s core dynamic programing
 #' routine. It constructs the total score matrix S(i,c), based on
 #' the passed scoring function ("icor" or "ccor"), and length penalty
 #' \code{M}. "Nuissance" cluster "0" can have a smaller penalty \code{Mn}
-#' to allow for shorter distance between "real" segments.
+#' to allow for shorter distances between "real" segments.
 #'
 #' Scoring function "icor" calculates the sum of similarities of
 #' data at positions k:i to cluster centers c over all k and i.
@@ -77,17 +77,19 @@ ccor <- function(k, j, c, seq, M, csim) {
 #' here are 0-based, where 0 is the nuissance cluster.
 #' @param C the list of clusters, including nuissance cluster '0', see 
 #' \code{seq}
-#' @param score the scoring function to be used, one of "ccor" or "icor";
-#' the scoring function "ccls" is a special case of "ccor" and should
+#' @param score the scoring function to be used, one of "ccor" or "icor".
+#' An apt similarity matrix must be supplied via option \code{csim}.
+#' The scoring function "ccls" is a special case of "ccor" and should
 #' be handled via the similarity function (matrix) "csim" as e.g. done
-#' by the R wrapper function \code{\link{segmentClusters}}. See "details".
+#' by the R wrapper function \code{\link{segmentClusters}}. See "Details".
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as an accumulating penalty that must be
-#' "overcome" by good score.
+#' "overcome" by good score
 #' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
 #' shorter distances between segments
 #' @param csim a matrix, providing either the cluster-cluster (scoring 
 #' function "ccor") or the position-cluster similarity function
+#' (scoring function "icor")
 #' @param multi if multiple \code{k} are found which return the same maximal
 #' score, should the "max" (shorter segment) or "min" (longer segment) be used?
 #' This has little effect on real-life large data sets, since the situation

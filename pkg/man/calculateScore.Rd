@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateScore}
 \alias{calculateScore}
-\title{segmenTier's dynamic programming routine}
+\title{segmenTier's core dynamic programming routine in Rcpp}
 \usage{
 calculateScore(seq, C, score, csim, M, Mn, multi = "max")
 }
@@ -14,17 +14,19 @@ here are 0-based, where 0 is the nuissance cluster.}
 \item{C}{the list of clusters, including nuissance cluster '0', see 
 \code{seq}}
 
-\item{score}{the scoring function to be used, one of "ccor" or "icor";
-the scoring function "ccls" is a special case of "ccor" and should
+\item{score}{the scoring function to be used, one of "ccor" or "icor".
+An apt similarity matrix must be supplied via option \code{csim}.
+The scoring function "ccls" is a special case of "ccor" and should
 be handled via the similarity function (matrix) "csim" as e.g. done
-by the R wrapper function \code{\link{segmentClusters}}. See "details".}
+by the R wrapper function \code{\link{segmentClusters}}. See "Details".}
 
 \item{csim}{a matrix, providing either the cluster-cluster (scoring 
-function "ccor") or the position-cluster similarity function}
+function "ccor") or the position-cluster similarity function
+(scoring function "icor")}
 
 \item{M}{minimal sequence length; Note, that this is not a strict
 cut-off but defined as an accumulating penalty that must be
-"overcome" by good score.}
+"overcome" by good score}
 
 \item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
 shorter distances between segments}
@@ -41,14 +43,14 @@ the maximal score at position \code{i}. This is used in the back-tracing
 phase.
 }
 \description{
-segmenTier's dynamic programming routine
+segmenTier's core dynamic programming routine in Rcpp
 }
 \details{
 This is \code{\link{segmenTier}}'s core dynamic programing
 routine. It constructs the total score matrix S(i,c), based on
 the passed scoring function ("icor" or "ccor"), and length penalty
 \code{M}. "Nuissance" cluster "0" can have a smaller penalty \code{Mn}
-to allow for shorter distance between "real" segments.
+to allow for shorter distances between "real" segments.
 
 Scoring function "icor" calculates the sum of similarities of
 data at positions k:i to cluster centers c over all k and i.

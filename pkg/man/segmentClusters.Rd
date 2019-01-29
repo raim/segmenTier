@@ -9,11 +9,12 @@ segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175, Mn = 20,
   rm.nui = TRUE, save.matrix = FALSE, verb = 1)
 }
 \arguments{
-\item{seq}{either a numeric vector providing a clustering sequence,
+\item{seq}{either an integer vector of cluster labels,
 or a structure of class 'clustering' as returned by
 \code{\link{clusterTimeseries}}. The only strict requirement
-for the first option is that nuissance clusters (which will not
-be segmented) have to be '0' (zero).}
+for the first option is that nuissance clusters (which will be
+treated specially during the dynamic programming routine) have to
+be '0' (zero).}
 
 \item{k}{if argument \code{seq} is of class 'clustering' the kth
 clustering will be used; defaults to 1}

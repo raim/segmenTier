@@ -65,11 +65,12 @@ correlation to any cluster center can be specified, argument
 then this, will also be assigned to the "nuissance" cluster.
 Resulting "nuissance segments" will not be shown in the results.
 
-Cluster sorting and coloring: Additionally the cluster labels in the
-result object will be sorted by cluster-cluster similarity (see
-\code{\link{sortClusters}}) and cluster colors assigned (see
-\code{\link{colorClusters}}) for convenient data inspection with the plot
-methods available for each data processing step (see examples).
+Cluster sorting and coloring:
+Additionally the cluster labels in the result object will be sorted by
+cluster-cluster similarity (see \code{\link{sortClusters}}) and cluster
+colors assigned (see \code{\link{colorClusters}}) for convenient data
+inspection with the plot methods available for each data processing
+step (see examples).
 
 Note that the function, in conjuction with
 \code{\link{processTimeseries}}, can also be used as a stand-alone
