@@ -217,7 +217,7 @@ clusterSegments <- function() {}
 #' plotSegmentation(tset, cset, segments)
 #' 
 #' # 5) and get segment border table for further processing:
-#' sgtable <- segments(segments)
+#' sgtable <- segments$segments
 #' 
 #' @export
 segmentClusters <- function(seq, k=1, csim, E=1,
@@ -507,19 +507,20 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
 
 ### UTILS
 
-#' get segment table from \code{\link{segmentClusters}}
-#' @param x result object returned by function \code{\link{segmentClusters}}
-#' @return Returns the segment table as a matrix
-#'@export
-segments <- function(x) x$segments
+## get segment table from \code{\link{segmentClusters}}
+## @param x result object returned by function \code{\link{segmentClusters}}
+## @return Returns the segment table as a matrix
+## @export
+#result <- function(x) x$segments
 
 #' Print method for segmentation result from \code{\link{segmentClusters}}.
 #' @param x result object returned by function \code{\link{segmentClusters}}
 #' @param ... further argument to \code{print.data.frame}
 #' @export
 print.segments <- function(x, ...) {
-    cat(paste("\nsimilarity-based segmentation by dynamic programming of",
-              x$N, "data points:\n\n"))
+    cat(paste("\nSimilarity-based segmentation by dynamic programming of",
+              x$N, "data points.\n"))
+    cat(paste("\nSegments:\n"))
     print(x$segments, ...)
     cat(paste("\nParameters:\n"))
     print(x$settings)

@@ -95,7 +95,7 @@ sset <- segmentCluster.batch(cset, varySettings=vary,
 print(sset)
 
 ## the segment coordinates are found in:
-segments <- segments(sset)
+head(sset$segments)
 
 ## plot segmentation
 if ( plot2file )

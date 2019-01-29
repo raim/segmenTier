@@ -154,7 +154,7 @@ print(segments)
 plotSegmentation(tset, cset, segments)
 
 # 5) and get segment border table for further processing:
-sgtable <- segments(segments)
+sgtable <- segments$segments
 
 }
 \references{

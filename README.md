@@ -49,7 +49,7 @@ segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 print(segments)
 plotSegmentation(tset,cset,segments)
 ## and get segment border table for further processing
-segments(segments)
+segments$segments
 ```
 
 ### Demos

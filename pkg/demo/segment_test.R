@@ -41,7 +41,7 @@ plot(sset, plot=c("S1","S", "segments"), lwd=3)
 print(sset)
 
 ## the segment coordinates are found in:
-segments <- segments(sset)
+head(sset$segments)
 
 
 ## CLUSTER SIMILARITIES
