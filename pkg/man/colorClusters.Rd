@@ -13,6 +13,11 @@ colorClusters(cset, colf, ...)
 
 \item{...}{arguments to color function \code{colf}}
 }
+\value{
+Returns the input "clustering" object with a list of vectors
+(names "colors"), each providing a vector of colors for each cluster
+label.
+}
 \description{
 Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 assigns colors to each cluster in each clustering along

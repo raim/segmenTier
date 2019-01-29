@@ -82,11 +82,12 @@ different parameters or input-clusterings.
 \details{
 This is the main R wrapper function for the `segmenTier'
 segmentation algorithm. It takes an ordered sequence of clusterings
-and returns segments of consistent clusters. Its input (argument
-\code{seq}) is either an integer vector of cluster associations or
-a "clustering" object returned by
-\code{\link{clusterTimeseries}}. It runs the dynamic programing
-algorithm (\code{\link{calculateScore}}) for a selected scoring
+and returns segments of consistent clusterings, where cluster-cluster
+or cluster-position similarities are maximal. Its main input (argument
+\code{seq}) is either an integer vector of cluster associations
+(scenario I) or a "clustering" object returned by
+\code{\link{clusterTimeseries}} (scenario II). It runs the dynamic
+programing algorithm (\code{\link{calculateScore}}) for a selected scoring
 function and an according cluster similarity matrix, followed by the
 back-tracing step (\code{\link{backtrace}}) to find
 segments.
@@ -95,7 +96,7 @@ As shown in the publication, the parameters \code{M}, \code{E} and
 Other parameters can be fine-tuned but had little impact on our
 test data set.
 
-In the first scenario, when the input is a simple clustering vector,
+In the first scenario I, when the input is a simple clustering vector,
 cluster-cluster or cluster-position similarities can be
 additionally provided via option \code{csim} for scoring functions
 "ccor" and "icor", respectively.  Or, if \code{csim} is missing and
@@ -103,27 +104,29 @@ scoring function is "ccls", cluster similarities are constructed
 from arguments \code{a} and \code{nui}.  A nuissance cluster must
 be indicated by cluster label "0".
 
-In the second scenario, when the input is of class
-"clustering" produced by \code{\link{clusterTimeseries}}, all this
-information is already present.
+In the second scenario II, when the input is an object of class
+"clustering" produced by \code{\link{clusterTimeseries}}, the
+cluster-cluster and cluster-position similarity matrices are already
+provided by this object.
 
-The function returns a list (class
-"segments") comprising of the main result (list item "segments"),
-and "warnings" from the dynamic programing and back-tracing phases,
-the used similarity matrix \code{csim}, extended for nuissance
-clusters; and optionally (see option \code{save.matrix}) the
-scoring vectors \code{S1(i,c)}, the total score matrix
-\code{S(i,c)} and the backtracing matrix \code{K(i,c)}.  It will
-further contain additional parameters like cluster colors and
-sortings if argument \code{seq} was of class 'clustering' for convenient
-inspection of all data processing steps with the plot methods.
+The function returns a list (class "segments") comprising of the
+main result (list item "segments"), and "warnings" from the dynamic
+programing and back-tracing phases, the used similarity matrix
+\code{csim}, extended for nuissance clusters; and optionally (see
+option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
+total score matrix \code{S(i,c)} and the backtracing matrix
+\code{K(i,c)}.  It will further contain additional parameters like
+cluster colors and sortings if argument \code{seq} was of class
+'clustering'. These allow for convenient inspection of all data
+processing steps with the plot methods. A plot method exists that
+allows to plot segments aligned to "timeseries" and "clustering"
+plots.
 
-The main result structure, list item "segments," is a 3-column matrix,
+The main result, list item "segments," is a 3-column matrix,
 where column 1 is the cluster assignment and colums 2 and 3 are start and
-end positions of the segments. If cluster colors were available in the
-input \code{seq}, a 4th column contains the colors assigned to those
-clusters for convenient inspection in plot.  A plot method exists that
-allows to plot segments aligned to "timeseries" and "clustering" plots.
+end indices of the segments. If cluster colors were available in the
+input, \code{seq}, a 4th column contains the colors assigned to those
+clusters.
 }
 \examples{
 data(primseg436) # RNA-seq time-series data

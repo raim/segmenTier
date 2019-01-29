@@ -35,6 +35,10 @@ either "min" (default) or "max"}
 \item{multib}{handling of multiple k with max. score in back-trace phase,
 either "min" (default), "max" or "skip"}
 }
+\value{
+Returns a parameter settings structure that can be used
+in the batch function \code{\link{segmentCluster.batch}}.
+}
 \description{
 Generates the parameter list (\code{varySettings}) for
 \code{\link{segmentCluster.batch}}, using defaults

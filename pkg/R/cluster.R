@@ -84,12 +84,39 @@ color_hue <- function(n) {
 #' 
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
-#' algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
+#' algorithm and the demo \code{segment_data}. As suggested by Machne & Murray
 #' (PLoS ONE 2012) and Lehmann et al. (BMC Bioinformatics 2014) a Discrete
 #' Fourier Transform of time-series data allows to cluster time-series by
 #' their change pattern. Additional data transformations can be applied (see
 #' documentation of options and example).
+#'
+#' Note that NA values are here interpreted as 0. Please take care of NA
+#' values yourself, if you do not want this behaviour.
+#'
+#' Rows consisting only of 0 (or NA) values, or with a total signal
+#' (sum over all time points) below the value passed in argument
+#' \code{low.thresh}, are detected, result in NA values in the
+#' transformed data, and will be assigned to the
+#' "nuissance" cluster in \code{\link{clusterTimeseries}}.
+#'
+#' Discrete Fourier Transform (DFT):
+#' If requested (option \code{use.fft}), a DFT will be applied using
+#' base R's \code{\link[stats:mvfft]{mvfft}} function and reporting
+#' all or only requested (option \code{dft.range}) DFT components, where the
+#' first, or DC ("direct current") component, equals the total signal
+#' (sum over all points) and other components are numbered 1:n, reflecting
+#' the number of full cycles in the time-series. Values are reported as
+#' complex numbers, from which both amplitude and phase can be calculated.
+#' All returned DFT components will be used by
+#' \code{\link{clusterTimeseries}}.
+#'
+#' Additional transformations:
+#' Data can be transformed prior to DFT (options \code{trafo},
+#' \code{smooth.time}, \code{smooth.space}), or after DFT (options
+#' \code{use.snr} and \code{dc.trafo}). It is recommended to use
+#' the signal-to-noise ratio transformation (see option documentation).
 #' 
+#' Permutation Analysis:
 #' This time-series processing and subsequent clustering can also be
 #' used without segmentation, eg. for conventional microarray data or
 #' RNA-seq data already mapped to genes. The option \code{perm} allows
@@ -107,36 +134,38 @@ color_hue <- function(n) {
 #' @param low.thresh use this threshold to cut-off data, which will be
 #'     added to the absent/nuissance cluster later
 #' @param perm number of permutations of the data set, to obtain
-#" p-values for the oscillation
+#"     p-values for the oscillation
 #' @param use.fft use the Discrete Fourier Transform of the data
 #' @param dft.range a vector of integers, giving the components of the
-#' Discrete Fourier Transform to be used where 1 is the first component (DC)
-#' corresponding to the mean value, and 2:n are the higher components
-#' correspondong to 2:n full cycles in the data
+#'     Discrete Fourier Transform to be used where 1 is the first component
+#'     (DC) corresponding to the total signal (sum over all time points),
+#'     and 2:n are the higher components corresponding to 2:n full
+#'     cycles in the data
 #' @param use.snr use a scaled amplitude, where each component of the
-#' Discrete Fourier Transform is divided by the mean of all other components,
-#' which is similar to a signal-to-noise ratio (SNR)
+#'     Discrete Fourier Transform is divided by the mean of all other
+#'     components (without the first or DC component), a normalization that
+#'     can be interpreted to reflect a signal-to-noise ratio (SNR)
 #' @param lambda parameter lambda for Box-Cox transformation of DFT
-#' amplitudes (experimental; not tested)
+#'     amplitudes (experimental; not tested)
 #' @param dc.trafo data transformation for the first (DC) component of the DFT,
-#' pass any function name, e.g., "log", or the package functions "ash"
-#' (asinh: \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" 
-#' (\code{log(x+1)}).
+#'     pass any function name, e.g., "log", or the package functions "ash"
+#'     (asinh: \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" 
+#'     (\code{log(x+1)}).
 #' @param smooth.space integer, if set a moving average is calculated for
-#' each time-point between adjacent data points using stats package's
-#' \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}
+#'     each time-point between adjacent data points using stats package's
+#'     \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}
 #' @param smooth.time integer, if set the time-series will be smoothed using
-#' stats package's \code{\link[stats:filter]{filter}} to calculate a moving
-#' average with span \code{smooth.time} and
-#' \code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
-#' and last time-points (again using span \code{smooth.time})
+#'     stats package's \code{\link[stats:filter]{filter}} to calculate a moving
+#'     average with span \code{smooth.time} and
+#'     \code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first
+#'     and last time-points (again using span \code{smooth.time})
 #' @param circular.time logical value indicating whether time can be
-#' treated as circular in smoothing
+#'     treated as circular in smoothing
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @return Returns a list of class "time-series" which comprises of the
-#' transformed time-series and additional information, such as the total
-#' signal, and positions of rows with only NA/0 values. Note that NA values
-#' are interpreted as 0.
+#'     transformed time-series and additional information, such as the total
+#'     signal, and positions of rows with only NA/0 values. Note that NA values
+#'     are interpreted as 0.
 #' @references Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and
 #' Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
 #' @examples
@@ -172,10 +201,12 @@ processTimeseries <- function(ts, trafo="raw",
      
     
     tsd <-ts
-    ## TODO: document this behaviour!!
+    ## NOTE: replace NA by 0
+    ## TODO: make this behaviour optional?
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
-    ## TODO: is this documented?
-    ## TODO: instead check if var==0 ?
+
+    ## detect rows only consisting of 0, these will not be processed
+    ## and later assigned to a nuissance cluster
     zs <- apply(tsd==0,1,sum)==ncol(tsd) # remember all zeros
 
     ## smooth time-points between adjacent positions
@@ -534,17 +565,30 @@ logLik.kmeans <- function(object, ...)
 #' and cluster-position similarity matrices as required for
 #' \code{\link{segmentClusters}}.
 #'
-#' @details This function performs one or more time-series clusterings using
-#' \code{\link[stats:kmeans]{kmeans}}, and the output of
+#' @details This function performs one or more time-series clustering(s)
+#' using \code{\link[stats:kmeans]{kmeans}}, and the output of
 #' \code{\link{processTimeseries}} as input. It further calculates
 #' cluster centers, cluster-cluster and cluster-position similarity
 #' matrices (Pearson correlation) that will be used by the main function
 #' of this package, \code{\link{segmentClusters}}, to split the cluster
 #' association sequence into segments, and assigns each segment to
-#' one of the input clusters. The clusters will be sorted by similarity
-#' and cluster colors assigned for convenient data inspection with the plot
-#' methods available for each data processing step (see examples).
+#' the "winning" input cluster.
 #'
+#' Nuissance cluster:
+#' Values that were removed during time-series processing, such as
+#' rows that only contain 0 or NA values, will be assigned to
+#' the "nuissance cluster" with cluster label "0". Additionally, a minimal
+#' correlation to any cluster center can be specified, argument
+#' \code{nui.thresh}, and positions without any correlation higher
+#' then this, will also be assigned to the "nuissance" cluster.
+#' Resulting "nuissance segments" will not be shown in the results.
+#'
+#' Cluster sorting and coloring: Additionally the cluster labels in the
+#' result object will be sorted by cluster-cluster similarity (see
+#' \code{\link{sortClusters}}) and cluster colors assigned (see
+#' \code{\link{colorClusters}}) for convenient data inspection with the plot
+#' methods available for each data processing step (see examples).
+#' 
 #' Note that the function, in conjuction with
 #' \code{\link{processTimeseries}}, can also be used as a stand-alone
 #' tool for time-series clusterings, specifically implementing the
@@ -746,6 +790,9 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param colf a function that generates \code{n} colors
 #' @param ... arguments to color function \code{colf}
+#' @return Returns the input "clustering" object with a list of vectors
+#' (names "colors"), each providing a vector of colors for each cluster
+#' label.
 #'@export
 colorClusters <- function(cset, colf, ...) {
 
@@ -786,6 +833,9 @@ colorClusters <- function(cset, colf, ...) {
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param sort if set to FALSE the clusters will be sorted merely numerically
 #' @param verb level of verbosity, 0: no output, 1: progress messages
+#' @return Returns the input "clustering" object with a list of vectors
+#' (names "sorting"), each providing a similarity-based sorting of
+#' cluster labels.
 #'@export
 sortClusters <- function(cset, sort=TRUE, verb=0) {
 
@@ -860,6 +910,8 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
 #' either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace phase,
 #' either "min" (default), "max" or "skip"
+#' @return Returns a parameter settings structure that can be used
+#' in the batch function \code{\link{segmentCluster.batch}}.
 #'@export
 setVarySettings <- function(E=c(1,3),
                             S="ccor",

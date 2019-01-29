@@ -47,15 +47,28 @@ and cluster-position similarity matrices as required for
 \code{\link{segmentClusters}}.
 }
 \details{
-This function performs one or more time-series clusterings using
-\code{\link[stats:kmeans]{kmeans}}, and the output of
+This function performs one or more time-series clustering(s)
+using \code{\link[stats:kmeans]{kmeans}}, and the output of
 \code{\link{processTimeseries}} as input. It further calculates
 cluster centers, cluster-cluster and cluster-position similarity
 matrices (Pearson correlation) that will be used by the main function
 of this package, \code{\link{segmentClusters}}, to split the cluster
 association sequence into segments, and assigns each segment to
-one of the input clusters. The clusters will be sorted by similarity
-and cluster colors assigned for convenient data inspection with the plot
+the "winning" input cluster.
+
+Nuissance cluster:
+Values that were removed during time-series processing, such as
+rows that only contain 0 or NA values, will be assigned to
+the "nuissance cluster" with cluster label "0". Additionally, a minimal
+correlation to any cluster center can be specified, argument
+\code{nui.thresh}, and positions without any correlation higher
+then this, will also be assigned to the "nuissance" cluster.
+Resulting "nuissance segments" will not be shown in the results.
+
+Cluster sorting and coloring: Additionally the cluster labels in the
+result object will be sorted by cluster-cluster similarity (see
+\code{\link{sortClusters}}) and cluster colors assigned (see
+\code{\link{colorClusters}}) for convenient data inspection with the plot
 methods available for each data processing step (see examples).
 
 Note that the function, in conjuction with

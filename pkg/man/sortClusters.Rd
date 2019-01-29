@@ -13,6 +13,11 @@ sortClusters(cset, sort = TRUE, verb = 0)
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
+\value{
+Returns the input "clustering" object with a list of vectors
+(names "sorting"), each providing a similarity-based sorting of
+cluster labels.
+}
 \description{
 Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 uses the cluster-cluster similarity matrix \code{Ccc} to sort

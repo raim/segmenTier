@@ -26,15 +26,17 @@ pass any function name, e.g., "log", or the package functions "ash"
 (\code{log(x+1)}).}
 
 \item{dft.range}{a vector of integers, giving the components of the
-Discrete Fourier Transform to be used where 1 is the first component (DC)
-corresponding to the mean value, and 2:n are the higher components
-correspondong to 2:n full cycles in the data}
+Discrete Fourier Transform to be used where 1 is the first component
+(DC) corresponding to the total signal (sum over all time points),
+and 2:n are the higher components corresponding to 2:n full
+cycles in the data}
 
 \item{perm}{number of permutations of the data set, to obtain}
 
 \item{use.snr}{use a scaled amplitude, where each component of the
-Discrete Fourier Transform is divided by the mean of all other components,
-which is similar to a signal-to-noise ratio (SNR)}
+Discrete Fourier Transform is divided by the mean of all other
+components (without the first or DC component), a normalization that
+can be interpreted to reflect a signal-to-noise ratio (SNR)}
 
 \item{lambda}{parameter lambda for Box-Cox transformation of DFT
 amplitudes (experimental; not tested)}
@@ -59,9 +61,9 @@ treated as circular in smoothing}
 }
 \value{
 Returns a list of class "time-series" which comprises of the
-transformed time-series and additional information, such as the total
-signal, and positions of rows with only NA/0 values. Note that NA values
-are interpreted as 0.
+    transformed time-series and additional information, such as the total
+    signal, and positions of rows with only NA/0 values. Note that NA values
+    are interpreted as 0.
 }
 \description{
 Prepares the time-series for subsequent clustering, and performs
@@ -74,12 +76,39 @@ time-series, including phases and p-values for requested DFT components.
 \details{
 This function exemplifies the processing of an oscillatory
 transcriptome time-series data as used in the establishment of this
-algorithm and the demo \code{segment_test}. As suggested by Machne & Murray
+algorithm and the demo \code{segment_data}. As suggested by Machne & Murray
 (PLoS ONE 2012) and Lehmann et al. (BMC Bioinformatics 2014) a Discrete
 Fourier Transform of time-series data allows to cluster time-series by
 their change pattern. Additional data transformations can be applied (see
 documentation of options and example).
 
+Note that NA values are here interpreted as 0. Please take care of NA
+values yourself, if you do not want this behaviour.
+
+Rows consisting only of 0 (or NA) values, or with a total signal
+(sum over all time points) below the value passed in argument
+\code{low.thresh}, are detected, result in NA values in the
+transformed data, and will be assigned to the
+"nuissance" cluster in \code{\link{clusterTimeseries}}.
+
+Discrete Fourier Transform (DFT):
+If requested (option \code{use.fft}), a DFT will be applied using
+base R's \code{\link[stats:mvfft]{mvfft}} function and reporting
+all or only requested (option \code{dft.range}) DFT components, where the
+first, or DC ("direct current") component, equals the total signal
+(sum over all points) and other components are numbered 1:n, reflecting
+the number of full cycles in the time-series. Values are reported as
+complex numbers, from which both amplitude and phase can be calculated.
+All returned DFT components will be used by
+\code{\link{clusterTimeseries}}.
+
+Additional transformations:
+Data can be transformed prior to DFT (options \code{trafo},
+\code{smooth.time}, \code{smooth.space}), or after DFT (options
+\code{use.snr} and \code{dc.trafo}). It is recommended to use
+the signal-to-noise ratio transformation (see option documentation).
+
+Permutation Analysis:
 This time-series processing and subsequent clustering can also be
 used without segmentation, eg. for conventional microarray data or
 RNA-seq data already mapped to genes. The option \code{perm} allows
