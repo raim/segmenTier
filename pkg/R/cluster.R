@@ -100,7 +100,7 @@ color_hue <- function(n) {
 #'
 #' Discrete Fourier Transform (DFT): If requested (option
 #' \code{use.fft}), a DFT will be applied using base R's
-#' \code{\link[stats:mvfft]{mvfft}} function and reporting all or only
+#' \code{\link[stats:fft]{mvfft}} function and reporting all or only
 #' requested (option \code{dft.range}) DFT components, where the
 #' first, or DC ("direct current") component, equals the total signal
 #' (sum over all points) and other components are numbered 1:n,
