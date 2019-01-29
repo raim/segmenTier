@@ -86,7 +86,7 @@ and returns segments of consistent clusters. Its input (argument
 \code{seq}) is either an integer vector of cluster associations or
 a "clustering" object returned by
 \code{\link{clusterTimeseries}}. It runs the dynamic programing
-algorithm (\code{\link{calculateScore}} for a selected scoring
+algorithm (\code{\link{calculateScore}}) for a selected scoring
 function and an according cluster similarity matrix, followed by the
 back-tracing step (\code{\link{backtrace}}) to find
 segments.
@@ -95,7 +95,7 @@ As shown in the publication, the parameters \code{M}, \code{E} and
 Other parameters can be fine-tuned but had little impact on our
 test data set.
 
-In the first scenario, when the input is a simple clustering,
+In the first scenario, when the input is a simple clustering vector,
 cluster-cluster or cluster-position similarities can be
 additionally provided via option \code{csim} for scoring functions
 "ccor" and "icor", respectively.  Or, if \code{csim} is missing and
