@@ -46,6 +46,7 @@ cset <- clusterTimeseries(tset)
 ## and segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 ## and inspect results:
+print(segments)
 plotSegmentation(tset,cset,segments)
 ```
 

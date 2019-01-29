@@ -1033,6 +1033,8 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
     ## colors & sorting
     seg.col <- rep(list(NA), nrow(params))
     seg.srt <- rep(list(NA), nrow(params))
+    ## run time
+    elapsed <- rep(NA, nrow(params))
     
     ## TODO: convert this loop to lapply and try parallel use!
     ## TODO: redirect messages to msgfile or store in results
@@ -1093,6 +1095,10 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
         if ( "sorting" %in% names(cset) )
           seg.srt[[i]] <- cset$sorting[[K]]
 
+        ## run.time
+        if ( "elapsed"%in%names(seg))
+            elapsed[i] <- seg$elapsed
+        
         ## tag adjacent segments from correlating clusters
         close <- fuseTagSegments(seg$segments, Ccc=cset$Ccc[[K]],
                                  fuse.threshold=fuse.threshold)
@@ -1140,7 +1146,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
     
     ## TODO: introduce and use classes for segment results
     sset <- list(segments=allsegs, N=N, colors=seg.col, sorting=seg.srt,
-                 SK=SK, settings=params, ids=sgtypes)
+                 SK=SK, settings=params, ids=sgtypes, elapsed=elapsed)
     class(sset) <- "segments"
     return(sset)
 }

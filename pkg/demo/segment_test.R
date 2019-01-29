@@ -1,13 +1,13 @@
 
 #library("segmenTier")
 
-debug <- FALSE#TRUE
+debug <- FALSE#TRUE#
 if ( debug ) {
     library("Rcpp")
-    source("~/programs/segmenTier/R/plot.R")
-    source("~/programs/segmenTier/R/cluster.R")
-    source("~/programs/segmenTier/R/segment.R")
-    sourceCpp("~/programs/segmenTier/src/segment.cpp")
+    source("~/programs/segmenTier/pkg/R/plot.R")
+    source("~/programs/segmenTier/pkg/R/cluster.R")
+    source("~/programs/segmenTier/pkg/R/segment.R")
+    sourceCpp("~/programs/segmenTier/pkg/src/segment.cpp")
 } else {
     library("segmenTier")
 }
@@ -37,8 +37,11 @@ class(sset)
 par(mfcol=c(3,1),mai=c(0,2,0,0))
 plot(sset, plot=c("S1","S", "segments"), lwd=3)
 
+## ... the print method shows the segment borders and cluster associations
+print(sset)
+
 ## the segment coordinates are found in:
-head(sset$segments)
+segments <- segments(sset)
 
 
 ## CLUSTER SIMILARITIES

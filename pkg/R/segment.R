@@ -96,54 +96,60 @@ clusterSegments <- function() {}
 #' \code{\link{segmentCluster.batch}} allows for multiple runs over
 #' different parameters or input-clusterings.
 #'
-#' This is the main R wrapper function for the `segmenTier'
-#' segmentation algorithm. It takes an ordered sequence of clusterings
-#' and returns segments of consistent clusterings, where cluster-cluster
-#' or cluster-position similarities are maximal. Its main input (argument
-#' \code{seq}) is either an integer vector of cluster associations
-#' (scenario I) or a "clustering" object returned by
-#' \code{\link{clusterTimeseries}} (scenario II). It runs the dynamic
-#' programing algorithm (\code{\link{calculateScore}}) for a selected scoring
-#' function and an according cluster similarity matrix, followed by the
-#' back-tracing step (\code{\link{backtrace}}) to find
-#' segments.
-#' As shown in the publication, the parameters \code{M}, \code{E} and
-#' \code{nui} have the strongest impact on resulting segment borders.
-#' Other parameters can be fine-tuned but had little impact on our
-#' test data set.
-#' 
-#' In the first scenario I, when the input is a simple clustering vector,
-#' cluster-cluster or cluster-position similarities can be
-#' additionally provided via option \code{csim} for scoring functions
-#' "ccor" and "icor", respectively.  Or, if \code{csim} is missing and
-#' scoring function is "ccls", cluster similarities are constructed
-#' from arguments \code{a} and \code{nui}.  A nuissance cluster must
-#' be indicated by cluster label "0".
+#' @details This is the main R wrapper function for the `segmenTier'
+#' segmentation algorithm. It takes an ordered sequence of cluster
+#' labels and returns segments of consistent clusterings, where
+#' cluster-cluster or cluster-position similarities are
+#' maximal. Its main input (argument \code{seq}) is either a
+#' "clustering" object returned by \code{\link{clusterTimeseries}}
+#' (scenario I), or an integer vector of cluster labels (scenario
+#' II) or. The function then runs the dynamic programing algorithm
+#' (\code{\link{calculateScore}}) for a selected scoring function
+#' and an according cluster similarity matrix, followed by the
+#' back-tracing step (\code{\link{backtrace}}) to find segment
+#' borders.
 #'
-#' In the second scenario II, when the input is an object of class
-#' "clustering" produced by \code{\link{clusterTimeseries}}, the
-#' cluster-cluster and cluster-position similarity matrices are already
-#' provided by this object.
+#' The main result, list item "segments" of the returned 
+#' object, is a 3-column matrix, where column 1 is the cluster
+#' assignment and colums 2 and 3 are start and end indices of the
+#' segments. It can be obtained as a table/numeric matrix with
+#' function \code{\link{segments}}.
+#' 
+#' As shown in the publication, the parameters \code{M},
+#' \code{E} and \code{nui} have the strongest impact on resulting
+#' segment borders.  Other parameters can be fine-tuned but had
+#' little impact on our test data set.
+#' 
+#' In the default and tested scenario I, when the input is an object
+#' of class "clustering" produced by \code{\link{clusterTimeseries}},
+#' the cluster-cluster and cluster-position similarity matrices are
+#' already provided by this object.
+#'
+#' In the second scenario II for custom use, argument \code{seq} can
+#' be a simple clustering vector, where a nuissance cluster must be
+#' indicated by cluster label "0" (zero). The cluster-cluster or
+#' cluster-position similarities MUST be provided (argument
+#' \code{csim}) for scoring functions "ccor" and "icor",
+#' respectively. For the simplest scoring function "ccls", a uniform
+#' cluster similarity matrix is constructed from arguments \code{a}
+#' and \code{nui}, with cluster self-similarities of 1,
+#' "dissimilarities" between different clusters using argument
+#' \code{a<0}, and nuissance cluster self-similarity of \code{-a}.
 #'
 #' The function returns a list (class "segments") comprising of the
 #' main result (list item "segments"), and "warnings" from the dynamic
 #' programing and back-tracing phases, the used similarity matrix
-#' \code{csim}, extended for nuissance clusters; and optionally (see
+#' \code{csim}, extended by the nuissance cluster; and optionally (see
 #' option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
 #' total score matrix \code{S(i,c)} and the backtracing matrix
-#' \code{K(i,c)}.  It will further contain additional parameters like
+#' \code{K(i,c)} for analysis of algorithm performance for novel
+#' data sets.  Additional convenience data is reported, such as
 #' cluster colors and sortings if argument \code{seq} was of class
 #' 'clustering'. These allow for convenient inspection of all data
 #' processing steps with the plot methods. A plot method exists that
 #' allows to plot segments aligned to "timeseries" and "clustering"
 #' plots.
-#'
-#' The main result, list item "segments," is a 3-column matrix,
-#' where column 1 is the cluster assignment and colums 2 and 3 are start and
-#' end indices of the segments. If cluster colors were available in the
-#' input, \code{seq}, a 4th column contains the colors assigned to those
-#' clusters.  
-#' @param seq either an integer vector of cluster labels,
+#' @param seq Either an integer vector of cluster labels,
 #'     or a structure of class 'clustering' as returned by
 #'     \code{\link{clusterTimeseries}}. The only strict requirement
 #'     for the first option is that nuissance clusters (which will be
@@ -151,28 +157,28 @@ clusterSegments <- function() {}
 #'     be '0' (zero).
 #' @param k if argument \code{seq} is of class 'clustering' the kth
 #'     clustering will be used; defaults to 1
-#' @param csim the cluster-cluster or position-cluster similarity
+#' @param csim The cluster-cluster or position-cluster similarity
 #'     matrix for scoring functions "ccor" and "icor" (option
-#'     \code{S}), respectively; where \code{csim} MUST be provided if
-#'     argument \code{seq} is a simple vector of clusters; if
-#'     \code{seq} is of class 'clustering' \code{csim} will override
-#'     the similarity matrix potentially present in
-#'     \code{seq}. Finally, for scoring function "ccls" the argument
-#'     \code{csim} will be ignored and the matrix instead
+#'     \code{S}), respectively. If \code{seq} is of class 'clustering'
+#'     \code{csim} is optional and will override the similarity matrices
+#'     potentially present in \code{seq}. if argument \code{seq} is a
+#'     simple vector of cluster labels and the scoring function is
+#'     "icor" or "ccor", an appropriate matrix \code{csim} MUST be
+#'     provided. Finally, for scoring function "ccls" the argument
+#'     \code{csim} will be ignored and the matrix is instead
 #'     automatically constructed from argument \code{a}, and using
 #'     argument \code{nui} for the nuissance cluster.
-#' @param E exponent to scale similarity matrices, must be odd to
-#'     maintain negative correlations!
-#' @param S the scoring function to be used: "ccor", "icor" or "cls"
-#' @param M minimal sequence length; Note, that this is not a strict
+#' @param E exponent to scale similarity matrices
+#' @param S the scoring function to be used: "ccor", "icor" or "ccls"
+#' @param M segment length penalty; Note, that this is not a strict
 #'     cut-off but defined as a penalty that must be "overcome" by
 #'     good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will
-#'     allow shorter distances between segments; only used in scoring
+#' @param Mn segment length penalty for nuissance cluster, Mn<M will
+#'     allow shorter distances between "real" segments; only used in scoring
 #'     functions "ccor" and "icor"
-#' @param a an additional penalty only used for pure cluster-based
+#' @param a a cluster "dissimilarity" only used for pure cluster-based
 #'     scoring w/o cluster similarity measures in scoring function
-#'     "cls"
+#'     "ccls", see "Details".
 #' @param nui the similarity score to be used for nuissance clusters
 #'     in the cluster similarity matrices
 #' @param nextmax go backwards while score is increasing before
@@ -193,16 +199,25 @@ clusterSegments <- function() {}
 #' @references Machne, Murray & Stadler (2017)
 #'     <doi:10.1038/s41598-017-12401-8>
 #' @examples
-#' data(primseg436) # RNA-seq time-series data
-#'
+#' # load example data, an RNA-seq time-series data from a short genomic region
+#' # of budding yeast
+#' data(primseg436)
+#' 
 #' # 1) Fourier-transform time series:
 #' tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+#' 
 #' # 2) cluster time-series:
 #' cset <- clusterTimeseries(tset)
+#' 
 #' # 3) ... segment it:
 #' segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
-#' # 4) and inspect results:
-#' plotSegmentation(tset, cset,segments)
+#' 
+#' # 4) inspect results:
+#' print(segments)
+#' plotSegmentation(tset, cset, segments)
+#' 
+#' # 5) and get segment border table for further processing:
+#' sgtable <- segments(segments)
 #' 
 #' @export
 segmentClusters <- function(seq, k=1, csim, E=1,
@@ -214,7 +229,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     ## TODO: report in results
     ##if ( verb>0 )
     ## start time
-    stime <- as.numeric(Sys.time()) 
+    stime <- Sys.time()
     
     ## input: cluster set from clusterTimeseries
     cset <- NULL
@@ -331,8 +346,6 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     if ( rm.nui )
       seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
 
-    ## TODO: add parameters 
-
     ## segmentation ID and sequence length
     seg$N <- N # sequence length
     seg$ids <- "segments" # default ID; required in plot functions
@@ -367,9 +380,18 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     
 
     ## record run-time
-    etime <- as.numeric(Sys.time())
-    elapsed <- etime-stime
+    elapsed <- difftime(Sys.time(),stime,, units="secs")
     seg$elapsed <- elapsed
+
+    ## add used parameters
+    ## TODO: only parameters used for selected scoring
+    parms <- data.frame(clustering=k,
+                        S=S, E=E, M=M, Mn=Mn, a=a, nui=nui, multi=multi, 
+                        nextmax=nextmax, multib=multib,
+                        stringsAsFactors=FALSE)
+    rownames(parms) <- seg$ids
+    seg[["settings"]] <- parms
+
 
     ## assign S3 class
     class(seg) <- "segments"
@@ -482,7 +504,36 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
         colnames(segments) <- c("CL","start","end")
     list(segments=segments,warnings=warnings)
 }
-    
+
+### UTILS
+
+#' get segment table from \code{\link{segmentClusters}}
+#' @param x result object returned by function \code{\link{segmentClusters}}
+#' @return Returns the segment table as a matrix
+#'@export
+segments <- function(x) x$segments
+
+#' Print method for segmentation result from \code{\link{segmentClusters}}.
+#' @param x result object returned by function \code{\link{segmentClusters}}
+#' @param ... further argument to \code{print.data.frame}
+#' @export
+print.segments <- function(x, ...) {
+    cat(paste("\nsimilarity-based segmentation by dynamic programming of",
+              x$N, "data points:\n\n"))
+    print(x$segments, ...)
+    cat(paste("\nParameters:\n"))
+    print(x$settings)
+    if ( "elapsed"%in%names(x) ) {
+        tme <- x$elapsed
+        cat(paste("\nRun time"))
+        if ( length(tme)>1 ) {
+            tme <- mean(tme)
+            cat(paste(", average"))
+        }
+        cat(paste(": ", round(tme,3), "seconds\n"))
+    }
+}
+
     
 ### DATA SET DOC
 

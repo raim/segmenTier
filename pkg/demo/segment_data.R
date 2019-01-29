@@ -2,12 +2,12 @@
 debug <- FALSE
 if ( debug ) {
     library("Rcpp")
-    source("~/programs/segmenTier/R/plot.R")
-    source("~/programs/segmenTier/R/cluster.R")
-    source("~/programs/segmenTier/R/segment.R")
-    sourceCpp("~/programs/segmenTier/src/segment.cpp")
-    sourceCpp("~/programs/segmenTier/src/cluster.cpp")
-    load("~/programs/segmenTier/data/primseg436.rda")
+    source("~/programs/segmenTier/pkg/R/plot.R")
+    source("~/programs/segmenTier/pkg/R/cluster.R")
+    source("~/programs/segmenTier/pkg/R/segment.R")
+    sourceCpp("~/programs/segmenTier/pkg/src/segment.cpp")
+    sourceCpp("~/programs/segmenTier/pkg/src/cluster.cpp")
+    load("~/programs/segmenTier/pkg/data/primseg436.rda")
 } else {
 
     ## load library
@@ -88,10 +88,15 @@ sset <- segmentCluster.batch(cset, varySettings=vary,
                              id="mysegments",
                              type.name=c("E","M","nui"), # segment type names
                              verb=1, save.matrix=FALSE) 
-## NOTE: segments are in sset$segments
-head(sset$segments)
 
-## PLOT RESULTS
+## INSPECT RESULTS
+
+## ... the print method shows the segment borders and cluster associations
+print(sset)
+
+## the segment coordinates are found in:
+segments <- segments(sset)
+
 ## plot segmentation
 if ( plot2file )
   plotdev("segment_data",res=300,width=10,height=5,type=fig.type)
