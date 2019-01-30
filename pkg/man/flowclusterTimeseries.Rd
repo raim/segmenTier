@@ -2,7 +2,9 @@
 % Please edit documentation in R/cluster.R
 \name{flowclusterTimeseries}
 \alias{flowclusterTimeseries}
-\title{Cluster a processed time-series with \code{\link[flowClust:flowClust]{flowClust}} & \code{\link[flowMerge:flowMerge]{flowMerge}}.}
+\title{Cluster a processed time-series with
+\code{\link[flowClust:flowClust]{flowClust}} &
+\code{\link[flowMerge:merge]{flowMerge}}.}
 \usage{
 flowclusterTimeseries(tset, ncpu = 1, K = 10, selected,
   merge = FALSE, B = 500, tol = 1e-05, lambda = 1, nu = 4,
@@ -20,11 +22,11 @@ Alternatively, you can set \code{options(mc.cores=ncpu)} directly.}
 \item{K}{the requested cluster numbers (vector of integers)}
 
 \item{selected}{a pre-selected cluster number  which is then
-used as a start clustering for  \code{\link[flowMerge:flowMerge]{flowMerge}}
+used as a start clustering for  \code{\link[flowMerge:merge]{flowMerge}}
 (if option \code{merge==TRUE})}
 
 \item{merge}{logical indicating whether cluster merging with
-\code{\link[flowMerge:flowMerge]{flowMerge}} should be attempted}
+\code{\link[flowMerge:merge]{flowMerge}} should be attempted}
 
 \item{B}{max. num. of EM iterations}
 
@@ -53,16 +55,15 @@ to microarray data from yeast by Machne & Murray (2012)
 <doi:10.1371/journal.pone.0037906> and from cyanobacteria by Lehmann
 et al. (2013) <doi:10.1186/1471-2105-14-133>.
 It could in principle also be used for segmentation, but that has not
-been extensively tested. The clustering function
-\code{\link[flowClust:flowClust]{flowClust}} is a model-based clustering
-approach and much slower then \code{\link[stats:kmeans]{kmeans}} used
-in \code{\link{clusterTimeseries}}. 
+been extensively tested. \code{\link[flowClust:flowClust]{flowClust}}
+implements a model-based clustering approach and is much slower then
+\code{\link[stats:kmeans]{kmeans}} used in \code{\link{clusterTimeseries}}. 
 Please see option \code{ncpu} on how to use parallel mode, which
 does not work on some installations. However, model-based clustering has
 the advantage of an intrinsic measure (\code{BIC}) to decide on the optimal
 cluster numbers. Additionally, the clusters can be "merged" to fewer
 clusters at constant \code{BIC} using
-\code{\link[flowMerge:flowMerge]{flowMerge}}.
+\code{\link[flowMerge:merge]{flowMerge}}.
 }
 \references{
 Machne & Murray (2012)

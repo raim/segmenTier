@@ -13,5 +13,5 @@ ash(x)
 The asinh transformation, (\code{ash(x) = log(x + sqrt(x^2+1))}), is
 an alternative to log transformation that has less (compressing) effects
 on the extreme values (low and high values), and naturally handles
-negative numbers and 0.
+negative numbers and 0. Also see \code{\link{log_1}}.
 }

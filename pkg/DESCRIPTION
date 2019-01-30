@@ -2,7 +2,6 @@ Package: segmenTier
 Type: Package
 Title: Similarity-Based Segmentation of Multidimensional Signals
 Version: 0.1.2
-Date: 2019-01-16
 Author: Rainer Machne, Douglas B. Murray, Peter F. Stadler
 URL: https://github.com/raim/segmenTier
 BugReports: https://github.com/raim/segmenTier/issues

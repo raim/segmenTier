@@ -417,7 +417,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"),
 #' in \code{cset$clusters}; if missing all columns will be plotted
 #' and the calling code must take care of properly assigning \code{par(mfcol)}
 #' or \code{layout} for the plot
-#' @param sort sort if TRUE and the clustering is yet unsorted a cluster
+#' @param sort if \code{TRUE} and the clustering is yet unsorted a cluster
 #' sorting will be calculated based on "ccor" cluster-cluster similarity
 #' matrix \code{x$Ccc}; see \code{\link{sortClusters}}
 #' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute

@@ -15,7 +15,7 @@ colorClusters(cset, colf, ...)
 }
 \value{
 Returns the input "clustering" object with a list of vectors
-("colors"), each providing a named vector of colors for cluster labels.
+("colors"), each providing a named vector of colors for each cluster.
 }
 \description{
 Takes a clustering set as returned by \code{\link{clusterTimeseries}} and

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{logLik.kmeans}
 \alias{logLik.kmeans}
-\title{AIC/BIC for kmeans}
+\title{Experimental: AIC/BIC for kmeans}
 \usage{
 \method{logLik}{kmeans}(object, ...)
 }
@@ -14,13 +14,15 @@
 \description{
 provides a log-likelihood method for \code{\link[stats:kmeans]{kmeans}}
 results, after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
-latest update from version on Jan 30, 2019  
-\href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. This is an attempt to reproduce the \code{BIC} measure
+also featured in the
+\href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. Note that the blogged version on Jan 30, 2019 add a minus
+and a division by 2 compared to the package version.
+The strategy has not been reviewed, and this function has not been
+tested extensively; feel free to do so and contribute your results. 
+This is an attempt to reproduce the \code{BIC} measure
 in model-based clustering to decide on an optimal number of clusters.
 This function will be used for \code{\link[stats:kmeans]{kmeans}}
 results objects when passed to \code{\link[stats:BIC]{BIC}} and
 \code{\link[stats:AIC]{AIC}} functions from the \pkg{stats} package in
 base R, and is used in this manner in \code{\link{segmentClusters}}.
-This has not been tested extensively; feel free to do so and contribute
-your results.
 }

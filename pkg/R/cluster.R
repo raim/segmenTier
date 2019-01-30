@@ -37,7 +37,7 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
 #' The asinh transformation, (\code{ash(x) = log(x + sqrt(x^2+1))}), is
 #' an alternative to log transformation that has less (compressing) effects
 #' on the extreme values (low and high values), and naturally handles
-#' negative numbers and 0.
+#' negative numbers and 0. Also see \code{\link{log_1}}.
 #' @param x a numeric vector
 #' @export
 ash <- function(x) log(x+sqrt(x^2+1))
@@ -45,7 +45,7 @@ ash <- function(x) log(x+sqrt(x^2+1))
 #' log transformation handling zeros by adding 1
 #'
 #' A conventional approach to handle 0 in log transformation is to simply
-#' add 1 to all data, \code{log_1(x) = log(x+1)}
+#' add 1 to all data, \code{log_1(x) = log(x+1)}. Also see \code{\link{ash}}.
 #' @param x a numeric vector
 #' @export
 log_1 <- function(x) log(x+1)
@@ -385,7 +385,9 @@ processTimeseries <- function(ts, trafo="raw",
 ## TODO: adapt to be used in segmentation as well, is fcls@mu
 ## equal/similar to kmeans' 'centers'? Are Ccc and Pci calculated correctly?
 
-#' Cluster a processed time-series with \code{\link[flowClust:flowClust]{flowClust}} & \code{\link[flowMerge:flowMerge]{flowMerge}}.
+#' Cluster a processed time-series with
+#' \code{\link[flowClust:flowClust]{flowClust}} &
+#' \code{\link[flowMerge:merge]{flowMerge}}.
 #' 
 #' A wrapper for \code{\link[flowClust:flowClust]{flowClust}}, clustering
 #' a time-series object \code{tset} provided by \code{\link{processTimeseries}},
@@ -397,16 +399,15 @@ processTimeseries <- function(ts, trafo="raw",
 #' <doi:10.1371/journal.pone.0037906> and from cyanobacteria by Lehmann
 #' et al. (2013) <doi:10.1186/1471-2105-14-133>.
 #' It could in principle also be used for segmentation, but that has not
-#' been extensively tested. The clustering function
-#' \code{\link[flowClust:flowClust]{flowClust}} is a model-based clustering
-#' approach and much slower then \code{\link[stats:kmeans]{kmeans}} used
-#' in \code{\link{clusterTimeseries}}. 
+#' been extensively tested. \code{\link[flowClust:flowClust]{flowClust}}
+#' implements a model-based clustering approach and is much slower then
+#' \code{\link[stats:kmeans]{kmeans}} used in \code{\link{clusterTimeseries}}. 
 #' Please see option \code{ncpu} on how to use parallel mode, which
 #' does not work on some installations. However, model-based clustering has
 #' the advantage of an intrinsic measure (\code{BIC}) to decide on the optimal
 #' cluster numbers. Additionally, the clusters can be "merged" to fewer
 #' clusters at constant \code{BIC} using
-#' \code{\link[flowMerge:flowMerge]{flowMerge}}.
+#' \code{\link[flowMerge:merge]{flowMerge}}.
 #' @param tset processed time-series as provided by
 #' \code{\link{processTimeseries}}
 #' @param ncpu number of cores available for parallel mode of
@@ -415,9 +416,9 @@ processTimeseries <- function(ts, trafo="raw",
 #' Alternatively, you can set \code{options(mc.cores=ncpu)} directly.
 #' @param K the requested cluster numbers (vector of integers)
 #' @param merge logical indicating whether cluster merging with
-#'  \code{\link[flowMerge:flowMerge]{flowMerge}} should be attempted
+#'  \code{\link[flowMerge:merge]{flowMerge}} should be attempted
 #' @param selected a pre-selected cluster number  which is then
-#' used as a start clustering for  \code{\link[flowMerge:flowMerge]{flowMerge}}
+#' used as a start clustering for  \code{\link[flowMerge:merge]{flowMerge}}
 #' (if option \code{merge==TRUE})
 #' @param B max. num. of EM iterations 
 #' @param tol tolerance for EM convergence
@@ -569,26 +570,29 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
     tmp <- fcset
 }
 
-#' AIC/BIC for kmeans
+#' Experimental: AIC/BIC for kmeans
 #'
 #' provides a log-likelihood method for \code{\link[stats:kmeans]{kmeans}}
 #' results, after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
-#' latest update from version on Jan 30, 2019  
-#' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. This is an attempt to reproduce the \code{BIC} measure
+#' also featured in the
+#' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. Note that the blogged version on Jan 30, 2019 add a minus
+#' and a division by 2 compared to the package version.
+#' The strategy has not been reviewed, and this function has not been
+#' tested extensively; feel free to do so and contribute your results. 
+#' This is an attempt to reproduce the \code{BIC} measure
 #' in model-based clustering to decide on an optimal number of clusters.
 #' This function will be used for \code{\link[stats:kmeans]{kmeans}}
 #' results objects when passed to \code{\link[stats:BIC]{BIC}} and
 #' \code{\link[stats:AIC]{AIC}} functions from the \pkg{stats} package in
 #' base R, and is used in this manner in \code{\link{segmentClusters}}.
-#' This has not been tested extensively; feel free to do so and contribute
-#' your results. 
 #' @param object a \code{kmeans} object
 #' @param ... unused
 #' @export
 logLik.kmeans <- function(object, ...)
     structure(-object$tot.withinss/2,
               df = nrow(object$centers)*ncol(object$centers),
-              nobs = length(object$cluster))
+              nobs = length(object$cluster),
+              class = 'logLik')
 
 
 #' Cluster a processed time-series with k-means.
@@ -836,7 +840,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 #' @param colf a function that generates \code{n} colors
 #' @param ... arguments to color function \code{colf}
 #' @return Returns the input "clustering" object with a list of vectors
-#' ("colors"), each providing a named vector of colors for cluster labels.
+#' ("colors"), each providing a named vector of colors for each cluster.
 #'@export
 colorClusters <- function(cset, colf, ...) {
 

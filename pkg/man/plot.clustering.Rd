@@ -17,7 +17,7 @@ in \code{cset$clusters}; if missing all columns will be plotted
 and the calling code must take care of properly assigning \code{par(mfcol)}
 or \code{layout} for the plot}
 
-\item{sort}{sort if TRUE and the clustering is yet unsorted a cluster
+\item{sort}{if \code{TRUE} and the clustering is yet unsorted a cluster
 sorting will be calculated based on "ccor" cluster-cluster similarity
 matrix \code{x$Ccc}; see \code{\link{sortClusters}}}
 

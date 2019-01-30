@@ -11,5 +11,5 @@ log_1(x)
 }
 \description{
 A conventional approach to handle 0 in log transformation is to simply
-add 1 to all data, \code{log_1(x) = log(x+1)}
+add 1 to all data, \code{log_1(x) = log(x+1)}. Also see \code{\link{ash}}.
 }
