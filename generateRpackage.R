@@ -1,9 +1,6 @@
 
 pkg <- "~/programs/segmenTier/pkg"
 
-## generate vignette
-
-rmarkdown::render(file.path(pkg,"vignettes","segmenTier.Rmd"))
 
 
 ## generate documentation build/check package
@@ -18,3 +15,8 @@ library(goodpractice)
 g <- gp(pkg)
 
 
+## generate vignette
+rmarkdown::render(file.path(pkg,"vignettes","segmenTier.Rmd"))
+# generate doc pdf in folder 
+## DOESNT WORK: check(pkg=pkg, path=pkg, args=c('--no-examples'), manual=TRUE)
+system(paste("rm pkg.pdf -f; R CMD Rd2pdf", pkg))
