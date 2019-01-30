@@ -968,7 +968,7 @@ setVarySettings <- function(E=c(1,3),
 #' a vector and ALL combinations of the passed parameter values will
 #' be used for one run of \code{\link{segmentClusters}}.
 #' The resulting segment table, list item "segments" of the returned object,
-#' is a \code{\link[data.frame]{data.frame}} with additional
+#' is a \code{\link[base:data.frame]{data.frame}} with additional
 #' columns "ID" and "type", automatically generated strings indicating
 #' the used parameters (each "type" reflects one parameter set), and
 #' "colors", indicating the automatically generated color of the assigned
@@ -1004,14 +1004,14 @@ setVarySettings <- function(E=c(1,3),
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @return Returns an object of class "segments", just as its base function
 #' \code{\link{segmentClusters}}, but the main segment table, list item
-#' "segments", is a \code{\link[data.frame]{data.frame}} with additional
+#' "segments", is a \code{\link[base:data.frame]{data.frame}} with additional
 #' columns "ID" and "type", automatically generated strings indicating
 #' the used parameters (each "type" reflects one parameter set), and
 #' "colors", indicating the automatically generated color of the assigned
 #' cluster label.
 #' @examples
-#' # load example data, an RNA-seq time-series data from a short genomic region
-#' # of budding yeast
+#' # load example data, an RNA-seq time-series data from a short genomic
+#' # region of budding yeast
 #' data(primseg436)
 #' 
 #' # 1) Fourier-transform time series:
@@ -1204,7 +1204,7 @@ segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
                                type=rep(sgtype,length(sgids)),
                                seg$segments,
                                fuse=close,
-                               color=colors)
+                               color=colors, stringsAsFactors=FALSE)
             allsegs <- rbind(allsegs,segs)
             
         } 

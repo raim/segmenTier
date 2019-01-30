@@ -113,7 +113,7 @@ clusterSegments <- function() {}
 #' object, is a 3-column matrix, where column 1 is the cluster
 #' assignment and colums 2 and 3 are start and end indices of the
 #' segments. For the batch function \code{\link{segmentCluster.batch}},
-#' the "segments" item is a \code{\link[data.frame]{data.frame}}
+#' the "segments" item is a \code{\link[base:data.frame]{data.frame}}
 #' containg additional information, see `?segmentCluster.batch`.
 #' 
 #' As shown in the publication, the parameters \code{M},
