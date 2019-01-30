@@ -29,20 +29,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// clusterMaxCor_c
-NumericVector clusterMaxCor_c(NumericMatrix data, NumericMatrix clusters, float mincor, int warn);
-RcppExport SEXP _segmenTier_clusterMaxCor_c(SEXP dataSEXP, SEXP clustersSEXP, SEXP mincorSEXP, SEXP warnSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type clusters(clustersSEXP);
-    Rcpp::traits::input_parameter< float >::type mincor(mincorSEXP);
-    Rcpp::traits::input_parameter< int >::type warn(warnSEXP);
-    rcpp_result_gen = Rcpp::wrap(clusterMaxCor_c(data, clusters, mincor, warn));
-    return rcpp_result_gen;
-END_RCPP
-}
 // icor
 double icor(int k, int j, int c, NumericVector seq, int M, NumericMatrix csim);
 RcppExport SEXP _segmenTier_icor(SEXP kSEXP, SEXP jSEXP, SEXP cSEXP, SEXP seqSEXP, SEXP MSEXP, SEXP csimSEXP) {
@@ -96,7 +82,6 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_segmenTier_myPearson", (DL_FUNC) &_segmenTier_myPearson, 2},
     {"_segmenTier_clusterCor_c", (DL_FUNC) &_segmenTier_clusterCor_c, 2},
-    {"_segmenTier_clusterMaxCor_c", (DL_FUNC) &_segmenTier_clusterMaxCor_c, 4},
     {"_segmenTier_icor", (DL_FUNC) &_segmenTier_icor, 6},
     {"_segmenTier_ccor", (DL_FUNC) &_segmenTier_ccor, 6},
     {"_segmenTier_calculateScore", (DL_FUNC) &_segmenTier_calculateScore, 7},

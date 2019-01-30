@@ -14,31 +14,20 @@ myPearson <- function(x, y) {
     .Call('_segmenTier_myPearson', PACKAGE = 'segmenTier', x, y)
 }
 
-#' Calculates data-cluster similarity.
-#' @details calculates Pearson's product-moment correlation coefficients
-#' of original data to cluster centers as used in the scoring function "icor".
+#' Calculates position-cluster correlations for scoring function "icor".
+#'
+#' Calculates Pearson's product-moment correlation coefficients
+#' between rows in \code{data}  and \code{cluster}, and is used to calculate
+#' the position-cluster similarity matrix for the scoring function "icor".
+#' This is implemented in Rcpp for calculation speed, using 
+#' \code{\link{myPearson}} to calculate correlations.
 #' @param data original data matrix
 #' @param clusters cluster centers
-#' @return Returns a data-cluster correlation matrix as used in
+#' @return Returns a position-cluster correlation matrix as used in
 #' scoring function "icor".
 #'@export
 clusterCor_c <- function(data, clusters) {
     .Call('_segmenTier_clusterCor_c', PACKAGE = 'segmenTier', data, clusters)
-}
-
-#' Reports the maximally correlating cluster for each data point.
-#' @details Calculates Pearson's product-moment correlation of each data
-#' to clusters and report the (first!) cluster which had max correlation.
-#' Note that this can lead to amibiguities since several clusters may
-#' reach the same maximum.
-#' TODO: this seems not be used anywhere, remove?
-#' @param mincor minimal correlation to be considered
-#' @param warn if set to 1/TRUE then the occurence of multiple maxima
-#' is tested and a warning issued
-#' @inheritParams clusterCor_c
-#'@export
-clusterMaxCor_c <- function(data, clusters, mincor = 0.0, warn = 0L) {
-    .Call('_segmenTier_clusterMaxCor_c', PACKAGE = 'segmenTier', data, clusters, mincor, warn)
 }
 
 icor <- function(k, j, c, seq, M, csim) {
@@ -77,11 +66,8 @@ ccor <- function(k, j, c, seq, M, csim) {
 #' here are 0-based, where 0 is the nuissance cluster.
 #' @param C the list of clusters, including nuissance cluster '0', see 
 #' \code{seq}
-#' @param score the scoring function to be used, one of "ccor" or "icor".
-#' An apt similarity matrix must be supplied via option \code{csim}.
-#' The scoring function "ccls" is a special case of "ccor" and should
-#' be handled via the similarity function (matrix) "csim" as e.g. done
-#' by the R wrapper function \code{\link{segmentClusters}}. See "Details".
+#' @param score the scoring function to be used, one of "ccor" or "icor",
+#' an apt similarity matrix must be supplied via option \code{csim}
 #' @param M minimal sequence length; Note, that this is not a strict
 #' cut-off but defined as an accumulating penalty that must be
 #' "overcome" by good score

@@ -142,28 +142,28 @@ clusterSegments <- function() {}
 #' \code{csim}, extended by the nuissance cluster; and optionally (see
 #' option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
 #' total score matrix \code{S(i,c)} and the backtracing matrix
-#' \code{K(i,c)} for analysis of algorithm performance for novel
-#' data sets.  Additional convenience data is reported, such as
-#' cluster colors and sortings if argument \code{seq} was of class
+#' \code{K(i,c)} for analysis of algorithm performance for novel data
+#' sets.  Additional convenience data is reported, such as cluster
+#' colors and sortings if argument \code{seq} was of class
 #' 'clustering'. These allow for convenient inspection of all data
 #' processing steps with the plot methods. A plot method exists that
 #' allows to plot segments aligned to "timeseries" and "clustering"
 #' plots.
-#' @param seq Either an integer vector of cluster labels,
-#'     or a structure of class 'clustering' as returned by
+#' @param seq Either an integer vector of cluster labels, or a
+#'     structure of class 'clustering' as returned by
 #'     \code{\link{clusterTimeseries}}. The only strict requirement
 #'     for the first option is that nuissance clusters (which will be
-#'     treated specially during the dynamic programming routine) have to
-#'     be '0' (zero).
+#'     treated specially during the dynamic programming routine) have
+#'     to be '0' (zero).
 #' @param k if argument \code{seq} is of class 'clustering' the kth
 #'     clustering will be used; defaults to 1
 #' @param csim The cluster-cluster or position-cluster similarity
 #'     matrix for scoring functions "ccor" and "icor" (option
 #'     \code{S}), respectively. If \code{seq} is of class 'clustering'
-#'     \code{csim} is optional and will override the similarity matrices
-#'     potentially present in \code{seq}. if argument \code{seq} is a
-#'     simple vector of cluster labels and the scoring function is
-#'     "icor" or "ccor", an appropriate matrix \code{csim} MUST be
+#'     \code{csim} is optional and will override the similarity
+#'     matrices in \code{seq}. If argument \code{seq} is a simple
+#'     vector of cluster labels and the scoring function is "icor" or
+#'     "ccor", an appropriate matrix \code{csim} MUST be
 #'     provided. Finally, for scoring function "ccls" the argument
 #'     \code{csim} will be ignored and the matrix is instead
 #'     automatically constructed from argument \code{a}, and using
@@ -174,8 +174,8 @@ clusterSegments <- function() {}
 #'     cut-off but defined as a penalty that must be "overcome" by
 #'     good score.
 #' @param Mn segment length penalty for nuissance cluster, Mn<M will
-#'     allow shorter distances between "real" segments; only used in scoring
-#'     functions "ccor" and "icor"
+#'     allow shorter distances between "real" segments; only used in
+#'     scoring functions "ccor" and "icor"
 #' @param a a cluster "dissimilarity" only used for pure cluster-based
 #'     scoring w/o cluster similarity measures in scoring function
 #'     "ccls", see "Details".

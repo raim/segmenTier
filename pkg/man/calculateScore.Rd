@@ -14,11 +14,8 @@ here are 0-based, where 0 is the nuissance cluster.}
 \item{C}{the list of clusters, including nuissance cluster '0', see 
 \code{seq}}
 
-\item{score}{the scoring function to be used, one of "ccor" or "icor".
-An apt similarity matrix must be supplied via option \code{csim}.
-The scoring function "ccls" is a special case of "ccor" and should
-be handled via the similarity function (matrix) "csim" as e.g. done
-by the R wrapper function \code{\link{segmentClusters}}. See "Details".}
+\item{score}{the scoring function to be used, one of "ccor" or "icor",
+an apt similarity matrix must be supplied via option \code{csim}}
 
 \item{csim}{a matrix, providing either the cluster-cluster (scoring 
 function "ccor") or the position-cluster similarity function

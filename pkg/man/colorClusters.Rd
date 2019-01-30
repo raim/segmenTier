@@ -15,14 +15,13 @@ colorClusters(cset, colf, ...)
 }
 \value{
 Returns the input "clustering" object with a list of vectors
-(names "colors"), each providing a vector of colors for each cluster
-label.
+("colors"), each providing a named vector of colors for cluster labels.
 }
 \description{
 Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
 assigns colors to each cluster in each clustering along
 the "hue" color wheel, as in \code{scale_colour_hue} in \code{ggplot2}.
-If \code{cset} contains a sorting (see
-\code{clusterSort}), this sorting will be used to assing colors along
-the color wheel, otherwise a sorting will be calculated first.
+If \code{cset} contains a sorting, this sorting will be used to assign
+colors along the color wheel, otherwise a sorting will be calculated first,
+using \code{\link{sortClusters}}.
 }

@@ -21,29 +21,54 @@ e.g., "log", or the package functions "ash" (asinh:
 
 \item{use.fft}{use the Discrete Fourier Transform of the data}
 
-\item{dc.trafo}{data transformation for the first (DC) component of the DFT, pass any function name, e.g., "log", or the package functions "ash" (asinh: \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1" (\code{log(x+1)}).}
+\item{dc.trafo}{data transformation for the first (DC) component of
+the DFT, pass any function name, e.g., "log", or the package
+functions "ash" (asinh: \code{ash(x) = log(x + sqrt(x^2+1))})
+or "log_1" (\code{log(x+1)}).}
 
-\item{dft.range}{a vector of integers, giving the components of the Discrete Fourier Transform to be used where 1 is the first component (DC) corresponding to the total signal (sum over all time points), and 2:n are the higher components corresponding to 2:n full cycles in the data}
+\item{dft.range}{a vector of integers, giving the components of the
+Discrete Fourier Transform to be used where 1 is the first
+component (DC) corresponding to the total signal (sum over all
+time points), and 2:n are the higher components corresponding
+to 2:n full cycles in the data}
 
-\item{perm}{number of permutations of the data set, to obtain}
+\item{perm}{number of permutations of the data set, to obtain
+p-values for the oscillation}
 
-\item{use.snr}{use a scaled amplitude, where each component of the Discrete Fourier Transform is divided by the mean of all other components (without the first or DC component), a normalization that can be interpreted to reflect a signal-to-noise ratio (SNR)}
+\item{use.snr}{use a scaled amplitude, where each component of the
+Discrete Fourier Transform is divided by the mean of all other
+components (without the first or DC component), a normalization
+that can be interpreted to reflect a signal-to-noise ratio
+(SNR)}
 
-\item{lambda}{parameter lambda for Box-Cox transformation of DFT amplitudes (experimental; not tested)}
+\item{lambda}{parameter lambda for Box-Cox transformation of DFT
+amplitudes (experimental; not tested)}
 
 \item{low.thresh}{use this threshold to cut-off data, which will be
 added to the absent/nuissance cluster later}
 
-\item{smooth.space}{integer, if set a moving average is calculated for each time-point between adjacent data points using stats package's \code{\link[stats:smooth]{smooth}} with span \code{smooth.space}}
+\item{smooth.space}{integer, if set a moving average is calculated
+for each time-point between adjacent data points using stats
+package's \code{\link[stats:smooth]{smooth}} with option
+\code{span=smooth.space}}
 
-\item{smooth.time}{integer, if set the time-series will be smoothed using stats package's \code{\link[stats:filter]{filter}} to calculate a moving average with span \code{smooth.time} and \code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate smoothed first and last time-points (again using span \code{smooth.time})}
+\item{smooth.time}{integer, if set the time-series will be smoothed
+using stats package's \code{\link[stats:filter]{filter}} to
+calculate a moving average with span \code{smooth.time} and
+\code{\link[stats:smoothEnds]{smoothEnds}} to extrapolate
+smoothed first and last time-points (again using span
+\code{smooth.time})}
 
-\item{circular.time}{logical value indicating whether time can be treated as circular in smoothing}
+\item{circular.time}{logical value indicating whether time can be
+treated as circular in smoothing via option \code{smooth.time}}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \value{
-Returns a list of class "time-series" which comprises of the transformed time-series and additional information, such as the total signal, and positions of rows with only NA/0 values. Note that NA values are interpreted as 0.
+Returns a list of class "timeseries" which comprises of
+    the transformed time-series and additional information, such as
+    the total signal, and positions of rows with only NA/0
+    values. Note that NA values are interpreted as 0.
 }
 \description{
 Prepares the time-series for subsequent clustering, and performs
@@ -51,7 +76,8 @@ requested data transformations, including a Discrete
 Fourier Transform (DFT) of the time-series as direct input for 
 the clustering wrapper \code{\link{clusterTimeseries}}. It can also be used
 as a stand-alone function equipped especially for analysis of oscillatory
-time-series, including phases and p-values for requested DFT components.
+time-series, including calculation of phases and p-values for
+all DFT components.
 }
 \details{
 This function exemplifies the processing of an oscillatory
@@ -70,8 +96,8 @@ Rows consisting only of 0 (or NA) values, or with a total signal
 transformed data, and will be assigned to the
 "nuissance" cluster in \code{\link{clusterTimeseries}}.
 
-Discrete Fourier Transform (DFT): If requested (option
-\code{use.fft}), a DFT will be applied using base R's
+Discrete Fourier Transform (DFT): if requested (option
+\code{use.fft=TRUE}), a DFT will be applied using base R's
 \code{\link[stats:fft]{mvfft}} function and reporting all or only
 requested (option \code{dft.range}) DFT components, where the
 first, or DC ("direct current") component, equals the total signal
@@ -81,7 +107,7 @@ reported as complex numbers, from which both amplitude and phase
 can be calculated.  All returned DFT components will be used by
 \code{\link{clusterTimeseries}}.
 
-Additional Transformations: Data can be transformed prior to DFT
+Additional Transformations: data can be transformed prior to DFT
 (options \code{trafo}, \code{smooth.time}, \code{smooth.space}), or
 after DFT (options \code{use.snr} and \code{dc.trafo}). It is
 recommended to use the amplitude scaling (a signal-to-noise ratio
@@ -94,13 +120,16 @@ transformation proofed useful in DFT-based clustering with the
 model-based clustering algorithm in package \pkg{flowClust}, and is
 available here for further tests with k-means clustering.
 
-Permutation Analysis: This time-series processing and subsequent
-clustering can also be used without segmentation, eg. for
-conventional microarray data or RNA-seq data already mapped to
-genes. The option \code{perm} allows to perform a permutation test
-(\code{perm} times) and returns a matrix of empirical p-values for
-all DFT components, ie. the fraction of \code{perm} where amplitude
-was higher then the amplitude of the randomized time-series.
+Phase, Amplitude and Permutation Analysis: this time-series
+processing and subsequent clustering can also be used without
+segmentation, eg. for conventional microarray data or RNA-seq data
+already mapped to genes. The option \code{perm} allows to perform a
+permutation test (\code{perm} times) and adds a matrix of empirical
+p-values for all DFT components to the results object, ie. the
+fraction of \code{perm} where amplitude was higher then the
+amplitude of the randomized time-series.  Phases and amplitudes can
+be derived from the complex numbers in matrix "dft" of the result
+object.
 }
 \examples{
 data(primseg436)
@@ -123,5 +152,7 @@ tset <- processTimeseries(ts=tsd, dc.trafo="ash",
 plot(tset)
 }
 \references{
-Machne & Murray (2012) <doi:10.1371/journal.pone.0037906>, and Lehmann et al. (2013) <doi:10.1186/1471-2105-14-133>
+Machne & Murray (2012)
+    <doi:10.1371/journal.pone.0037906>, and Lehmann et al. (2013)
+    <doi:10.1186/1471-2105-14-133>
 }

@@ -85,11 +85,8 @@ XPtr<scorefun> getScorefun(std::string fstr) {
 //' here are 0-based, where 0 is the nuissance cluster.
 //' @param C the list of clusters, including nuissance cluster '0', see 
 //' \code{seq}
-//' @param score the scoring function to be used, one of "ccor" or "icor".
-//' An apt similarity matrix must be supplied via option \code{csim}.
-//' The scoring function "ccls" is a special case of "ccor" and should
-//' be handled via the similarity function (matrix) "csim" as e.g. done
-//' by the R wrapper function \code{\link{segmentClusters}}. See "Details".
+//' @param score the scoring function to be used, one of "ccor" or "icor",
+//' an apt similarity matrix must be supplied via option \code{csim}
 //' @param M minimal sequence length; Note, that this is not a strict
 //' cut-off but defined as an accumulating penalty that must be
 //' "overcome" by good score

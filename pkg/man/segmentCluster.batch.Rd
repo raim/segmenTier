@@ -47,9 +47,17 @@ returns a matrix only}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
+\value{
+Returns an object of class "segments", just as its base function
+\code{\link{segmentClusters}}, but the main segment table has additional
+columns "ID" and "type", automatically generated strings indicating
+the used parameters (each "type" reflects one parameter set), and
+"colors", indicating the automatically generated color of the assigned
+cluster label.
+}
 \description{
 A high-level wrapper for multiple runs of segmentation by
-\code{\link{segmentClusters}} for multiple clusterings and
+\code{\link{segmentClusters}} for multiple clusterings and/or
 multiple segmentation parameters. It additionally allows to
 tag adjacent segments to be potentially fused due to similarity
 of their clusters.

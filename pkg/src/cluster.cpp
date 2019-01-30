@@ -40,12 +40,16 @@ double myPearson(NumericVector x, NumericVector y) {
 
 }
 
-//' Calculates data-cluster similarity.
-//' @details calculates Pearson's product-moment correlation coefficients
-//' of original data to cluster centers as used in the scoring function "icor".
+//' Calculates position-cluster correlations for scoring function "icor".
+//'
+//' Calculates Pearson's product-moment correlation coefficients
+//' between rows in \code{data}  and \code{cluster}, and is used to calculate
+//' the position-cluster similarity matrix for the scoring function "icor".
+//' This is implemented in Rcpp for calculation speed, using 
+//' \code{\link{myPearson}} to calculate correlations.
 //' @param data original data matrix
 //' @param clusters cluster centers
-//' @return Returns a data-cluster correlation matrix as used in
+//' @return Returns a position-cluster correlation matrix as used in
 //' scoring function "icor".
 //'@export
 // [[Rcpp::export]]
@@ -71,18 +75,18 @@ NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters) {
   return clCor;
 }
 
-//' Reports the maximally correlating cluster for each data point.
-//' @details Calculates Pearson's product-moment correlation of each data
-//' to clusters and report the (first!) cluster which had max correlation.
-//' Note that this can lead to amibiguities since several clusters may
-//' reach the same maximum.
-//' TODO: this seems not be used anywhere, remove?
-//' @param mincor minimal correlation to be considered
-//' @param warn if set to 1/TRUE then the occurence of multiple maxima
-//' is tested and a warning issued
-//' @inheritParams clusterCor_c
-//'@export
-// [[Rcpp::export]]
+/// Reports the maximally correlating cluster for each data point.
+/// @details Calculates Pearson's product-moment correlation of each data
+/// to clusters and report the (first!) cluster which had max correlation.
+/// Note that this can lead to amibiguities since several clusters may
+/// reach the same maximum.
+/// TODO: this seems not be used anywhere, remove?
+/// @param mincor minimal correlation to be considered
+/// @param warn if set to 1/TRUE then the occurence of multiple maxima
+/// is tested and a warning issued
+/// @inheritParams clusterCor_c
+/// export
+///
 NumericVector clusterMaxCor_c(NumericMatrix data, NumericMatrix clusters, float mincor=0.0, int warn=0) {
 
   int N = data.nrow();

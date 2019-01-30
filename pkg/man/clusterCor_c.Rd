@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{clusterCor_c}
 \alias{clusterCor_c}
-\title{Calculates data-cluster similarity.}
+\title{Calculates position-cluster correlations for scoring function "icor".}
 \usage{
 clusterCor_c(data, clusters)
 }
@@ -12,13 +12,13 @@ clusterCor_c(data, clusters)
 \item{clusters}{cluster centers}
 }
 \value{
-Returns a data-cluster correlation matrix as used in
+Returns a position-cluster correlation matrix as used in
 scoring function "icor".
 }
 \description{
-Calculates data-cluster similarity.
-}
-\details{
-calculates Pearson's product-moment correlation coefficients
-of original data to cluster centers as used in the scoring function "icor".
+Calculates Pearson's product-moment correlation coefficients
+between rows in \code{data}  and \code{cluster}, and is used to calculate
+the position-cluster similarity matrix for the scoring function "icor".
+This is implemented in Rcpp for calculation speed, using 
+\code{\link{myPearson}} to calculate correlations.
 }

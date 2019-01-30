@@ -56,8 +56,8 @@ of this package, \code{\link{segmentClusters}}, to split the cluster
 association sequence into segments, and assigns each segment to
 the "winning" input cluster.
 
-Nuissance cluster:
-Values that were removed during time-series processing, such as
+Nuissance Cluster:
+values that were removed during time-series processing, such as
 rows that only contain 0 or NA values, will be assigned to
 the "nuissance cluster" with cluster label "0". Additionally, a minimal
 correlation to any cluster center can be specified, argument
@@ -65,8 +65,8 @@ correlation to any cluster center can be specified, argument
 then this, will also be assigned to the "nuissance" cluster.
 Resulting "nuissance segments" will not be shown in the results.
 
-Cluster sorting and coloring:
-Additionally the cluster labels in the result object will be sorted by
+Cluster Sorting and Coloring:
+additionally the cluster labels in the result object will be sorted by
 cluster-cluster similarity (see \code{\link{sortClusters}}) and cluster
 colors assigned (see \code{\link{colorClusters}}) for convenient data
 inspection with the plot methods available for each data processing
@@ -75,7 +75,7 @@ step (see examples).
 Note that the function, in conjuction with
 \code{\link{processTimeseries}}, can also be used as a stand-alone
 tool for time-series clusterings, specifically implementing the
-strategy of cluster the Discrete Fourier Transform of period
+strategy of clustering the Discrete Fourier Transform of periodic
 time-series developed by Machne & Murray (2012)
 <doi:10.1371/journal.pone.0037906>, and further analyzed in Lehmann
 et al. (2013) <doi:10.1186/1471-2105-14-133>, such as transcriptome
@@ -83,8 +83,8 @@ data from circadian or yeast respiratory oscillation systems.
 }
 \examples{
 data(primseg436)
-## Discrete Fourier Transform of the time-series, see
-## help for ?processTimeseries for details
+## Discrete Fourier Transform of the time-series, 
+## see ?processTimeseries for details
 tset <- processTimeseries(ts=tsd, dc.trafo="ash",
                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
 ## ... and cluster the transformed time-series

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{flowclusterTimeseries}
 \alias{flowclusterTimeseries}
-\title{Cluster a processed time-series with \pkg{flowClust} & \pkg{flowMerge}.}
+\title{Cluster a processed time-series with \code{\link[flowClust:flowClust]{flowClust}} & \code{\link[flowMerge:flowMerge]{flowMerge}}.}
 \usage{
 flowclusterTimeseries(tset, ncpu = 1, K = 10, selected,
   merge = FALSE, B = 500, tol = 1e-05, lambda = 1, nu = 4,
@@ -20,11 +20,11 @@ Alternatively, you can set \code{options(mc.cores=ncpu)} directly.}
 \item{K}{the requested cluster numbers (vector of integers)}
 
 \item{selected}{a pre-selected cluster number  which is then
-used as a start clustering for \code{flowMerge} (if option
-\code{merge==TRUE})}
+used as a start clustering for  \code{\link[flowMerge:flowMerge]{flowMerge}}
+(if option \code{merge==TRUE})}
 
 \item{merge}{logical indicating whether cluster merging with
-\pkg{flowMerge} should be attempted}
+\code{\link[flowMerge:flowMerge]{flowMerge}} should be attempted}
 
 \item{B}{max. num. of EM iterations}
 
@@ -39,16 +39,32 @@ pure Gaussian}
 
 \item{trans}{0: no, 1: non-specific, 2: cluster-specific estim. of lambda}
 
-\item{...}{further parameter to \code{flowClust}}
+\item{...}{further parameters for
+\code{\link[flowClust:flowClust]{flowClust}}}
 }
 \description{
-A wrapper for \pkg{flowClust}, clustering
+A wrapper for \code{\link[flowClust:flowClust]{flowClust}}, clustering
 a time-series object \code{tset} provided by \code{\link{processTimeseries}},
 where specifically the DFT of a time-series and requested data
-transformation were calculated. The clustering is performed
-on the matrix \code{tset$dat}. This is currently only used for
-clustering of final segment time-series; it could in principle also
-be used for segmentation, but that has not been tested.
+transformation were calculated. This is intended to work in the same way
+as \code{\link{clusterTimeseries}} but was so far only tested for
+clustering of the final segment time-series, as previously applied
+to microarray data from yeast by Machne & Murray (2012)
+<doi:10.1371/journal.pone.0037906> and from cyanobacteria by Lehmann
+et al. (2013) <doi:10.1186/1471-2105-14-133>.
+It could in principle also be used for segmentation, but that has not
+been extensively tested. The clustering function
+\code{\link[flowClust:flowClust]{flowClust}} is a model-based clustering
+approach and much slower then \code{\link[stats:kmeans]{kmeans}} used
+in \code{\link{clusterTimeseries}}. 
 Please see option \code{ncpu} on how to use parallel mode, which
-does not work on some installations.
+does not work on some installations. However, model-based clustering has
+the advantage of an intrinsic measure (\code{BIC}) to decide on the optimal
+cluster numbers. Additionally, the clusters can be "merged" to fewer
+clusters at constant \code{BIC} using
+\code{\link[flowMerge:flowMerge]{flowMerge}}.
+}
+\references{
+Machne & Murray (2012)
+    <doi:10.1371/journal.pone.0037906>
 }

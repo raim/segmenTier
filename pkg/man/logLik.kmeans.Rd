@@ -12,8 +12,9 @@
 \item{...}{unused}
 }
 \description{
-provides a log-likelihood method for \code{kmeans} results,
-after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
+provides a log-likelihood method for \code{\link[stats:kmeans]{kmeans}}
+results, after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
 also available via the 
-\href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}
+\href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. This is an attempt to reproduce the \code{BIC} measure
+in model-based clustering to decide on an optimal number of clusters.
 }
