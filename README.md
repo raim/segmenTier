@@ -58,12 +58,13 @@ segments$segments
 
 Usage of the package is further demonstrated in two R demos:
 
-#### Direct Interface to Algorithm
+#### Demo I: Direct Interface to Algorithm
 
-The main low level interface to the algorithm, function `segmentClusters`,
-is demonstrated in the file [demo/segment_test.R](demo/segment_test.R). 
-It produces Supplemental Figure S1 of the preprint 
-manuscript.
+The main low level interface to the algorithm, function
+`segmentClusters`, is demonstrated in the file
+[demo/segment_test.R](demo/segment_test.R).  It produces Supplemental
+Figure S1 of [Machne, Murray & Stadler
+2017](http://www.nature.com/articles/s41598-017-12401-8).
 
 To run it as a demo in R simply type:
 ```
@@ -71,15 +72,17 @@ library(segmenTier)
 demo("segment_test", package = "segmenTier")
 ```
 
-#### Interfaces to Time-Series Processing, Clustering and Batch Segmentation 
+#### Demo II: Clustering, Batch Segmentation & Parameter Scans
 
 A real-life data set is processed, clustered and 
 segmented with varying parameters in 
 [demo/segment_data.R](demo/segment_data.R).
 
-This demo runs quite long, since it calculates many 
-segmentations. It produces Figure 3 and Supplemental Figures
-S4a and S4b of the preprint manuscript.
+This demo runs quite long, since it calculates many segmentations. It
+provides a comprehensive overview of the effects of segmentation
+parameters `E`, `M` and `nui`, and produces (among others) Figure 3
+and Supplemental Figures S4a and S4b of [Machne, Murray & Stadler
+2017](http://www.nature.com/articles/s41598-017-12401-8).
 
 ```
 demo("segment_data", package = "segmenTier")
