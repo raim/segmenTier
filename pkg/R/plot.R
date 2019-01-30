@@ -8,7 +8,8 @@
 #' @param type plot type: png, jpeg, eps, pdf, tiff or svg
 #' @param width figure width in inches
 #' @param height figure height in inches
-#' @param res resolution in ppi (pixels per inch), only for 'png' and 'tiff'
+#' @param res resolution in ppi (pixels per inch), only for types png,
+#' jpeg and tiff
 #' @export
 plotdev <- function(file.name="test", type="png", width=5, height=5, res=100) {
   file.name <- paste(file.name, type, sep=".")
@@ -320,14 +321,14 @@ image_matrix <- function(dat, text, text.col,
 #' @param x a time-series object as returned by
 #' \code{\link{processTimeseries}}
 #' @param plot a string vector indicating the values to be plotted;
-#' `total': plot of the total signal, summed over
+#' "total": plot of the total signal, summed over
 #' the time-points, and indicating the applied threshold \code{low.thresh};
-#' note that the total levels may have been transformed (e.g. by \code{log_1}
-#' or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
-#' in \code{\link{processTimeseries}}; `timeseries': plot the complete
-#' time-series as a heatmap, where time is plotted bottom-up on the y-axis
-#' and the genomic coordinate is the x-axis;
-## `clusters': this requires
+#' note that the total levels may have been transformed (e.g. by
+#' \code{\link{log_1}} or \code{\link{ash}}) depending on the arguments
+#' \code{trafo} and \code{dc.trafo} in \code{\link{processTimeseries}};
+#' "timeseries": plot the complete time-series as a heatmap, where time is
+#' plotted bottom-up on the y-axis and segmentation coordinates on the x-axis;
+## "clusters": this requires
 ## a clustering set from clusterTimeseries and plots average time-series
 ## for clusters, independent of their genomic coordinate
 #' @param xaxis x-values to use as x-axis (e.g. to reflect absolute
@@ -425,7 +426,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"),
 #' in function \code{axis}
 #' @param pch argument \code{pch} (symbol) for plot
 #' @param ylabh plot "clustering" horizontally at y-axis
-#' @param ... additional arguments to plot (untested)
+#' @param ... additional arguments to plot, eg. to set point \code{cex}
 #' @return returns the input "clustering" object with (potentially new)
 #' cluster sorting and colors as in shown in the plot
 #'@export
@@ -490,16 +491,20 @@ plot.clustering <- function(x, k, sort=FALSE, xaxis,
 #' @param xaxis optional x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
 #' @param show.fused show the fuse tag as a black x
-#' @param plot string list indicating which data should be plotted;
-#' `segments': plot segments as arrows; `S1' plot the scoring vectors
-#' \code{s(i,j,c} for all \code{c}; `S' plot the derivative of
+#' @param plot string vector indicating which data should be plotted;
+#' "segments": plot segments as arrows; "S1" plot the scoring vectors
+#' \code{s(i,j,c} for all \code{c}; "S" plot the derivative of
 #' matrix \code{S(i,c)} for all \code{c}
-#' @param ... currently unused additional arguments to plot
+#' @param ... additional arguments forwarded to
+#' \code{\link[graphics:arrows]{arrows}}, eg. to set \code{lwd} for
+#' for \code{plot="segments"}, or to \code{\link[graphics:matplot]{matplot}}
+#' for \code{plot="S"}
 #'@export
 plot.segments <- function(x, plot=c("S","segments"),  types, params,
                           xaxis, show.fused=FALSE, ...) {
     for ( pl in plot ) 
-        plotSegments(x, pl, types, params, xaxis, show.fused, ...)
+        plotSegments(x, plot=pl, types=types, params=params,
+                     xaxis=xaxis, show.fused=show.fused, ...)
 }
 ## above public wrapper allows to sort the plots by the order in plots
 plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
@@ -656,8 +661,11 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
 #' @param split split segment plots by clustering plots
 #' @param plot.matrix include the internal scoring matrices in the plot
 #' @param mai margins of invidual plots, see \code{par}
-#' @param ... further arguments to plot methods for \code{cset} and
-#' \code{sset}
+#' @param ... further arguments to
+#' \code{\link{plot.clustering}} (\code{cset}) and
+#' \code{\link{plot.segments}} (\code{sset}). Note: these may
+#' conflict and cause errors, but eg. a combination of \code{cex=0.5, lwd=3}
+#' works, affecting cluster point size and segment line width, respectively.
 #'@export
 plotSegmentation <- function(tset, cset, sset, split=FALSE, plot.matrix=FALSE,
                              mai=c(.01,2,.01,.01), ...) {
