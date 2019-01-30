@@ -26,10 +26,10 @@ developed for clustering of the Discrete Fourier Transform of periodic
 gene expression data ("circadian" or "yeast metabolic oscillations").
 
 This clustering approach is outlined in the supplemental material of
-@Machne2012, and here is used as a basis of
-segment similarity measures.  Note, that the functions
-`processTimeseries` and `clusterTimeseries`, can also be used as
-stand-alone tools for periodic time-series analysis and clustering.
+@Machne2012, and here is used as a basis of segment similarity
+measures.  Note, that the functions `processTimeseries` and
+`clusterTimeseries`, can also be used as stand-alone tools for
+periodic time-series analysis and clustering.
 
 
 # Theory
@@ -45,16 +45,18 @@ $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
 \label{eq:01}
 \end{equation}
 
-where $s(j,k,\alpha)$ is a scoring function that provides similarity of a segment
-from position $j$ to $k$ to clusters $\mathcal{C}_\alpha$, *e.g.* based on Pearson correlation
-to cluster centers, and $M$ is a penalty incurred
-by the use of a new segment, a fixed cost for each jump that allows to 
-fine-tune minimal segment lengths. Backtracing the maximal scores $S(k,\alpha)$ then
-provides both segment borders and segment cluster association.
+where $s(j,k,\alpha)$ is a scoring function that provides similarity
+of a segment from position $j$ to $k$ to clusters
+$\mathcal{C}_\alpha$, *e.g.* based on Pearson correlation to cluster
+centers, and $M$ is a penalty incurred by the use of a new segment, a
+fixed cost for each jump that allows to fine-tune minimal segment
+lengths. Backtracing the maximal scores $S(k,\alpha)$ then provides
+both segment borders and segment cluster association.
 
 Clustering tools are provided in the package, and a full pipeline is
-available for clustering the Fourier-transform of oscillatory RNA-seq time-series,
-("circadian or metabolic oscillations"). See **Quick Guide**.
+available for clustering the Fourier-transform of oscillatory RNA-seq
+time-series, ("circadian or metabolic oscillations"). See **Quick
+Guide**.
  
 
 The theory behind the package is detailed in @Machne2017. 
@@ -69,7 +71,8 @@ From CRAN:
 install.packages("segmenTier")
 ```
 
-The development version can be obtained from github using [`devtools`](https://cran.r-project.org/package=devtools):
+The development version can be obtained from github using
+[`devtools`](https://cran.r-project.org/package=devtools):
 
 ```{r, eval=FALSE}
 library(devtools)
@@ -91,7 +94,7 @@ cset <- clusterTimeseries(tset, K=12)
 # ... segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 # and inspect results:
-plotSegmentation(tset,cset,segments)
+plotSegmentation(tset, cset, segments, cex=.5, lwd=2)
 print(segments)
 ## and get segment border table for further processing
 head(segments$segments)
