@@ -967,6 +967,12 @@ setVarySettings <- function(E=c(1,3),
 #' parameters. Each parameter in the list \code{varySettings} can be
 #' a vector and ALL combinations of the passed parameter values will
 #' be used for one run of \code{\link{segmentClusters}}.
+#' The resulting segment table, list item "segments" of the returned object,
+#' is a \code{\link[data.frame]{data.frame}} with additional
+#' columns "ID" and "type", automatically generated strings indicating
+#' the used parameters (each "type" reflects one parameter set), and
+#' "colors", indicating the automatically generated color of the assigned
+#' cluster label.
 #' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
 #' @param varySettings list of settings where each entry can be a vector;
 #' the function will construct a matrix of all possible combinations of
@@ -997,7 +1003,8 @@ setVarySettings <- function(E=c(1,3),
 #' returns a matrix only
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @return Returns an object of class "segments", just as its base function
-#' \code{\link{segmentClusters}}, but the main segment table has additional
+#' \code{\link{segmentClusters}}, but the main segment table, list item
+#' "segments", is a \code{\link[data.frame]{data.frame}} with additional
 #' columns "ID" and "type", automatically generated strings indicating
 #' the used parameters (each "type" reflects one parameter set), and
 #' "colors", indicating the automatically generated color of the assigned

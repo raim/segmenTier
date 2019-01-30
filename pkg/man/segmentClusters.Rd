@@ -97,8 +97,9 @@ borders.
 The main result, list item "segments" of the returned 
 object, is a 3-column matrix, where column 1 is the cluster
 assignment and colums 2 and 3 are start and end indices of the
-segments. It can be obtained as a table/numeric matrix with
-function \code{\link{segments}}.
+segments. For the batch function \code{\link{segmentCluster.batch}},
+the "segments" item is a \code{\link[data.frame]{data.frame}}
+containg additional information, see `?segmentCluster.batch`.
 
 As shown in the publication, the parameters \code{M},
 \code{E} and \code{nui} have the strongest impact on resulting
@@ -143,7 +144,7 @@ data(primseg436)
 # 1) Fourier-transform time series:
 tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
 
-# 2) cluster time-series (into K=12 clusters):
+# 2) cluster time-series into K=12 clusters:
 cset <- clusterTimeseries(tset, K=12)
 
 # 3) ... segment it:

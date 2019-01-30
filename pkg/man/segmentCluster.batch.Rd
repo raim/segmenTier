@@ -49,7 +49,8 @@ returns a matrix only}
 }
 \value{
 Returns an object of class "segments", just as its base function
-\code{\link{segmentClusters}}, but the main segment table has additional
+\code{\link{segmentClusters}}, but the main segment table, list item
+"segments", is a \code{\link[data.frame]{data.frame}} with additional
 columns "ID" and "type", automatically generated strings indicating
 the used parameters (each "type" reflects one parameter set), and
 "colors", indicating the automatically generated color of the assigned
@@ -69,6 +70,12 @@ function \code{\link{clusterTimeseries}} and over multiple segmentation
 parameters. Each parameter in the list \code{varySettings} can be
 a vector and ALL combinations of the passed parameter values will
 be used for one run of \code{\link{segmentClusters}}.
+The resulting segment table, list item "segments" of the returned object,
+is a \code{\link[data.frame]{data.frame}} with additional
+columns "ID" and "type", automatically generated strings indicating
+the used parameters (each "type" reflects one parameter set), and
+"colors", indicating the automatically generated color of the assigned
+cluster label.
 }
 \examples{
 # load example data, an RNA-seq time-series data from a short genomic region
