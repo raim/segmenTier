@@ -179,7 +179,7 @@ clusterSegments <- function() {}
 #'     scoring functions "ccor" and "icor"
 #' @param a a cluster "dissimilarity" only used for pure cluster-based
 #'     scoring w/o cluster similarity measures in scoring function
-#'     "ccls", see "Details".
+#'     "ccls".
 #' @param nui the similarity score to be used for nuissance clusters
 #'     in the cluster similarity matrices
 #' @param nextmax go backwards while score is increasing before

@@ -23,7 +23,7 @@ scoring functions "ccor" and "icor"}
 
 \item{a}{a cluster "dissimilarity" only used for pure cluster-based
 scoring w/o cluster similarity measures in scoring function
-"ccls", see "Details".}
+"ccls".}
 
 \item{nui}{the similarity score to be used for nuissance clusters
 in the cluster similarity matrices}
