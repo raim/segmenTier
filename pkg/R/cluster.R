@@ -199,6 +199,7 @@ color_hue <- function(n) {
 #' tset <- processTimeseries(ts=tsd, dc.trafo="ash",
 #'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
 #' ## a plot method exists for the returned time-series class:
+#' par(mfcol=c(2,1))
 #' plot(tset)
 #'@export
 processTimeseries <- function(ts, trafo="raw", 
@@ -572,17 +573,22 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
 #'
 #' provides a log-likelihood method for \code{\link[stats:kmeans]{kmeans}}
 #' results, after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
-#' also available via the 
+#' latest update from version on Jan 30, 2019  
 #' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. This is an attempt to reproduce the \code{BIC} measure
 #' in model-based clustering to decide on an optimal number of clusters.
+#' This function will be used for \code{\link[stats:kmeans]{kmeans}}
+#' results objects when passed to \code{\link[stats:BIC]{BIC}} and
+#' \code{\link[stats:AIC]{AIC}} functions from the \pkg{stats} package in
+#' base R, and is used in this manner in \code{\link{segmentClusters}}.
+#' This has not been tested extensively; feel free to do so and contribute
+#' your results. 
 #' @param object a \code{kmeans} object
 #' @param ... unused
 #' @export
 logLik.kmeans <- function(object, ...)
-    structure(object$tot.withinss,
+    structure(-object$tot.withinss/2,
               df = nrow(object$centers)*ncol(object$centers),
-              nobs = length(object$cluster),
-              class = 'logLik')
+              nobs = length(object$cluster))
 
 
 #' Cluster a processed time-series with k-means.
@@ -602,6 +608,12 @@ logLik.kmeans <- function(object, ...)
 #' association sequence into segments, and assigns each segment to
 #' the "winning" input cluster.
 #'
+#' The argument \code{K} is an integer vector that sets the requested
+#' cluster numbers (argument \code{centers} in
+#' \code{\link[stats:kmeans]{kmeans}}). However, to avoid errors in batch
+#' use, a smaller \code{K} is chosen, if the data contains less then
+#' \code{K} distinct values.
+#' 
 #' Nuissance Cluster:
 #' values that were removed during time-series processing, such as
 #' rows that only contain 0 or NA values, will be assigned to
@@ -631,7 +643,8 @@ logLik.kmeans <- function(object, ...)
 #' @param K the number of clusters to be calculated, ie. the argument
 #'     \code{centers} of \code{\link[stats:kmeans]{kmeans}}, but here
 #'     multiple clusterings can be calculated, ie. \code{K} can be an
-#'     integer vector
+#'     integer vector. Note that a smaller cluster number is automatically
+#'     chosen, if the data doesn't have more then K different values.
 #' @param iter.max the maximum number of iterations allowed in
 #'     \code{\link[stats:kmeans]{kmeans}}
 #' @param nstart number of randomized initializations of
@@ -712,6 +725,8 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     for ( k in seq_along(K) ) {
         
         ## get cluster number K
+        ## NOTE: a smaller cluster number is automatically chosen,
+        ## if the data doesn't have more then K different values!
         Kused <- min(c(K[k],sum(!duplicated(dat[!rm.vals,]))))
         
         if ( verb>0 )
@@ -751,6 +766,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         Pci[[k]] <- P
 
         ## calculate BIC/AIC
+        ## NOTE: this uses logLik.kmeans defined herein!
         bic[k] <- stats::BIC(km)
         aic[k] <- stats::AIC(km)
     }
