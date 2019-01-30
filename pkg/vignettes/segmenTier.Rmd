@@ -1,5 +1,5 @@
 ---
-title: "segmenTier: similarity-based segmentation of multi-dimensional signals"
+title: "segmenTier: Similarity-Based Segmentation of Multi-Dimensional Signals"
 author: "Rainer Machne, Douglas B. Murray, Peter F. Stadler"
 date: "`r Sys.Date()`"
 output: 
@@ -63,11 +63,13 @@ The theory behind the package is detailed in @Machne2017.
 
 ## Installation
 
+From CRAN:
+
 ```{r, eval=FALSE}
 install.packages("segmenTier")
 ```
 
-The development version can be obtained from github:
+The development version can be obtained from github using [`devtools`](https://cran.r-project.org/package=devtools):
 
 ```{r, eval=FALSE}
 library(devtools)
@@ -85,7 +87,7 @@ data(primseg436) # RNA-seq time-series data
 
 # Fourier-transform and cluster time-series:
 tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
-cset <- clusterTimeseries(tset)
+cset <- clusterTimeseries(tset, K=12)
 # ... segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 # and inspect results:

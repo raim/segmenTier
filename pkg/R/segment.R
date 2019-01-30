@@ -206,8 +206,8 @@ clusterSegments <- function() {}
 #' # 1) Fourier-transform time series:
 #' tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
 #' 
-#' # 2) cluster time-series:
-#' cset <- clusterTimeseries(tset)
+#' # 2) cluster time-series into K=12 clusters:
+#' cset <- clusterTimeseries(tset, K=12)
 #' 
 #' # 3) ... segment it:
 #' segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")

@@ -26,6 +26,8 @@ The theory behind the package is outlined in detail in
 
 ## Installation
 
+The development version can be installed from github using `devtools`:
+
 ```R
 library(devtools)
 install_github("raim/segmenTier", subdir = "pkg")
@@ -42,7 +44,7 @@ data(primseg436) # RNA-seq time-series data
 
 ## cluster timeseries:
 tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
-cset <- clusterTimeseries(tset)
+cset <- clusterTimeseries(tset, K=12)
 ## and segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 ## inspect results:

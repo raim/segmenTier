@@ -995,13 +995,40 @@ setVarySettings <- function(E=c(1,3),
 #' debugging or illustration of the algorithm;
 #' TODO: save.matrix is currently not implemented, since batch function
 #' returns a matrix only
+#' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @return Returns an object of class "segments", just as its base function
 #' \code{\link{segmentClusters}}, but the main segment table has additional
 #' columns "ID" and "type", automatically generated strings indicating
 #' the used parameters (each "type" reflects one parameter set), and
 #' "colors", indicating the automatically generated color of the assigned
 #' cluster label.
-#' @param verb level of verbosity, 0: no output, 1: progress messages
+#' @examples
+#' # load example data, an RNA-seq time-series data from a short genomic region
+#' # of budding yeast
+#' data(primseg436)
+#' 
+#' # 1) Fourier-transform time series:
+#' tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+#'
+#' # 2) cluster time-series several times into K=12 clusters:
+#' cset <- clusterTimeseries(tset, K=c(12,12,12))
+#'
+#' # 3) choose parameter ranges, here only E is varied 
+#' vary <- setVarySettings(M=100, E=c(1,3), nui=3, S="icor", Mn=20)
+#' 
+#' # 4) ... segment ALL using the batch function:
+#' segments <- segmentCluster.batch(cset=cset, varySettings=vary)
+#' 
+#' # 5) inspect results:
+#' print(segments)
+#' plotSegmentation(tset, cset, segments)
+#' 
+#' # 6) and get segment border table. Note that the table has
+#' #    additional columns "ID" and "type", indicating the used parameters,
+#' #    and "color" providing the color of the cluster the segment was
+#' #    assigned to. This allows to track segments in the inspection plots.
+#' sgtable <- segments$segments
+#' 
 #'@export
 segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
                                  fuse.threshold=0.2, rm.nui=TRUE, 

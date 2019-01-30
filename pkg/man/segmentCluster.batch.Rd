@@ -70,3 +70,31 @@ parameters. Each parameter in the list \code{varySettings} can be
 a vector and ALL combinations of the passed parameter values will
 be used for one run of \code{\link{segmentClusters}}.
 }
+\examples{
+# load example data, an RNA-seq time-series data from a short genomic region
+# of budding yeast
+data(primseg436)
+
+# 1) Fourier-transform time series:
+tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+
+# 2) cluster time-series several times into K=12 clusters:
+cset <- clusterTimeseries(tset, K=c(12,12,12))
+
+# 3) choose parameter ranges, here only E is varied 
+vary <- setVarySettings(M=100, E=c(1,3), nui=3, S="icor", Mn=20)
+
+# 4) ... segment ALL using the batch function:
+segments <- segmentCluster.batch(cset=cset, varySettings=vary)
+
+# 5) inspect results:
+print(segments)
+plotSegmentation(tset, cset, segments)
+
+# 6) and get segment border table. Note that the table has
+#    additional columns "ID" and "type", indicating the used parameters,
+#    and "color" providing the color of the cluster the segment was
+#    assigned to. This allows to track segments in the inspection plots.
+sgtable <- segments$segments
+
+}
