@@ -385,7 +385,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
 
     ## add used parameters
     ## TODO: only parameters used for selected scoring
-    parms <- data.frame(clustering=k,
+    parms <- data.frame(k=k,
                         S=S, E=E, M=M, Mn=Mn, a=a, nui=nui, multi=multi, 
                         nextmax=nextmax, multib=multib,
                         stringsAsFactors=FALSE)
@@ -518,8 +518,8 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
 #' @param ... further argument to \code{print.data.frame}
 #' @export
 print.segments <- function(x, ...) {
-    cat(paste("\nSimilarity-based segmentation by dynamic programming of",
-              x$N, "data points.\n"))
+    cat(paste("\nSimilarity-based segmentation by dynamic programming:"))
+    cat(paste("\nTotal length: ", x$N))
     cat(paste("\nSegments:\n"))
     print(x$segments, ...)
     cat(paste("\nParameters:\n"))
