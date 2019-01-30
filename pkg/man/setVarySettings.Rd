@@ -9,32 +9,33 @@ setVarySettings(E = c(1, 3), S = "ccor", M = 100, Mn = 100,
   multib = "max")
 }
 \arguments{
-\item{E}{exponent to scale similarity matrices, must be odd
-to maintain negative correlations!}
+\item{E}{exponent to scale similarity matrices}
 
-\item{S}{the scoring function to be used: "ccor", "icor" or "cls"}
+\item{S}{the scoring function to be used: "ccor", "icor" or "ccls"}
 
-\item{M}{minimal sequence length; Note, that this is not a strict
-cut-off but defined as a penalty that must be "overcome" by good score.}
+\item{M}{segment length penalty. Note, that this is not a strict
+cut-off but defined as a penalty that must be "overcome" by
+good score.}
 
-\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
-shorter distances between segments; only used in scoring functions
-"ccor" and "icor"}
+\item{Mn}{segment length penalty for nuissance cluster. Mn<M will
+allow shorter distances between "real" segments; only used in
+scoring functions "ccor" and "icor"}
 
-\item{a}{an additional penalty only used for pure cluster-based
-scoring w/o cluster similarity measures in scoring function "cls"}
+\item{a}{a cluster "dissimilarity" only used for pure cluster-based
+scoring w/o cluster similarity measures in scoring function
+"ccls", see "Details".}
 
-\item{nui}{the similarity score to be used for nuissance clusters in the
-cluster similarity matrices}
+\item{nui}{the similarity score to be used for nuissance clusters
+in the cluster similarity matrices}
 
-\item{nextmax}{go backwards while score is increasing before openening a
-new segment, default is TRUE}
+\item{nextmax}{go backwards while score is increasing before
+openening a new segment, default is TRUE}
 
-\item{multi}{handling of multiple k with max. score in forward phase,
-either "min" (default) or "max"}
+\item{multi}{handling of multiple k with max. score in forward
+phase, either "min" (default) or "max"}
 
-\item{multib}{handling of multiple k with max. score in back-trace phase,
-either "min" (default), "max" or "skip"}
+\item{multib}{handling of multiple k with max. score in back-trace
+phase, either "min" (default), "max" or "skip"}
 }
 \value{
 Returns a parameter settings structure that can be used

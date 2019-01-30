@@ -171,10 +171,10 @@ clusterSegments <- function() {}
 #'     argument \code{nui} for the nuissance cluster.
 #' @param E exponent to scale similarity matrices
 #' @param S the scoring function to be used: "ccor", "icor" or "ccls"
-#' @param M segment length penalty; Note, that this is not a strict
+#' @param M segment length penalty. Note, that this is not a strict
 #'     cut-off but defined as a penalty that must be "overcome" by
 #'     good score.
-#' @param Mn segment length penalty for nuissance cluster, Mn<M will
+#' @param Mn segment length penalty for nuissance cluster. Mn<M will
 #'     allow shorter distances between "real" segments; only used in
 #'     scoring functions "ccor" and "icor"
 #' @param a a cluster "dissimilarity" only used for pure cluster-based

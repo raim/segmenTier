@@ -920,24 +920,7 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
 #' Generates the parameter list (\code{varySettings}) for
 #' \code{\link{segmentCluster.batch}}, using defaults
 #' for all parameters not passed.
-#' @param E exponent to scale similarity matrices, must be odd
-#' to maintain negative correlations!
-#' @param S the scoring function to be used: "ccor", "icor" or "cls"
-#' @param M minimal sequence length; Note, that this is not a strict
-#' cut-off but defined as a penalty that must be "overcome" by good score.
-#' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
-#' shorter distances between segments; only used in scoring functions
-#' "ccor" and "icor" 
-#' @param a an additional penalty only used for pure cluster-based
-#' scoring w/o cluster similarity measures in scoring function "cls"
-#' @param nui the similarity score to be used for nuissance clusters in the
-#' cluster similarity matrices
-#' @param nextmax go backwards while score is increasing before openening a
-#' new segment, default is TRUE
-#' @param multi handling of multiple k with max. score in forward phase,
-#' either "min" (default) or "max"
-#' @param multib handling of multiple k with max. score in back-trace phase,
-#' either "min" (default), "max" or "skip"
+#' @inheritParams segmentClusters
 #' @return Returns a parameter settings structure that can be used
 #' in the batch function \code{\link{segmentCluster.batch}}.
 #'@export
