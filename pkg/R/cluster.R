@@ -578,14 +578,16 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
 #' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. Note that the blogged version on Jan 30, 2019 add a minus
 #' and a division by 2 compared to the package version.
 #' The strategy has not been reviewed, and this function has not been
-#' tested extensively; feel free to do so and contribute your results. 
+#' tested extensively; feel free to do so and contribute your results.
 #' This is an attempt to reproduce the \code{BIC} measure
 #' in model-based clustering to decide on an optimal number of clusters.
 #' This function will be used for \code{\link[stats:kmeans]{kmeans}}
 #' results objects when passed to \code{\link[stats:BIC]{BIC}} and
 #' \code{\link[stats:AIC]{AIC}} functions from the \pkg{stats} package in
-#' base R, and is used in this manner in \code{\link{segmentClusters}}.
-#' @param object a \code{kmeans} object
+#' base R, and BIC and AIC are calculated this way in
+#' \code{\link{segmentClusters}}. It is however not used anywhere at the
+#' moment.
+#' @param object a \code{\link[stats:kmeans]{kmeans}} result object
 #' @param ... unused
 #' @export
 logLik.kmeans <- function(object, ...)
