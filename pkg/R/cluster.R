@@ -572,13 +572,14 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
 
 #' Experimental: AIC/BIC for kmeans
 #'
-#' provides a log-likelihood method for \code{\link[stats:kmeans]{kmeans}}
-#' results, after Neal Fultz at \url{https://stackoverflow.com/a/33202188},
-#' also featured in the
-#' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. Note that the blogged version on Jan 30, 2019 add a minus
-#' and a division by 2 compared to the package version.
-#' The strategy has not been reviewed, and this function has not been
+#' This function is supposed to provide a log-likelihood method for
+#' \code{\link[stats:kmeans]{kmeans}} results, after Neal Fultz at
+#' \url{https://stackoverflow.com/a/33202188} and also featured in the
+#' \href{https://rdrr.io/github/nfultz/stackoverflow/src/R/logLik_kmeans.R}{stackoverflow package}. Note, that the blogged version on Jan 30, 2019 adds
+#' a minus and a division by 2 compared to a linked git version.
+#' This idea has not been reviewed, and this function has not been
 #' tested extensively; feel free to do so and contribute your results.
+#' 
 #' This is an attempt to reproduce the \code{BIC} measure
 #' in model-based clustering to decide on an optimal number of clusters.
 #' This function will be used for \code{\link[stats:kmeans]{kmeans}}
