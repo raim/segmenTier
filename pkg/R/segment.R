@@ -215,7 +215,7 @@ clusterSegments <- function() {}
 #' 
 #' # 4) inspect results:
 #' print(segments)
-#' plotSegmentation(tset, cset, segments)
+#' plotSegmentation(tset, cset, segments, cex=.5, lwd=3)
 #' 
 #' # 5) and get segment border table for further processing:
 #' sgtable <- segments$segments
@@ -541,8 +541,8 @@ print.segments <- function(x, ...) {
 
 #' Transcriptome time-series from budding yeast.
 #' 
-#' transcriptome time series data from a region encompassing
-#' four genes and regulatory upstream non-coding RNA in budding yeast.
+#' Transcriptome time-series data from a region encompassing
+#' four genes and a regulatory upstream non-coding RNA in budding yeast.
 #' The data set is described in more detail in the publication
 #' Machne, Murray & Stadler (2017) <doi:10.1038/s41598-017-12401-8>.
 #'
