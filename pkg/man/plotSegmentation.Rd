@@ -23,8 +23,11 @@ plotSegmentation(tset, cset, sset, split = FALSE, plot.matrix = FALSE,
 
 \item{mai}{margins of invidual plots, see \code{par}}
 
-\item{...}{further arguments to plot methods for \code{cset} and
-\code{sset}}
+\item{...}{further arguments to
+\code{\link{plot.clustering}} (\code{cset}) and
+\code{\link{plot.segments}} (\code{sset}). Note: these may
+conflict and cause errors, but eg. a combination of \code{cex=0.5, lwd=3}
+works, affecting cluster point size and segment line width, respectively.}
 }
 \description{
 Plot all objects from the segmentation pipeline, i.e. the processed

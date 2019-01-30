@@ -152,7 +152,7 @@ segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 
 # 4) inspect results:
 print(segments)
-plotSegmentation(tset, cset, segments)
+plotSegmentation(tset, cset, segments, cex=.5, lwd=3)
 
 # 5) and get segment border table for further processing:
 sgtable <- segments$segments

@@ -16,7 +16,8 @@ plotdev(file.name = "test", type = "png", width = 5, height = 5,
 
 \item{height}{figure height in inches}
 
-\item{res}{resolution in ppi (pixels per inch), only for 'png' and 'tiff'}
+\item{res}{resolution in ppi (pixels per inch), only for types png,
+jpeg and tiff}
 }
 \description{
 Switch between plot devices.

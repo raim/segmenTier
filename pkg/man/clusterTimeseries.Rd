@@ -14,7 +14,8 @@ clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
 \item{K}{the number of clusters to be calculated, ie. the argument
 \code{centers} of \code{\link[stats:kmeans]{kmeans}}, but here
 multiple clusterings can be calculated, ie. \code{K} can be an
-integer vector}
+integer vector. Note that a smaller cluster number is automatically
+chosen, if the data doesn't have more then K different values.}
 
 \item{iter.max}{the maximum number of iterations allowed in
 \code{\link[stats:kmeans]{kmeans}}}
@@ -55,6 +56,12 @@ matrices (Pearson correlation) that will be used by the main function
 of this package, \code{\link{segmentClusters}}, to split the cluster
 association sequence into segments, and assigns each segment to
 the "winning" input cluster.
+
+The argument \code{K} is an integer vector that sets the requested
+cluster numbers (argument \code{centers} in
+\code{\link[stats:kmeans]{kmeans}}). However, to avoid errors in batch
+use, a smaller \code{K} is chosen, if the data contains less then
+\code{K} distinct values.
 
 Nuissance Cluster:
 values that were removed during time-series processing, such as

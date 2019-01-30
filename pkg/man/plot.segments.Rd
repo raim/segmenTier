@@ -11,9 +11,9 @@
 \item{x}{a segmentation object as returned by
 \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}}
 
-\item{plot}{string list indicating which data should be plotted;
-`segments': plot segments as arrows; `S1' plot the scoring vectors
-\code{s(i,j,c} for all \code{c}; `S' plot the derivative of
+\item{plot}{string vector indicating which data should be plotted;
+"segments": plot segments as arrows; "S1" plot the scoring vectors
+\code{s(i,j,c} for all \code{c}; "S" plot the derivative of
 matrix \code{S(i,c)} for all \code{c}}
 
 \item{types}{a string vector indicating segment types to plot (a subset of
@@ -29,7 +29,10 @@ chromosomal coordinates)}
 
 \item{show.fused}{show the fuse tag as a black x}
 
-\item{...}{currently unused additional arguments to plot}
+\item{...}{additional arguments forwarded to
+\code{\link[graphics:arrows]{arrows}}, eg. to set \code{lwd} for
+for \code{plot="segments"}, or to \code{\link[graphics:matplot]{matplot}}
+for \code{plot="S"}}
 }
 \description{
 plot the final segmentation objects returned by

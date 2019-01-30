@@ -31,7 +31,7 @@ in function \code{axis}}
 
 \item{ylabh}{plot "clustering" horizontally at y-axis}
 
-\item{...}{additional arguments to plot (untested)}
+\item{...}{additional arguments to plot, eg. to set point \code{cex}}
 }
 \value{
 returns the input "clustering" object with (potentially new)

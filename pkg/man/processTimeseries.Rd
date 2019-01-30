@@ -149,6 +149,7 @@ nrow(tsd)
 tset <- processTimeseries(ts=tsd, dc.trafo="ash",
                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
 ## a plot method exists for the returned time-series class:
+par(mfcol=c(2,1))
 plot(tset)
 }
 \references{

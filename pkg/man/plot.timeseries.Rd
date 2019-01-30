@@ -12,13 +12,13 @@
 \code{\link{processTimeseries}}}
 
 \item{plot}{a string vector indicating the values to be plotted;
-`total': plot of the total signal, summed over
+"total": plot of the total signal, summed over
 the time-points, and indicating the applied threshold \code{low.thresh};
-note that the total levels may have been transformed (e.g. by \code{log_1}
-or \code{ash}) depending on the arguments \code{trafo} and \code{dc.trafo}
-in \code{\link{processTimeseries}}; `timeseries': plot the complete
-time-series as a heatmap, where time is plotted bottom-up on the y-axis
-and the genomic coordinate is the x-axis;}
+note that the total levels may have been transformed (e.g. by
+\code{\link{log_1}} or \code{\link{ash}}) depending on the arguments
+\code{trafo} and \code{dc.trafo} in \code{\link{processTimeseries}};
+"timeseries": plot the complete time-series as a heatmap, where time is
+plotted bottom-up on the y-axis and segmentation coordinates on the x-axis;}
 
 \item{xaxis}{x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
