@@ -45,8 +45,8 @@ $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
 \label{eq:01}
 \end{equation}
 
-where $s(j,k,\alpha)$ is a scoring function that provides similarity
-of a segment from position $j$ to $k$ to clusters
+where $s(j,k,\alpha)$ is a scoring function that measures the similarity
+of a segment from position $j$ to $k$ to cluster
 $\mathcal{C}_\alpha$, *e.g.* based on Pearson correlation to cluster
 centers, and $M$ is a penalty incurred by the use of a new segment, a
 fixed cost for each jump that allows to fine-tune minimal segment
