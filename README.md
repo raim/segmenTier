@@ -5,15 +5,14 @@
 `segmenTier` is a dynamic programming solution to segmentation based
  on maximization of arbitrary similarity measures within segments.
  The general idea, theory and this implementation are described in
- [Machne, Murray & Stadler
- (2017)](http://www.nature.com/articles/s41598-017-12401-8).  In
- addition to the core algorithm, the package provides time-series
+ [Machne, Murray & Stadler (2017)](http://www.nature.com/articles/s41598-017-12401-8).
+ In addition to the core algorithm, the package provides time-series
  processing and clustering functions as described in the
  publication. These are generally applicable where a `kmeans`
  clustering yields meaningful results, and have been specifically
  developed for clustering of the Discrete Fourier Transform of
- periodic gene expression data (`circadian' or `yeast metabolic
- oscillations'). This clustering approach is outlined in the
+ periodic gene expression data (circadian or yeast metabolic
+ oscillations). This clustering approach is outlined in the
  supplemental material of [Machne & Murray (2012)]
  (https://doi.org/10.1371/journal.pone.0037906), and here is used as a
  basis of segment similarity measures.
@@ -26,7 +25,8 @@ The theory behind the package is outlined in detail in
 
 ## Installation
 
-The development version can be installed from github using `devtools`:
+The development version can be installed from github using
+[`devtools`](https://cran.r-project.org/package=devtools):
 
 ```R
 library(devtools)
