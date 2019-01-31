@@ -45,7 +45,7 @@ that can be interpreted to reflect a signal-to-noise ratio
 amplitudes (experimental; not tested)}
 
 \item{low.thresh}{use this threshold to cut-off data, which will be
-added to the absent/nuissance cluster later}
+added to the absent/nuisance cluster later}
 
 \item{smooth.space}{integer, if set a moving average is calculated
 for each time-point between adjacent data points using stats
@@ -94,7 +94,7 @@ Rows consisting only of 0 (or NA) values, or with a total signal
 (sum over all time points) below the value passed in argument
 \code{low.thresh}, are detected, result in NA values in the
 transformed data, and will be assigned to the
-"nuissance" cluster in \code{\link{clusterTimeseries}}.
+"nuisance" cluster in \code{\link{clusterTimeseries}}.
 
 Discrete Fourier Transform (DFT): if requested (option
 \code{use.fft=TRUE}), a DFT will be applied using base R's

@@ -21,7 +21,7 @@ plotSegmentation(tset, cset, sset, split = FALSE, plot.matrix = FALSE,
 
 \item{plot.matrix}{include the internal scoring matrices in the plot}
 
-\item{mai}{margins of invidual plots, see \code{par}}
+\item{mai}{margins of individual plots, see \code{par}}
 
 \item{...}{further arguments to
 \code{\link{plot.clustering}} (\code{cset}) and

@@ -9,9 +9,9 @@ calculateScore(seq, C, score, csim, M, Mn, multi = "max")
 \arguments{
 \item{seq}{the cluster sequence (where clusters at positions k:i are
 considered). Note, that unlike the R wrapper, clustering numbers
-here are 0-based, where 0 is the nuissance cluster.}
+here are 0-based, where 0 is the nuisance cluster.}
 
-\item{C}{the list of clusters, including nuissance cluster '0', see 
+\item{C}{the list of clusters, including nuisance cluster '0', see 
 \code{seq}}
 
 \item{score}{the scoring function to be used, one of "ccor" or "icor",
@@ -25,7 +25,7 @@ function "ccor") or the position-cluster similarity function
 cut-off but defined as an accumulating penalty that must be
 "overcome" by good score}
 
-\item{Mn}{minimal sequence length for nuissance cluster, Mn<M will allow
+\item{Mn}{minimal sequence length for nuisance cluster, Mn<M will allow
 shorter distances between segments}
 
 \item{multi}{if multiple \code{k} are found which return the same maximal
@@ -46,7 +46,7 @@ segmenTier's core dynamic programming routine in Rcpp
 This is \code{\link{segmenTier}}'s core dynamic programming
 routine. It constructs the total score matrix S(i,c), based on
 the passed scoring function ("icor" or "ccor"), and length penalty
-\code{M}. "Nuissance" cluster "0" can have a smaller penalty \code{Mn}
+\code{M}. "Nuisance" cluster "0" can have a smaller penalty \code{Mn}
 to allow for shorter distances between "real" segments.
 
 Scoring function "icor" calculates the sum of similarities of

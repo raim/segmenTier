@@ -24,7 +24,7 @@ fig.type <- "eps"
 ## EXAMPLE DATASET FROM BUDDING YEAST
 ## NOTE Here we vary the parameters with strongest effect
 ## on segmentation of our budding yeast data set.
-## Paramters with little effect on similarity-based scoring functions
+## Parameters with little effect on similarity-based scoring functions
 ## icor and ccor are discussed in demo(segment_test)
 
 
@@ -51,7 +51,7 @@ K <- c(12)         # cluster number K; multiple allowed; specifically, note
                    # and replicates of the same K can  yield different
                    # results for otherwise 
 nui.thresh <- 0.6  # threshold of position-cluster correlation below which
-                   # the position will be assigned to the nuissance cluster
+                   # the position will be assigned to the nuisance cluster
 ## k-means initialization
 iter.max <- 100000 # max. iterations in kmeans
 nstart <- 100      # number of initial configurations tested in kmeans
@@ -63,8 +63,8 @@ vary <- setVarySettings(
     E=c(1,3), # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=c(150), # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=c(1,3)#-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=c(1,3)#-/+ correlation of nuisance cluster with others and itself
 )
 
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
@@ -110,24 +110,24 @@ if ( plot2file )
 
 
 
-## BEST AND WORST PARAMETER SETS, as resulting from paramater scan
+## BEST AND WORST PARAMETER SETS, as resulting from parameter scan
 ## in publication
 ## UNDER-FRAGMENTATION - red cluster in fig 2
 vary <- setVarySettings(
     E=1,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=200,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=1   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=1   #-/+ correlation of nuisance cluster with others and itself
 )
 bad1 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
-## OVER-FRAGMENATION - magenta
+## OVER-FRAGMENTATION - magenta
 vary <- setVarySettings(
     E=3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=75,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=3   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=3   #-/+ correlation of nuisance cluster with others and itself
 )
 bad2 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
@@ -136,20 +136,20 @@ vary <- setVarySettings(
     E=3,    # scale exponent of similarity matrices csim
     S="ccor", # SCORING FUNCTIONS
     M=75,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=3   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=3   #-/+ correlation of nuisance cluster with others and itself
 )
 bad2.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
-## BEST FRAGMENATIONS - cyan
+## BEST FRAGMENTATION - cyan
 
 ## best 1 - high E/nui - long M
 vary <- setVarySettings(
     E=3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=200,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=3   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=3   #-/+ correlation of nuisance cluster with others and itself
 )
 best1 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 ## best 2 - intermediate
@@ -157,8 +157,8 @@ vary <- setVarySettings(
     E=2,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=150,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=3   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=3   #-/+ correlation of nuisance cluster with others and itself
 )
 best2 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 ## best 3 - E/nui=1 - short M
@@ -166,8 +166,8 @@ vary <- setVarySettings(
     E=1,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=75,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=1   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=1   #-/+ correlation of nuisance cluster with others and itself
 )
 best3 <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 ## best 3-ccor - E/nui=1 - short M
@@ -175,8 +175,8 @@ vary <- setVarySettings(
     E=1,    # scale exponent of similarity matrices csim
     S="ccor", # SCORING FUNCTIONS
     M=75,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=1   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=1   #-/+ correlation of nuisance cluster with others and itself
 )
 best3.ccor <- segmentCluster.batch(cset, varySettings=vary,type.name=c("S"))
 
@@ -212,8 +212,8 @@ vary <- setVarySettings(
     E=1,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=seq(50,250,25), # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=1   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=1   #-/+ correlation of nuisance cluster with others and itself
 )
 varM <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
@@ -222,8 +222,8 @@ vary <- setVarySettings(
     E=1:9,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=150,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=2  #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=2  #-/+ correlation of nuisance cluster with others and itself
 )
 varE <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
@@ -232,8 +232,8 @@ vary <- setVarySettings(
     E=1,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=150,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=1:9   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=1:9   #-/+ correlation of nuisance cluster with others and itself
 )
 varN <- segmentCluster.batch(cset, varySettings=vary,type.name=c("E","M","nui"))
 
@@ -258,7 +258,7 @@ if ( plot2file )
 ## Here we generate multiple clusterings, and segmentations
 ## (here with constant parameters) will be calculated for all of them.
 ## NOTE that nui.thresh acts as a noise filter for clustering, 
-## based on a minimal position-cluster similarity in marix cset$Pci
+## based on a minimal position-cluster similarity in matrix cset$Pci
 ## NOTE that random effects of k-means clustering could potentially
 ## be utilized to clean data.
 ## cluster
@@ -273,8 +273,8 @@ vary <- setVarySettings(
     E=3,    # scale exponent of similarity matrices csim
     S="icor", # SCORING FUNCTIONS
     M=75,   # scoring function minimal length penalty
-    Mn=100,   # M for nuissance clusters
-    nui=3   #-/+ correlation of nuissance cluster with others and itself
+    Mn=100,   # M for nuisance clusters
+    nui=3   #-/+ correlation of nuisance cluster with others and itself
 )
 #vary$nui <- vary$E <- 3
 vark <- segmentCluster.batch(kset, varySettings=vary)

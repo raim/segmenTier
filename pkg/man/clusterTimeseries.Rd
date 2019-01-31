@@ -26,7 +26,7 @@ be chosen?"}
 
 \item{nui.thresh}{threshold correlation of a data point to a
 cluster center; if below the data point will be added to
-nuissance cluster 0}
+nuisance cluster 0}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
@@ -63,14 +63,14 @@ cluster numbers (argument \code{centers} in
 use, a smaller \code{K} is chosen, if the data contains less then
 \code{K} distinct values.
 
-Nuissance Cluster:
+Nuisance Cluster:
 values that were removed during time-series processing, such as
 rows that only contain 0 or NA values, will be assigned to
-the "nuissance cluster" with cluster label "0". Additionally, a minimal
+the "nuisance cluster" with cluster label "0". Additionally, a minimal
 correlation to any cluster center can be specified, argument
 \code{nui.thresh}, and positions without any correlation higher
-then this, will also be assigned to the "nuissance" cluster.
-Resulting "nuissance segments" will not be shown in the results.
+then this, will also be assigned to the "nuisance" cluster.
+Resulting "nuisance segments" will not be shown in the results.
 
 Cluster Sorting and Coloring:
 additionally the cluster labels in the result object will be sorted by

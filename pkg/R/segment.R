@@ -127,7 +127,7 @@ clusterSegments <- function() {}
 #' already provided by this object.
 #'
 #' In the second scenario II for custom use, argument \code{seq} can
-#' be a simple clustering vector, where a nuissance cluster must be
+#' be a simple clustering vector, where a nuisance cluster must be
 #' indicated by cluster label "0" (zero). The cluster-cluster or
 #' cluster-position similarities MUST be provided (argument
 #' \code{csim}) for scoring functions "ccor" and "icor",
@@ -135,12 +135,12 @@ clusterSegments <- function() {}
 #' cluster similarity matrix is constructed from arguments \code{a}
 #' and \code{nui}, with cluster self-similarities of 1,
 #' "dissimilarities" between different clusters using argument
-#' \code{a<0}, and nuissance cluster self-similarity of \code{-a}.
+#' \code{a<0}, and nuisance cluster self-similarity of \code{-a}.
 #'
 #' The function returns a list (class "segments") comprising of the
 #' main result (list item "segments"), and "warnings" from the dynamic
 #' programming and backtracing phases, the used similarity matrix
-#' \code{csim}, extended by the nuissance cluster; and optionally (see
+#' \code{csim}, extended by the nuisance cluster; and optionally (see
 #' option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
 #' total score matrix \code{S(i,c)} and the backtracing matrix
 #' \code{K(i,c)} for analysis of algorithm performance for novel data
@@ -153,7 +153,7 @@ clusterSegments <- function() {}
 #' @param seq Either an integer vector of cluster labels, or a
 #'     structure of class 'clustering' as returned by
 #'     \code{\link{clusterTimeseries}}. The only strict requirement
-#'     for the first option is that nuissance clusters (which will be
+#'     for the first option is that nuisance clusters (which will be
 #'     treated specially during the dynamic programming routine) have
 #'     to be '0' (zero).
 #' @param k if argument \code{seq} is of class 'clustering' the kth
@@ -168,19 +168,19 @@ clusterSegments <- function() {}
 #'     provided. Finally, for scoring function "ccls" the argument
 #'     \code{csim} will be ignored and the matrix is instead
 #'     automatically constructed from argument \code{a}, and using
-#'     argument \code{nui} for the nuissance cluster.
+#'     argument \code{nui} for the nuisance cluster.
 #' @param E exponent to scale similarity matrices
 #' @param S the scoring function to be used: "ccor", "icor" or "ccls"
 #' @param M segment length penalty. Note, that this is not a strict
 #'     cut-off but defined as a penalty that must be "overcome" by
 #'     good score.
-#' @param Mn segment length penalty for nuissance cluster. Mn<M will
+#' @param Mn segment length penalty for nuisance cluster. Mn<M will
 #'     allow shorter distances between "real" segments; only used in
 #'     scoring functions "ccor" and "icor"
 #' @param a a cluster "dissimilarity" only used for pure cluster-based
 #'     scoring w/o cluster similarity measures in scoring function
 #'     "ccls".
-#' @param nui the similarity score to be used for nuissance clusters
+#' @param nui the similarity score to be used for nuisance clusters
 #'     in the cluster similarity matrices
 #' @param nextmax go backwards while score is increasing before
 #'     opening a new segment, default is TRUE
@@ -188,7 +188,7 @@ clusterSegments <- function() {}
 #'     phase, either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace
 #'     phase, either "min" (default), "max" or "skip"
-#' @param rm.nui remove nuissance cluster segments from final results
+#' @param rm.nui remove nuisance cluster segments from final results
 #' @param save.matrix store the total score matrix \code{S(i,c)} and
 #'     the backtracing matrix \code{K(i,c)}; useful in testing stage
 #'     or for debugging or illustration of the algorithm;
@@ -252,13 +252,13 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     ## 1a: map to internal 1:K clustering:
     ## TODO: allow character clusters!?
     map <- sort(unique(seqr)) # clusters
-    map <- map[map!=0]        #  nuissance cluster
+    map <- map[map!=0]        #  nuisance cluster
     names(map) <- map
     map[] <- seq_along(map)
   
     seqr <- map[as.character(seq)]
-    seqr[seq==0] <- 0      # original nuissance clusters
-    seqr[is.na(seqr)] <- 0 # replace NA by nuissance
+    seqr[seq==0] <- 0      # original nuisance clusters
+    seqr[is.na(seqr)] <- 0 # replace NA by nuisance
         
     ## set-up similarity matrix for ccls
     ## internally 'ccor' is used, and we set up the
@@ -267,13 +267,13 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         L <- length(unique(seqr))
         csim <- matrix(a, nrow=L, ncol=L) # Delta(C,D!=C) = a
         diag(csim) <- 1 # Delta(C,C) = 1
-        nui <- -a # csim will be expanded to contain nuissance below
+        nui <- -a # csim will be expanded to contain nuisance below
     }
     
-    ## 1b: add nuissance cluster if present:
+    ## 1b: add nuisance cluster if present:
     ## columns and rows are be added to the similarity matrices, using
     ## nui and -nui as "correlations";
-    ## cluster index increased by +1, and the nuissance cluster will be "1"
+    ## cluster index increased by +1, and the nuisance cluster will be "1"
     ## throughout further processing!
 
     nui.present <- FALSE
@@ -281,14 +281,14 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         
         nui.present <- TRUE
         ## increase clustering by +1:
-        ## nuissance cluster will internally be cluster 1 !
+        ## nuisance cluster will internally be cluster 1 !
         seqr <- seqr + 1 ## TODO: get rid of this, avoid correction in .cpp
         
         if ( S=="icor" ) {
             ## cor(i,c) - similarity of position i to cluster medians
             ## reduce passed matrix to actually present clusters
             csim <- csim[,as.numeric(names(map))]
-            ## add nuissance cluster
+            ## add nuisance cluster
             csim <- cbind(rep(-nui,N),csim)
             csim[seqr==1,] <- -nui
             csim[seqr==1,1] <- nui
@@ -298,7 +298,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
             ## reduce passed matrix to actually present clusters
             csim <- csim[as.numeric(names(map)),as.numeric(names(map)),
                          drop=FALSE] # allow single cluster? or abort here?
-            ## add nuissance cluster
+            ## add nuisance cluster
             csim <- rbind(rep(-nui,nrow(csim)+1),
                           cbind(rep(-nui,nrow(csim)), csim))
             csim[1,1] <- nui
@@ -327,7 +327,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
                   "\n",sep=""))
     }
     ## TODO: handle Mn in scoring functions
-    ## add official nuissance cluster
+    ## add official nuisance cluster
     SK<- calculateScore(seq=seqr, C=C, score=S, csim=csim,
                         M=M, Mn=Mn, multi=multi)
 
@@ -343,7 +343,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     remap <- as.numeric(names(map))
     seg$segments[,1] <- remap[seg$segments[,1]]
 
-    ## rm nuissance segments
+    ## rm nuisance segments
     if ( rm.nui )
       seg$segments <- seg$segments[seg$segments[,1]!=0,,drop=FALSE]
 
@@ -360,9 +360,9 @@ segmentClusters <- function(seq, k=1, csim, E=1,
     ## input: plain sequence or cset without colors
     if ( is.null(colors) ) { 
         ## generate colors; use remap for names
-        colors <- rep("#888888", length(remap)) # nuissance color!
+        colors <- rep("#888888", length(remap)) # nuisance color!
         names(colors) <- sort(remap)
-        colors[remap!=0] <- color_hue(length(remap[remap!=0])) # non-nuissance
+        colors[remap!=0] <- color_hue(length(remap[remap!=0])) # non-nuisance
     }
     seg$colors <- list(colors)
     names(seg$colors) <- seg$ids

@@ -251,7 +251,7 @@ segment.plotHeat <- function(data, coors, orig.idx, breaks, colors,
                 xlab="chromosome position",breaks=breaks,col=colors)
   }
   ## if present/requested, plot locations of original data
-  ## (or abitrary discrete info on positions)
+  ## (or arbitrary discrete info on positions)
   if ( !missing(orig.idx) ) {
     if ( missing(orig.col) ) orig.col <- 2
     # cat(paste("plotting original data locations\n"))
@@ -420,7 +420,7 @@ plot.timeseries <- function(x, plot=c("total","timeseries"),
 #' @param sort if \code{TRUE} and the clustering is yet unsorted a cluster
 #' sorting will be calculated based on "ccor" cluster-cluster similarity
 #' matrix \code{x$Ccc}; see \code{\link{sortClusters}}
-#' @param xaxis optinally x-values to use as x-axis (e.g. to reflect absolute
+#' @param xaxis optionally x-values to use as x-axis (e.g. to reflect absolute
 #' chromosomal coordinates)
 #' @param axes list of axes to plot, numbers as used as first argument
 #' in function \code{axis}
@@ -601,7 +601,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
 
             ## cluster sorting
             srt <- as.character(sk.srt[[j]])
-            if ( !"0" %in% srt ) # in generated sk.srt nuissance "0" is present
+            if ( !"0" %in% srt ) # in generated sk.srt nuisance "0" is present
                 srt <- c("0",srt)
 
             ## plot S1 as heatmap
@@ -614,7 +614,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
             }
             if ( !"S" %in% plot ) next
             
-            ## cluster coloring; add black for nuissance
+            ## cluster coloring; add black for nuisance
             sgcols <- sk.col[[j]][srt]
             ## add alpha
             sgcols <- paste(sgcols,"EE",sep="") 
@@ -660,7 +660,7 @@ plotSegments <- function(x, plot=c("segments", "S", "S1"), types, params,
 #' \code{\link{segmentClusters}} and \code{\link{segmentCluster.batch}}
 #' @param split split segment plots by clustering plots
 #' @param plot.matrix include the internal scoring matrices in the plot
-#' @param mai margins of invidual plots, see \code{par}
+#' @param mai margins of individual plots, see \code{par}
 #' @param ... further arguments to
 #' \code{\link{plot.clustering}} (\code{cset}) and
 #' \code{\link{plot.segments}} (\code{sset}). Note: these may

@@ -12,7 +12,7 @@ segmentClusters(seq, k = 1, csim, E = 1, S = "ccor", M = 175,
 \item{seq}{Either an integer vector of cluster labels, or a
 structure of class 'clustering' as returned by
 \code{\link{clusterTimeseries}}. The only strict requirement
-for the first option is that nuissance clusters (which will be
+for the first option is that nuisance clusters (which will be
 treated specially during the dynamic programming routine) have
 to be '0' (zero).}
 
@@ -29,7 +29,7 @@ vector of cluster labels and the scoring function is "icor" or
 provided. Finally, for scoring function "ccls" the argument
 \code{csim} will be ignored and the matrix is instead
 automatically constructed from argument \code{a}, and using
-argument \code{nui} for the nuissance cluster.}
+argument \code{nui} for the nuisance cluster.}
 
 \item{E}{exponent to scale similarity matrices}
 
@@ -39,7 +39,7 @@ argument \code{nui} for the nuissance cluster.}
 cut-off but defined as a penalty that must be "overcome" by
 good score.}
 
-\item{Mn}{segment length penalty for nuissance cluster. Mn<M will
+\item{Mn}{segment length penalty for nuisance cluster. Mn<M will
 allow shorter distances between "real" segments; only used in
 scoring functions "ccor" and "icor"}
 
@@ -47,7 +47,7 @@ scoring functions "ccor" and "icor"}
 scoring w/o cluster similarity measures in scoring function
 "ccls".}
 
-\item{nui}{the similarity score to be used for nuissance clusters
+\item{nui}{the similarity score to be used for nuisance clusters
 in the cluster similarity matrices}
 
 \item{nextmax}{go backwards while score is increasing before
@@ -59,7 +59,7 @@ phase, either "min" (default) or "max"}
 \item{multib}{handling of multiple k with max. score in back-trace
 phase, either "min" (default), "max" or "skip"}
 
-\item{rm.nui}{remove nuissance cluster segments from final results}
+\item{rm.nui}{remove nuisance cluster segments from final results}
 
 \item{save.matrix}{store the total score matrix \code{S(i,c)} and
 the backtracing matrix \code{K(i,c)}; useful in testing stage
@@ -112,7 +112,7 @@ the cluster-cluster and cluster-position similarity matrices are
 already provided by this object.
 
 In the second scenario II for custom use, argument \code{seq} can
-be a simple clustering vector, where a nuissance cluster must be
+be a simple clustering vector, where a nuisance cluster must be
 indicated by cluster label "0" (zero). The cluster-cluster or
 cluster-position similarities MUST be provided (argument
 \code{csim}) for scoring functions "ccor" and "icor",
@@ -120,12 +120,12 @@ respectively. For the simplest scoring function "ccls", a uniform
 cluster similarity matrix is constructed from arguments \code{a}
 and \code{nui}, with cluster self-similarities of 1,
 "dissimilarities" between different clusters using argument
-\code{a<0}, and nuissance cluster self-similarity of \code{-a}.
+\code{a<0}, and nuisance cluster self-similarity of \code{-a}.
 
 The function returns a list (class "segments") comprising of the
 main result (list item "segments"), and "warnings" from the dynamic
 programming and backtracing phases, the used similarity matrix
-\code{csim}, extended by the nuissance cluster; and optionally (see
+\code{csim}, extended by the nuisance cluster; and optionally (see
 option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
 total score matrix \code{S(i,c)} and the backtracing matrix
 \code{K(i,c)} for analysis of algorithm performance for novel data

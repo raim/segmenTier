@@ -97,7 +97,7 @@ color_hue <- function(n) {
 #' (sum over all time points) below the value passed in argument
 #' \code{low.thresh}, are detected, result in NA values in the
 #' transformed data, and will be assigned to the
-#' "nuissance" cluster in \code{\link{clusterTimeseries}}.
+#' "nuisance" cluster in \code{\link{clusterTimeseries}}.
 #'
 #' Discrete Fourier Transform (DFT): if requested (option
 #' \code{use.fft=TRUE}), a DFT will be applied using base R's
@@ -141,7 +141,7 @@ color_hue <- function(n) {
 #'     \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1"
 #'     (\code{log(ts+1)})
 #' @param low.thresh use this threshold to cut-off data, which will be
-#'     added to the absent/nuissance cluster later
+#'     added to the absent/nuisance cluster later
 #' @param perm number of permutations of the data set, to obtain
 #'     p-values for the oscillation
 #' @param use.fft use the Discrete Fourier Transform of the data
@@ -217,10 +217,10 @@ processTimeseries <- function(ts, trafo="raw",
     tsd <-ts
     ## NOTE: replace NA by 0
     ## TODO: make this behavior optional?
-    tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
+    tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuisance cluster)
 
     ## detect rows only consisting of 0, these will not be processed
-    ## and later assigned to a nuissance cluster
+    ## and later assigned to a nuisance cluster
     zs <- apply(tsd==0,1,sum)==ncol(tsd) # remember all zeros
 
     ## smooth time-points between adjacent positions
@@ -621,14 +621,14 @@ logLik.kmeans <- function(object, ...)
 #' use, a smaller \code{K} is chosen, if the data contains less then
 #' \code{K} distinct values.
 #' 
-#' Nuissance Cluster:
+#' Nuisance Cluster:
 #' values that were removed during time-series processing, such as
 #' rows that only contain 0 or NA values, will be assigned to
-#' the "nuissance cluster" with cluster label "0". Additionally, a minimal
+#' the "nuisance cluster" with cluster label "0". Additionally, a minimal
 #' correlation to any cluster center can be specified, argument
 #' \code{nui.thresh}, and positions without any correlation higher
-#' then this, will also be assigned to the "nuissance" cluster.
-#' Resulting "nuissance segments" will not be shown in the results.
+#' then this, will also be assigned to the "nuisance" cluster.
+#' Resulting "nuisance segments" will not be shown in the results.
 #'
 #' Cluster Sorting and Coloring:
 #' additionally the cluster labels in the result object will be sorted by
@@ -659,7 +659,7 @@ logLik.kmeans <- function(object, ...)
 #'     be chosen?"
 #' @param nui.thresh threshold correlation of a data point to a
 #'     cluster center; if below the data point will be added to
-#'     nuissance cluster 0
+#'     nuisance cluster 0
 #' @param verb level of verbosity, 0: no output, 1: progress messages
 #' @return Returns a list of class "clustering" comprising of a matrix
 #'     of clusterings, lists of cluster centers, cluster-cluster and
@@ -753,7 +753,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         }
         
         ## prepare cluster sequence
-        seq <- rep(0, N) ## init. to nuissance cluster 0
+        seq <- rep(0, N) ## init. to nuisance cluster 0
         seq[!rm.vals] <- km$cluster
         
         ## store which K was used, the clustering and cluster centers
@@ -855,7 +855,7 @@ colorClusters <- function(cset, colf, ...) {
     if ( !"sorting" %in% names(cset) )
         cset <- sortClusters(cset, sort=TRUE)
 
-    ## generate colors; use gray for nuissance
+    ## generate colors; use gray for nuisance
     for ( k in seq_len(ncol(cset$clusters)) ) {
         if ( missing(colf) )
             colf <- color_hue # internal function
@@ -994,7 +994,7 @@ setVarySettings <- function(E=c(1,3),
 #' the centers of which have a Pearson correlation \code{>fuse.threshold}
 #' the field "fuse" will be set to 1 for the second segments (top-to-bottom
 #' as reported)
-#' @param rm.nui remove nuissance cluster segments from final results
+#' @param rm.nui remove nuisance cluster segments from final results
 #' @param type.name vector of strings selecting the parameters which will be
 #' used as segment types. Note, that all parameters that are actually varied
 #' will be automatically added (if missing). The list can include parameters

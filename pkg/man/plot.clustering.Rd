@@ -21,7 +21,7 @@ or \code{layout} for the plot}
 sorting will be calculated based on "ccor" cluster-cluster similarity
 matrix \code{x$Ccc}; see \code{\link{sortClusters}}}
 
-\item{xaxis}{optinally x-values to use as x-axis (e.g. to reflect absolute
+\item{xaxis}{optionally x-values to use as x-axis (e.g. to reflect absolute
 chromosomal coordinates)}
 
 \item{axes}{list of axes to plot, numbers as used as first argument

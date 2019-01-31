@@ -62,7 +62,7 @@ XPtr<scorefun> getScorefun(std::string fstr) {
 //' @details This is \code{\link{segmenTier}}'s core dynamic programming
 //' routine. It constructs the total score matrix S(i,c), based on
 //' the passed scoring function ("icor" or "ccor"), and length penalty
-//' \code{M}. "Nuissance" cluster "0" can have a smaller penalty \code{Mn}
+//' \code{M}. "Nuisance" cluster "0" can have a smaller penalty \code{Mn}
 //' to allow for shorter distances between "real" segments.
 //'
 //' Scoring function "icor" calculates the sum of similarities of
@@ -82,15 +82,15 @@ XPtr<scorefun> getScorefun(std::string fstr) {
 //' a penalty for the count of non-identical clusters.
 //' @param seq the cluster sequence (where clusters at positions k:i are
 //' considered). Note, that unlike the R wrapper, clustering numbers
-//' here are 0-based, where 0 is the nuissance cluster.
-//' @param C the list of clusters, including nuissance cluster '0', see 
+//' here are 0-based, where 0 is the nuisance cluster.
+//' @param C the list of clusters, including nuisance cluster '0', see 
 //' \code{seq}
 //' @param score the scoring function to be used, one of "ccor" or "icor",
 //' an apt similarity matrix must be supplied via option \code{csim}
 //' @param M minimal sequence length; Note, that this is not a strict
 //' cut-off but defined as an accumulating penalty that must be
 //' "overcome" by good score
-//' @param Mn minimal sequence length for nuissance cluster, Mn<M will allow
+//' @param Mn minimal sequence length for nuisance cluster, Mn<M will allow
 //' shorter distances between segments
 //' @param csim a matrix, providing either the cluster-cluster (scoring 
 //' function "ccor") or the position-cluster similarity function
@@ -140,12 +140,12 @@ List calculateScore(NumericVector seq, NumericVector C,
   for ( int c=0; c<L; c++ )  {
     
     int m;
-    if ( c==0 ) m = Mn; // c==0 is nuissance cluster
+    if ( c==0 ) m = Mn; // c==0 is nuisance cluster
     else m = M;
 
     // Rcpp::Rcout << "HALLO: " << m << std::endl;
 
-    //TODO: is nuissance used? it seems that Mn has
+    //TODO: is nuisance used? it seems that Mn has
     // no effect and the passed cluster sequence starts at 1!?
     for ( int i=0; i<N; i++ ) 
       S1(i,c) = scoref(0, i, c, seq, m, csim); // s(1, i, C)

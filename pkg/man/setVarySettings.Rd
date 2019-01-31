@@ -17,7 +17,7 @@ setVarySettings(E = c(1, 3), S = "ccor", M = 100, Mn = 100,
 cut-off but defined as a penalty that must be "overcome" by
 good score.}
 
-\item{Mn}{segment length penalty for nuissance cluster. Mn<M will
+\item{Mn}{segment length penalty for nuisance cluster. Mn<M will
 allow shorter distances between "real" segments; only used in
 scoring functions "ccor" and "icor"}
 
@@ -25,7 +25,7 @@ scoring functions "ccor" and "icor"}
 scoring w/o cluster similarity measures in scoring function
 "ccls".}
 
-\item{nui}{the similarity score to be used for nuissance clusters
+\item{nui}{the similarity score to be used for nuisance clusters
 in the cluster similarity matrices}
 
 \item{nextmax}{go backwards while score is increasing before

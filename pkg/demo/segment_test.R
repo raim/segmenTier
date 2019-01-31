@@ -13,8 +13,8 @@ if ( debug ) {
 }
 
 ## A sequence of clusters: this must be of type "numeric", and
-## most importantly, a nuissance cluster `0' indicates
-## noisy or absent data. The nuissance cluster is handled
+## most importantly, a nuisance cluster `0' indicates
+## noisy or absent data. The nuisance cluster is handled
 ## with separate parameters, which mostly helps to define
 ## "tighter" ends of segments with similarity-based scoring functions!
 
@@ -57,12 +57,12 @@ C <- sort(unique(seq))
 C <- C[as.character(C)!="0"]
 
 ## SCORING FUNCTION "ccor": cluster-cluster similarity (correlation)
-## list of non-nuissance clusters
+## list of non-nuisance clusters
 Ccc <- matrix(0,ncol=length(C),nrow=length(C))
 colnames(Ccc) <- rownames(Ccc) <- as.character(C)
 diag(Ccc)<- 1 # set diagonal to 1
 Ccc[1,2] <- Ccc[2,1] <- -.6 # just enough to avoid merging of 2 with 1
-Ccc[2,4] <- Ccc[4,2] <- -.4 # just enought to avoid merging of 2 with 4
+Ccc[2,4] <- Ccc[4,2] <- -.4 # just enough to avoid merging of 2 with 4
 Ccc[1,3] <- Ccc[3,1] <- -.5
 
 ## SCORING FUNCTION "icor": position-cluster similarity (correlation)
@@ -97,15 +97,15 @@ cset <- colorClusters(cset)
 class(cset)
 plot(cset) # plot method for class "clustering"
 
-## SIMILIRITY BASED SCORING FUNCTIONS
+## SIMILARITY BASED SCORING FUNCTIONS
 ## ccor requires matrix Ccc: cluster-cluster similarity, here correlation
 ## icor required matrix Pci: position-cluster similarity, here correlation
 sset <- segmentClusters(seq = cset,
                         S = "ccor", M = 3, Mn = 3, 
                         save.matrix = TRUE, rm.nui= FALSE)
 
-## Note, that here we keep nuissance segments for illustration.
-## Nuissance segments are plotted in gray, while data-based
+## Note, that here we keep nuisance segments for illustration.
+## Nuisance segments are plotted in gray, while data-based
 ## segments are colored.
 
 ## PLOT FUNCTION FOR CLASS "clustering"

@@ -24,7 +24,7 @@ the centers of which have a Pearson correlation \code{>fuse.threshold}
 the field "fuse" will be set to 1 for the second segments (top-to-bottom
 as reported)}
 
-\item{rm.nui}{remove nuissance cluster segments from final results}
+\item{rm.nui}{remove nuisance cluster segments from final results}
 
 \item{type.name}{vector of strings selecting the parameters which will be
 used as segment types. Note, that all parameters that are actually varied
