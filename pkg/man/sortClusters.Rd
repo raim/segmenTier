@@ -7,26 +7,29 @@
 sortClusters(cset, sort = TRUE, verb = 0)
 }
 \arguments{
-\item{cset}{a clustering set as returned by \code{\link{clusterTimeseries}}}
+\item{cset}{a clustering set as returned by
+\code{\link{clusterTimeseries}}}
 
-\item{sort}{if set to FALSE the clusters will be sorted merely numerically}
+\item{sort}{if set to FALSE the clusters will be sorted merely
+numerically}
 
 \item{verb}{level of verbosity, 0: no output, 1: progress messages}
 }
 \value{
-Returns the input "clustering" object with a list of vectors
-(names "sorting"), each providing a similarity-based sorting of
-cluster labels.
+Returns the input "clustering" object with a list of
+    vectors (named "sorting"), each providing a similarity-based
+    sorting of cluster labels.
 }
 \description{
-Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
-uses the cluster-cluster similarity matrix \code{Ccc} to sort
-clusters by their similarity, starting with the first cluster `1'; the next
-cluster is the first cluster (lowest cluster number) with the highest
-similarity to cluster `1', and procedding from there. The final sorting is
-added as \code{sorting} to \code{cset} and the annotated
-\code{cset} is returned. This sorting is subsequently used to select
-cluster colors. This simply allows for more informative plots
-of the clustering underlying a segmentation but has no consequence
-on segmentation itself.
+Takes a "clustering" object as returned by
+\code{\link{clusterTimeseries}} and uses the cluster-cluster
+similarity matrix, item \code{Ccc}, to sort clusters by their
+similarity, starting with the cluster labeled `1'; the next
+cluster is the first cluster (lowest cluster label) with the
+highest similarity to cluster `1', and proceeding from there. The
+final sorting is added as item "sorting" to the \code{cset} object
+and returned.  This sorting is subsequently used to select cluster
+colors and in the plot method. This simply allows for more
+informative plots of the clustering underlying a segmentation but
+has no consequence on segmentation itself.
 }

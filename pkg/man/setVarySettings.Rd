@@ -29,7 +29,7 @@ scoring w/o cluster similarity measures in scoring function
 in the cluster similarity matrices}
 
 \item{nextmax}{go backwards while score is increasing before
-openening a new segment, default is TRUE}
+opening a new segment, default is TRUE}
 
 \item{multi}{handling of multiple k with max. score in forward
 phase, either "min" (default) or "max"}

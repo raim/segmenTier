@@ -51,7 +51,7 @@ scoring w/o cluster similarity measures in scoring function
 in the cluster similarity matrices}
 
 \item{nextmax}{go backwards while score is increasing before
-openening a new segment, default is TRUE}
+opening a new segment, default is TRUE}
 
 \item{multi}{handling of multiple k with max. score in forward
 phase, either "min" (default) or "max"}
@@ -88,7 +88,7 @@ cluster-cluster or cluster-position similarities are
 maximal. Its main input (argument \code{seq}) is either a
 "clustering" object returned by \code{\link{clusterTimeseries}}
 (scenario I), or an integer vector of cluster labels (scenario
-II) or. The function then runs the dynamic programing algorithm
+II) or. The function then runs the dynamic programming algorithm
 (\code{\link{calculateScore}}) for a selected scoring function
 and an according cluster similarity matrix, followed by the
 back-tracing step (\code{\link{backtrace}}) to find segment
@@ -96,10 +96,10 @@ borders.
 
 The main result, list item "segments" of the returned 
 object, is a 3-column matrix, where column 1 is the cluster
-assignment and colums 2 and 3 are start and end indices of the
+assignment and columns 2 and 3 are start and end indices of the
 segments. For the batch function \code{\link{segmentCluster.batch}},
 the "segments" item is a \code{\link[base:data.frame]{data.frame}}
-containg additional information, see `?segmentCluster.batch`.
+contain additional information, see ?segmentCluster.batch.
 
 As shown in the publication, the parameters \code{M},
 \code{E} and \code{nui} have the strongest impact on resulting
@@ -124,7 +124,7 @@ and \code{nui}, with cluster self-similarities of 1,
 
 The function returns a list (class "segments") comprising of the
 main result (list item "segments"), and "warnings" from the dynamic
-programing and back-tracing phases, the used similarity matrix
+programming and backtracing phases, the used similarity matrix
 \code{csim}, extended by the nuissance cluster; and optionally (see
 option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
 total score matrix \code{S(i,c)} and the backtracing matrix

@@ -78,11 +78,11 @@ NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters) {
 /// Reports the maximally correlating cluster for each data point.
 /// @details Calculates Pearson's product-moment correlation of each data
 /// to clusters and report the (first!) cluster which had max correlation.
-/// Note that this can lead to amibiguities since several clusters may
+/// Note that this can lead to ambiguities since several clusters may
 /// reach the same maximum.
 /// TODO: this seems not be used anywhere, remove?
 /// @param mincor minimal correlation to be considered
-/// @param warn if set to 1/TRUE then the occurence of multiple maxima
+/// @param warn if set to 1/TRUE then the occurrence of multiple maxima
 /// is tested and a warning issued
 /// @inheritParams clusterCor_c
 /// export

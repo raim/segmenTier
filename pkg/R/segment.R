@@ -47,10 +47,10 @@ NULL # this just ends the global package documentation
 ## find max score in S(i,c) at i=N
 ## i = N
 ## while(i != 0)
-##   for all k<i und color c'!= c:
+##   for all k<i and color c'!= c:
 ##      if S(i,c) == S(k-1,c') + score[k,c,i] )
 ##      break;
-##   output:  interval k bis i mit Farbe c
+##   output:  interval k to i with color c
 ##   i <- k - 1 // nextmax: search next non-decreasing S(i,c)
 ##   c <- c'
 
@@ -59,7 +59,7 @@ NULL # this just ends the global package documentation
 
 ### MESSAGE UTILS
 
-## nicer timestamp
+## nicer time-stamp
 time <- function() format(Sys.time(), "%Y%m%d %H:%M:%S")
 ## messages
 msg <- function(x) cat(x, file=stdout()) # until piping is implemented
@@ -103,7 +103,7 @@ clusterSegments <- function() {}
 #' maximal. Its main input (argument \code{seq}) is either a
 #' "clustering" object returned by \code{\link{clusterTimeseries}}
 #' (scenario I), or an integer vector of cluster labels (scenario
-#' II) or. The function then runs the dynamic programing algorithm
+#' II) or. The function then runs the dynamic programming algorithm
 #' (\code{\link{calculateScore}}) for a selected scoring function
 #' and an according cluster similarity matrix, followed by the
 #' back-tracing step (\code{\link{backtrace}}) to find segment
@@ -111,10 +111,10 @@ clusterSegments <- function() {}
 #'
 #' The main result, list item "segments" of the returned 
 #' object, is a 3-column matrix, where column 1 is the cluster
-#' assignment and colums 2 and 3 are start and end indices of the
+#' assignment and columns 2 and 3 are start and end indices of the
 #' segments. For the batch function \code{\link{segmentCluster.batch}},
 #' the "segments" item is a \code{\link[base:data.frame]{data.frame}}
-#' containg additional information, see `?segmentCluster.batch`.
+#' contain additional information, see ?segmentCluster.batch.
 #' 
 #' As shown in the publication, the parameters \code{M},
 #' \code{E} and \code{nui} have the strongest impact on resulting
@@ -139,7 +139,7 @@ clusterSegments <- function() {}
 #'
 #' The function returns a list (class "segments") comprising of the
 #' main result (list item "segments"), and "warnings" from the dynamic
-#' programing and back-tracing phases, the used similarity matrix
+#' programming and backtracing phases, the used similarity matrix
 #' \code{csim}, extended by the nuissance cluster; and optionally (see
 #' option \code{save.matrix}) the scoring vectors \code{S1(i,c)}, the
 #' total score matrix \code{S(i,c)} and the backtracing matrix
@@ -183,7 +183,7 @@ clusterSegments <- function() {}
 #' @param nui the similarity score to be used for nuissance clusters
 #'     in the cluster similarity matrices
 #' @param nextmax go backwards while score is increasing before
-#'     openening a new segment, default is TRUE
+#'     opening a new segment, default is TRUE
 #' @param multi handling of multiple k with max. score in forward
 #'     phase, either "min" (default) or "max"
 #' @param multib handling of multiple k with max. score in back-trace
@@ -242,7 +242,7 @@ segmentClusters <- function(seq, k=1, csim, E=1,
         if ( S=="ccor" & missing(csim) ) csim <- cset$Ccc[[k]]
         if ( S=="icor" & missing(csim) ) csim <- cset$Pci[[k]]
     }
-    ## input: processed timeseries from processTimeseries
+    ## input: processed time-series from processTimeseries
     ## TODO: cluster-free approach; generate Pci for all vs. all
            
     ## 1: set up sequence and data
@@ -409,17 +409,17 @@ segmentClusters <- function(seq, k=1, csim, E=1,
 ## TODO: move this to .cpp as well, then the whole algo is available in C++
 #' Back-tracing step of the \code{segmenTier} algorithm.
 #' 
-#' back-tracing : collect clustered segments from the scoring matrix
+#' back-tracing step: collect clustered segments from the scoring matrix
 #' \code{S(i,c)} by back-tracing the position \code{j=k} which delivered
-#' the maximal score at position {i}.
+#' the maximal score at position \code{i}.
 #' 
 #' @param S matrix S, containing the local scores
 #' @param K matrix K, containing the position k used for score maximization
 #' @param multib if multiple k produce the maximal score, take either the
-#' shortest k ("max") or the longest k ("min"); if multib is set to "skip"
-#' the next unique k will be searched
+#' shortest k ("max") or the longest k ("min"); if \code{multib} is set to
+#' "skip" the next unique k will be searched
 #' @param nextmax proceed backwards while score is increasing before
-#' openening a new segment
+#' opening a new segment
 #' @param verb print messages
 #' @export
 backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
@@ -431,7 +431,7 @@ backtrace <- function(S, K, multib, nextmax=FALSE, verb=TRUE) {
     while ( i>0 ) {
         
         ## FIND SEGMENT END
-        ## Note, that this determines the segment's cluster assigment,
+        ## Note, that this determines the segment's cluster assignment,
         ## unless multiple clusters deliver the maximal score
         
         ##  WHICH cluster(s) had max S at i?

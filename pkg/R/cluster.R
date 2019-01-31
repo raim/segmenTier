@@ -11,7 +11,7 @@ get.fft <- function(x) {
         colnames(fft) <- c("DC",as.character(seq_len(n-1)))
     fft
 }
-## fourier permutation
+## Fourier permutation
 do.perm <- function(x, fft=NULL, perm, verb=0) {
 
     N <- ncol(x)
@@ -23,7 +23,7 @@ do.perm <- function(x, fft=NULL, perm, verb=0) {
     for ( i in seq_len(perm) ) {
         if ( verb>0 & i%%round(perm/10)==0 )
           cat(paste(round(i/perm,2)*100,"%, "))
-        ## randomize columns and get fourier
+        ## randomize columns and get Fourier
         rft <- get.fft(x[,sample(seq_len(ncol(x)))])
         ram <- abs(rft)/N
         pvl <- pvl + as.numeric(ram >= xam)
@@ -91,7 +91,7 @@ color_hue <- function(n) {
 #' their change pattern. 
 #'
 #' Note that NA values are here interpreted as 0. Please take care of NA
-#' values yourself, if you do not want this behaviour.
+#' values yourself, if you do not want this behavior.
 #'
 #' Rows consisting only of 0 (or NA) values, or with a total signal
 #' (sum over all time points) below the value passed in argument
@@ -133,8 +133,8 @@ color_hue <- function(n) {
 #' amplitude of the randomized time-series.  Phases and amplitudes can
 #' be derived from the complex numbers in matrix "dft" of the result
 #' object.
-#' @param ts the timeseries as a matrix, where columns are the
-#'     timepoints and rows individual measurements (e.g., genomic
+#' @param ts the time-series as a matrix, where columns are the
+#'     time points and rows individual measurements (e.g., genomic
 #'     positions for transcriptome data)
 #' @param trafo prior data transformation, pass any function name,
 #'     e.g., "log", or the package functions "ash" (asinh:
@@ -216,7 +216,7 @@ processTimeseries <- function(ts, trafo="raw",
     
     tsd <-ts
     ## NOTE: replace NA by 0
-    ## TODO: make this behaviour optional?
+    ## TODO: make this behavior optional?
     tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuissance cluster)
 
     ## detect rows only consisting of 0, these will not be processed
@@ -281,7 +281,7 @@ processTimeseries <- function(ts, trafo="raw",
 
         ## experimental: amplitude Box-Cox transformation
         ## box-cox trafo for negative values (Bickel and Doksum 1981)
-        ## as used in flowclust
+        ## as used in flowClust
         bc <- function(x,lambda) (sign(x)*abs(x)^lambda-1)/lambda
         ## amplitude box-cox trafo for complex polar coordinates 
         bcdft <- function(x, lambda) {
@@ -420,9 +420,9 @@ processTimeseries <- function(ts, trafo="raw",
 #' @param selected a pre-selected cluster number  which is then
 #' used as a start clustering for  \code{\link[flowMerge:merge]{flowMerge}}
 #' (if option \code{merge==TRUE})
-#' @param B max. num. of EM iterations 
+#' @param B maximal number of EM iterations 
 #' @param tol tolerance for EM convergence
-#' @param lambda intial Box-Cox trafo
+#' @param lambda initial Box-Cox trafo
 #' @param nu degrees of freedom used for the t distribution, Inf for
 #' pure Gaussian
 #' @param nu.est 0: no, 1: non-specific, 2: cluster-specific estimation of nu
@@ -515,7 +515,7 @@ flowclusterTimeseries <- function(tset, ncpu=1, K=10, selected, merge=FALSE,
     }
     colnames(cluster.matrix) <- paste0("K:",colnames(cluster.matrix))
 
-    ## collect centers, Pci and Ccc corelation matrices (see clusterTimeseries)
+    ## collect centers, Pci and Ccc correlation matrices (see clusterTimeseries)
     ## TODO: TEST FOR SEGMENTATION (currently only used for final
     ## segment time series)
     ## -> is `mu' really the same as centers and are Ccc and Pci
@@ -637,7 +637,7 @@ logLik.kmeans <- function(object, ...)
 #' inspection with the plot methods available for each data processing
 #' step (see examples).
 #' 
-#' Note that the function, in conjuction with
+#' Note that the function, in conjunction with
 #' \code{\link{processTimeseries}}, can also be used as a stand-alone
 #' tool for time-series clusterings, specifically implementing the
 #' strategy of clustering the Discrete Fourier Transform of periodic
@@ -691,7 +691,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
 
     ## TODO:
     ## call recursively if multiple tsets are available
-    ## and prepend tset names 
+    ## and pre-pend tset names 
 
     ## get time series data
     id <- tset$id
@@ -699,7 +699,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
     rm.vals <- tset$rm.vals
     N <- nrow(dat)
 
-    ## enought distinct values?
+    ## enough distinct values?
     ## TODO: issue segment based on low-filter
     ## OOR: postprocessing - extend segments into low levels?
     warn <- NULL
@@ -742,7 +742,7 @@ clusterTimeseries <- function(tset, K=16, iter.max=100000, nstart=100,
         ## cluster
         km <- stats::kmeans(dat[!rm.vals,], Kused, iter.max=iter.max,
                             nstart=nstart, algorithm="Hartigan-Wong")
-        ## use alternative algo if this error occured
+        ## use alternative algo if this error occurred
         if (km$ifault==4) {
             km <- stats::kmeans(dat[!rm.vals,], Kused,
                                 iter.max=iter.max,nstart=nstart,
@@ -871,22 +871,25 @@ colorClusters <- function(cset, colf, ...) {
 
 #' Sort clusters by similarity.
 #' 
-#' Takes a clustering set as returned by \code{\link{clusterTimeseries}} and
-#' uses the cluster-cluster similarity matrix \code{Ccc} to sort
-#' clusters by their similarity, starting with the first cluster `1'; the next
-#' cluster is the first cluster (lowest cluster number) with the highest
-#' similarity to cluster `1', and procedding from there. The final sorting is
-#' added as \code{sorting} to \code{cset} and the annotated
-#' \code{cset} is returned. This sorting is subsequently used to select
-#' cluster colors. This simply allows for more informative plots
-#' of the clustering underlying a segmentation but has no consequence
-#' on segmentation itself.
-#' @param cset a clustering set as returned by \code{\link{clusterTimeseries}}
-#' @param sort if set to FALSE the clusters will be sorted merely numerically
+#' Takes a "clustering" object as returned by
+#' \code{\link{clusterTimeseries}} and uses the cluster-cluster
+#' similarity matrix, item \code{Ccc}, to sort clusters by their
+#' similarity, starting with the cluster labeled `1'; the next
+#' cluster is the first cluster (lowest cluster label) with the
+#' highest similarity to cluster `1', and proceeding from there. The
+#' final sorting is added as item "sorting" to the \code{cset} object
+#' and returned.  This sorting is subsequently used to select cluster
+#' colors and in the plot method. This simply allows for more
+#' informative plots of the clustering underlying a segmentation but
+#' has no consequence on segmentation itself.
+#' @param cset a clustering set as returned by
+#'     \code{\link{clusterTimeseries}}
+#' @param sort if set to FALSE the clusters will be sorted merely
+#'     numerically
 #' @param verb level of verbosity, 0: no output, 1: progress messages
-#' @return Returns the input "clustering" object with a list of vectors
-#' (names "sorting"), each providing a similarity-based sorting of
-#' cluster labels.
+#' @return Returns the input "clustering" object with a list of
+#'     vectors (named "sorting"), each providing a similarity-based
+#'     sorting of cluster labels.
 #'@export
 sortClusters <- function(cset, sort=TRUE, verb=0) {
 

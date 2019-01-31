@@ -10,8 +10,8 @@ processTimeseries(ts, trafo = "raw", use.fft = TRUE,
   circular.time = FALSE, verb = 0)
 }
 \arguments{
-\item{ts}{the timeseries as a matrix, where columns are the
-timepoints and rows individual measurements (e.g., genomic
+\item{ts}{the time-series as a matrix, where columns are the
+time points and rows individual measurements (e.g., genomic
 positions for transcriptome data)}
 
 \item{trafo}{prior data transformation, pass any function name,
@@ -88,7 +88,7 @@ Fourier Transform of time-series data allows to cluster time-series by
 their change pattern. 
 
 Note that NA values are here interpreted as 0. Please take care of NA
-values yourself, if you do not want this behaviour.
+values yourself, if you do not want this behavior.
 
 Rows consisting only of 0 (or NA) values, or with a total signal
 (sum over all time points) below the value passed in argument

@@ -28,11 +28,11 @@ used as a start clustering for  \code{\link[flowMerge:merge]{flowMerge}}
 \item{merge}{logical indicating whether cluster merging with
 \code{\link[flowMerge:merge]{flowMerge}} should be attempted}
 
-\item{B}{max. num. of EM iterations}
+\item{B}{maximal number of EM iterations}
 
 \item{tol}{tolerance for EM convergence}
 
-\item{lambda}{intial Box-Cox trafo}
+\item{lambda}{initial Box-Cox trafo}
 
 \item{nu}{degrees of freedom used for the t distribution, Inf for
 pure Gaussian}

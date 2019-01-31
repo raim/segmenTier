@@ -40,7 +40,7 @@ ccor <- function(k, j, c, seq, M, csim) {
 
 #' segmenTier's core dynamic programming routine in Rcpp
 #' 
-#' @details This is \code{\link{segmenTier}}'s core dynamic programing
+#' @details This is \code{\link{segmenTier}}'s core dynamic programming
 #' routine. It constructs the total score matrix S(i,c), based on
 #' the passed scoring function ("icor" or "ccor"), and length penalty
 #' \code{M}. "Nuissance" cluster "0" can have a smaller penalty \code{Mn}

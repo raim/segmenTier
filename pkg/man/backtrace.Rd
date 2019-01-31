@@ -12,16 +12,16 @@ backtrace(S, K, multib, nextmax = FALSE, verb = TRUE)
 \item{K}{matrix K, containing the position k used for score maximization}
 
 \item{multib}{if multiple k produce the maximal score, take either the
-shortest k ("max") or the longest k ("min"); if multib is set to "skip"
-the next unique k will be searched}
+shortest k ("max") or the longest k ("min"); if \code{multib} is set to
+"skip" the next unique k will be searched}
 
 \item{nextmax}{proceed backwards while score is increasing before
-openening a new segment}
+opening a new segment}
 
 \item{verb}{print messages}
 }
 \description{
-back-tracing : collect clustered segments from the scoring matrix
+back-tracing step: collect clustered segments from the scoring matrix
 \code{S(i,c)} by back-tracing the position \code{j=k} which delivered
-the maximal score at position {i}.
+the maximal score at position \code{i}.
 }

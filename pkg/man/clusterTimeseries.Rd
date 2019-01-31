@@ -79,7 +79,7 @@ colors assigned (see \code{\link{colorClusters}}) for convenient data
 inspection with the plot methods available for each data processing
 step (see examples).
 
-Note that the function, in conjuction with
+Note that the function, in conjunction with
 \code{\link{processTimeseries}}, can also be used as a stand-alone
 tool for time-series clusterings, specifically implementing the
 strategy of clustering the Discrete Fourier Transform of periodic
