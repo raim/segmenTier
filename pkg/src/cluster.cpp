@@ -80,7 +80,7 @@ NumericMatrix clusterCor_c(NumericMatrix data, NumericMatrix clusters) {
 /// to clusters and report the (first!) cluster which had max correlation.
 /// Note that this can lead to ambiguities since several clusters may
 /// reach the same maximum.
-/// TODO: this seems not be used anywhere, remove?
+/// TODO: THIS SEEMS NOT BE USED ANYWHERE, REMOVE?
 /// @param mincor minimal correlation to be considered
 /// @param warn if set to 1/TRUE then the occurrence of multiple maxima
 /// is tested and a warning issued
