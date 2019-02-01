@@ -71,10 +71,10 @@ measure between positions $i$ and $k$ and clusters $\mathcal{C}$.
 The first two rely on a clustering of all positions $x$
 
 \begin{equation}
-s(i,k,\alpha) = \sum_{j=i}^k Q(\mathcal{C}_j,\mathcal{C}_\alpha)
+s(j,k,\alpha) = \sum_{i=j}^k Q(\mathcal{C}_i,\mathcal{C}_\alpha)
 \end{equation}
 
-where $\mathcal{C}_j$ is the cluster label of position $x_j$, and
+where $\mathcal{C}_i$ is the cluster label of data row $x_i$, and
 $Q(\mathcal{C},\mathcal{D})$ is an, in principle arbitrary, similarity
 measure for the two clusters. The most basic choice is
 $Q(\mathcal{C},\mathcal{C})=1$ and $Q(\mathcal{C},\mathcal{D})=a<0$
@@ -83,24 +83,23 @@ function "ccls" (argument `S="ccls"`) with a default value $a=-2$,
 and requires as sole input a vector of cluster labels.
 
 For our application, an RNAseq timeseries, the Pearson correlation
-$\text{corr}$ between the cluster centroids (mean values) proofed
-useful: $Q(\mathcal{C},\mathcal{D})= \text{corr}(\bar
-x_{\mathcal{C}},\bar x_{\mathcal{D}})$ is pre-calculated as a
-cluster-cluster correlation matrix by `segmenTier`s interface to
-`kmeans` clustering, and available as scoring function "ccor"
-(`S="ccor"`).
+between the cluster centroids (mean values) proofed useful:
+$Q(\mathcal{C},\mathcal{D})= \text{corr}(\bar x_{\mathcal{C}},\bar
+x_{\mathcal{D}})$ is pre-calculated as a cluster-cluster correlation
+matrix by `segmenTier`s interface to `kmeans` clustering, and
+available as scoring function "ccor" (`S="ccor"`).
 
 The third option does not rely on a clustering of all positions, and
 would in principle allow to use cluster centroids that are independently
 derived, eg. from only a subset of the data. The scoring function
 
 \begin{equation}
-  s(i,k,\alpha) = \sum_{j=i}^k \tilde\sigma(x_j,\mathcal{C}_{\alpha})
+  s(j,k,\alpha) = \sum_{i=j}^k \tilde\sigma(x_i,\mathcal{C}_{\alpha})
 \end{equation}
 
-measures the similarity of each position $x_j$ to a cluster centroid,
+measures the similarity of each data row $x_i$ to a cluster centroid,
 is again implemented as Pearson correlations,
-$\tilde\sigma(x_j,\mathcal{C}_{\alpha})= \text{corr}(x_j,\bar
+$\tilde\sigma(x_i,\mathcal{C}_{\alpha})= \text{corr}(x_i,\bar
 x_{\mathcal{C}_{\alpha}})$, pre-calculated by the clustering
 interface, and available as scoring function "icor" (`S="icor"`).
 
@@ -109,10 +108,16 @@ interface, and available as scoring function "icor" (`S="icor"`).
 It proofed useful to further emphasize correlation derived similarities
 by an exponent $\epsilon>1$, which de-emphasizes weakly positive
 or negative correlations, and this is available as argument `E` for
-all scoring functions.
+all scoring functions. Signs are preserved, allowing for even-valued
+exponents.
 
-Additionally, one can define a nuisance cluster.
-... TODO: explain why nui has an effect in "icor"??
+Additionally, one can define a nuisance cluster in pre-processing of
+the data, eg. total data values or data-cluster correlations below a
+certain threshold, and enforce such segments by using a higher
+similarity/dis-similarity value, argument `nui` in our implementation.
+
+The figure below shows the effects of scaling Pearson correlations
+by `E` and choosing a "nui>1$.
 
 ```{r, echo=FALSE, fig.width=4, fig.height=3}
 par(mai=c(.5,.5,.05,.05), mgp=c(1.2,.3,0), tcl=-.25)
@@ -121,13 +126,16 @@ points(c(-1.25,1.25), c(-1.25^3,1.25^3),col=2,pch=4)
 legend("bottomright", c("E=3","nui=1.25"), bty="n", col=c(NA,2), pch=c(NA,4))
 ```
 
-## User-Defined Scoring Functions
+## User-Defined Similarities
+
+.. explain csim ..
 
 Advanced users can provide similarity measures themselves by
 constructing a "similarity matrix" `csim` where an input cluster
 labeling must be integers that serve as row and column indices of this
 matrix, ie. similarity between a cluster "2" and a cluster "3" is
-stored in `csim[2,3]`. Construction of `csim` is demonstrated
+stored in `csim[2,3]`. The nuisance cluster is added to this matrix
+internally. Construction of `csim` is demonstrated
 in the `segment_test` demo, see below.
 
 
