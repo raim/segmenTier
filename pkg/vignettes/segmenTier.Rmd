@@ -12,18 +12,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+# Summary
+
 ![](logo.png) 
 
 `segmenTier` is a dynamic programming solution to segmentation based
 on maximization of arbitrary similarity measures within segments
 as developed in @Machne2017.
 
-In addition to the core algorithm, the package provides time-series
-processing and clustering functions as described in the
-publication. These are generally applicable where a `k-means`
-clustering yields meaningful results, and have been specifically
-developed for clustering of the Discrete Fourier Transform of periodic
-gene expression data ("circadian" or "yeast metabolic oscillations").
+In addition to the core algorithm, function `segmentClusters`, the
+package provides time-series processing and clustering functions as
+described in the publication. These are generally applicable where a
+`k-means` clustering yields meaningful results, and have been
+specifically developed for clustering of the Discrete Fourier
+Transform of periodic gene expression data ("circadian" or "yeast
+metabolic oscillations").
 
 This clustering approach is outlined in the supplemental material of
 @Machne2012, and here is used as a basis of segment similarity
@@ -32,12 +35,12 @@ measures.  Note, that the functions `processTimeseries` and
 periodic time-series analysis and clustering.
 
 
-# Theory
+# Theory & Implementation
 
 The ideas and theory behind the package is detailed in @Machne2017,
 here we provide a synopsis.
 
-## Dynamic Programming Recursion
+## The Recursion
 
 `segmenTier`'s input is a clustering
 $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
@@ -50,20 +53,26 @@ $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
 \label{eq:01}
 \end{equation}
 
-where $s(j,k,\alpha)$ is a scoring function that measures the similarity
-of a segment from position $j$ to $k$ to cluster
-$\mathcal{C}_\alpha$, *e.g.* based on Pearson correlation to cluster
-centers, and $M$ is a penalty incurred by the use of a new segment, a
-fixed cost for each jump that allows to fine-tune minimal segment
-lengths. Backtracing the maximal scores $S(k,\alpha)$ then provides
-both segment borders and segment cluster association.
+where $s(j,k,\alpha)$ is a scoring function that measures the
+similarity of a segment from position $j$ to $k$ to cluster
+$\mathcal{C}_\alpha$, and $M$ is a penalty incurred by the use of a
+new segment, a fixed cost for each jump that allows to fine-tune
+minimal segment lengths. The algorithm maximizes scores for breakpoints
+at which maximal inter-segment similarities are reached when
+switching between two distinct clusters at positions $j$ 
+("$\max_{\beta\ne\alpha}$"). This recursion is implemented in `Rcpp`
+for efficiency, and directly available as function `calculateScore`.
 
-Clustering tools are provided in the package, and a full pipeline is
-available for clustering the Fourier-transform of oscillatory RNA-seq
-time-series, ("circadian or metabolic oscillations"). See **Quick
-Guide**.
+Back-tracing the maximal scores $S_{k,\alpha}$, function `backtrace`,
+then provides both segment borders and segment cluster
+associations. 
 
-## Scoring Functions 
+The main interface function `segmentClusters` wraps the recursion
+and back-tracing functions and handles scoring function selection
+and additional parameters.
+
+
+## The Scoring Functions 
 
 Three scoring functions are available. They all sum up a similarity
 measure between positions $i$ and $k$ and clusters $\mathcal{C}$.
@@ -82,11 +91,11 @@ for $\mathcal{C}\ne\mathcal{D}$.  This case is available as scoring
 function "ccls" (argument `S="ccls"`) with a default value $a=-2$,
 and requires as sole input a vector of cluster labels.
 
-For our application, an RNAseq timeseries, the Pearson correlation
+For our application, an RNA-seq time-series, the Pearson correlation
 between the cluster centroids (mean values) proofed useful:
 $Q(\mathcal{C},\mathcal{D})= \text{corr}(\bar x_{\mathcal{C}},\bar
 x_{\mathcal{D}})$ is pre-calculated as a cluster-cluster correlation
-matrix by `segmenTier`s interface to `kmeans` clustering, and
+matrix by `segmenTier`'s interface to `kmeans` clustering, and
 available as scoring function "ccor" (`S="ccor"`).
 
 The third option does not rely on a clustering of all positions, and
@@ -103,10 +112,29 @@ $\tilde\sigma(x_i,\mathcal{C}_{\alpha})= \text{corr}(x_i,\bar
 x_{\mathcal{C}_{\alpha}})$, pre-calculated by the clustering
 interface, and available as scoring function "icor" (`S="icor"`).
 
+For efficiency, Pearson correlations are calculated in a custom
+function in `Rcpp`.  Note that it is not necessary to pre-calculate
+all values of $s(i,k,\mathcal{C}$, since we can simply subtract sums;
+for $i>1$:
+
+\begin{equation}
+ s(j,k,\alpha)= s(1,k,\alpha) - s(j-1,k,\alpha)\;.
+\end{equation}
+
+In summary, the primitive scoring function "ccls" requires only a
+vector of cluster labels as input. Scoring function "ccor" requires
+both a vector of cluster labels and a cluster-cluster similarity
+matrix (see below), and scoring function "icor" requires only a
+position-cluster similarity matrix.  These matrices, internally called
+`csim`, are provided by `segmenTier`'s clustering function using
+Pearson correlations to cluster centroids, but can also be provided by
+the user, as outlined below.
+
+
 ## Scaling & Nuisance
 
-It proofed useful to further emphasize correlation derived similarities
-by an exponent $\epsilon>1$, which de-emphasizes weakly positive
+It proofed useful to further emphasize correlation-based similarities
+by an exponent $\epsilon>1$, which further weakens moderate positive
 or negative correlations, and this is available as argument `E` for
 all scoring functions. Signs are preserved, allowing for even-valued
 exponents.
@@ -114,30 +142,62 @@ exponents.
 Additionally, one can define a nuisance cluster in pre-processing of
 the data, eg. total data values or data-cluster correlations below a
 certain threshold, and enforce such segments by using a higher
-similarity/dis-similarity value, argument `nui` in our implementation.
+similarity. Argument `nui` of `segmentClusters` will be the
+self-similarity of the nuisance segment, and `-nui` the nuisance
+similarity to all other clusters. Note that the exponent `E` will also
+be applied to nuisance similarity `nui`.
 
 The figure below shows the effects of scaling Pearson correlations
-by `E` and choosing a "nui>1$.
+by `E` and choosing a `nui`>1.
+
+The effects of these parameters on segmentation are intensively
+discussed in the @Machne2017 and demonstrated in the R demo
+`segment_data`.
 
 ```{r, echo=FALSE, fig.width=4, fig.height=3}
 par(mai=c(.5,.5,.05,.05), mgp=c(1.2,.3,0), tcl=-.25)
 plot(seq(-1,1,.01), seq(-1,1,.01)^3, type="l", ylab=expression("Scaled Pearson Correlation"), xlab="Pearson correlation", ylim=c(-2,2),xlim=c(-1.25,1.25))
 points(c(-1.25,1.25), c(-1.25^3,1.25^3),col=2,pch=4)
 legend("bottomright", c("E=3","nui=1.25"), bty="n", col=c(NA,2), pch=c(NA,4))
+arrows(x0=-.3, x1=.3, y0=.25,code=3,lwd=2,lty=2, length=0.1, col="gray")
+text(0,.5, expression(score %->%  0), col="gray")
 ```
 
 ## User-Defined Similarities
 
-.. explain csim ..
+`segmenTier`'s clustering interface pre-calculates the cluster-cluster
+("ccor") and position-cluster ("icor") similarity matrices and adds
+them to the "clustering" object that is passed to the recursion
+function as a look-up table.
 
 Advanced users can provide similarity measures themselves by
 constructing a "similarity matrix" `csim` where an input cluster
-labeling must be integers that serve as row and column indices of this
+labeling must be integers that serve as column and row indices of this
 matrix, ie. similarity between a cluster "2" and a cluster "3" is
-stored in `csim[2,3]`. The nuisance cluster is added to this matrix
-internally. Construction of `csim` is demonstrated
-in the `segment_test` demo, see below.
+stored in `csim[2,3]` for scoring function "ccor", using cluster-cluster
+similarities and a vector of cluster labels. 
 
+For scoring function "icor" columns are also indexed by cluster
+labels, and rows are the indices at positions $i$, ie. `csim[345,4]`
+is the similarity of data row 345 to the cluster labeled "4".  Scoring
+function "icor" in principle does not require cluster labels for all
+positions. However, in the current implementation a cluster label
+vector must still be supplied. It can consist of arbitrary values,
+ie. non-zero integers, EXCEPT for positions pre-determined as
+"nuisance" with fixed similarities `nui`. At such position the cluster
+label should be "0".
+
+Consequently, the reported cluster labels of segments are the column
+indices of `csim`.
+
+Scaling `E` and nuisance similarities `nui` can be used, but when 
+choosing `E`=1 and simply NOT supplying any clusters labels "0" they
+will have no effect.
+
+In summary, users that wish to define their own similarities are best
+advised to provide this similarities as a numeric matrix, argument
+`csim` in the main function `segmentClusters`.  Construction of `csim`
+is demonstrated in the R demo `segment_test`.
 
 
 # Usage
@@ -180,6 +240,7 @@ head(segments$segments)
 ```
 
 
+# Demonstrations
 
 Usage of the package is further demonstrated in two R demos.
 

@@ -7,8 +7,7 @@ devtools::document(pkg) #
 devtools::check(pkg,cran=TRUE) # check if all is OK
 devtools::build(pkg) # generate .tar.gz
 
-library(goodpractice)
-g <- gp(pkg)
+g <- goodpractice::gp(pkg)
 
 
 ## generate vignette
