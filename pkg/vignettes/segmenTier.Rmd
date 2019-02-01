@@ -37,7 +37,7 @@ periodic time-series analysis and clustering.
 The ideas and theory behind the package is detailed in @Machne2017,
 here we provide a synopsis.
 
-## The Dynamic Programming Recursion
+## Dynamic Programming Recursion
 
 `segmenTier`'s input is a clustering
 $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
@@ -79,8 +79,8 @@ $Q(\mathcal{C},\mathcal{D})$ is an, in principle arbitrary, similarity
 measure for the two clusters. The most basic choice is
 $Q(\mathcal{C},\mathcal{C})=1$ and $Q(\mathcal{C},\mathcal{D})=a<0$
 for $\mathcal{C}\ne\mathcal{D}$.  This case is available as scoring
-function "ccls" (argument `S="ccls"`) with a default value $a=-2$.
-
+function "ccls" (argument `S="ccls"`) with a default value $a=-2$,
+and requires as sole input a vector of cluster labels.
 
 For our application, an RNAseq timeseries, the Pearson correlation
 $\text{corr}$ between the cluster centroids (mean values) proofed
@@ -113,6 +113,13 @@ all scoring functions.
 
 Additionally, one can define a nuisance cluster.
 ... TODO: explain why nui has an effect in "icor"??
+
+```{r, echo=FALSE, fig.width=4, fig.height=3}
+par(mai=c(.5,.5,.05,.05), mgp=c(1.2,.3,0), tcl=-.25)
+plot(seq(-1,1,.01), seq(-1,1,.01)^3, type="l", ylab=expression("Scaled Pearson Correlation"), xlab="Pearson correlation", ylim=c(-2,2),xlim=c(-1.25,1.25))
+points(c(-1.25,1.25), c(-1.25^3,1.25^3),col=2,pch=4)
+legend("bottomright", c("E=3","nui=1.25"), bty="n", col=c(NA,2), pch=c(NA,4))
+```
 
 ## User-Defined Scoring Functions
 
