@@ -34,6 +34,11 @@ periodic time-series analysis and clustering.
 
 # Theory
 
+The ideas and theory behind the package is detailed in @Machne2017,
+here we provide a synopsis.
+
+## The Dynamic Programming Recursion
+
 `segmenTier`'s input is a clustering
 $\mathcal{C}_{\alpha}\subseteq\mathbb{X}$, $\alpha=1,\dots N$.
 `segmenTier` then solves the recursion:
@@ -57,9 +62,68 @@ Clustering tools are provided in the package, and a full pipeline is
 available for clustering the Fourier-transform of oscillatory RNA-seq
 time-series, ("circadian or metabolic oscillations"). See **Quick
 Guide**.
- 
 
-The theory behind the package is detailed in @Machne2017. 
+## Scoring Functions 
+
+Three scoring functions are available. They all sum up a similarity
+measure between positions $i$ and $k$ and clusters $\mathcal{C}$.
+
+The first two rely on a clustering of all positions $x$
+
+\begin{equation}
+s(i,k,\alpha) = \sum_{j=i}^k Q(\mathcal{C}_j,\mathcal{C}_\alpha)
+\end{equation}
+
+where $\mathcal{C}_j$ is the cluster label of position $x_j$, and
+$Q(\mathcal{C},\mathcal{D})$ is an, in principle arbitrary, similarity
+measure for the two clusters. The most basic choice is
+$Q(\mathcal{C},\mathcal{C})=1$ and $Q(\mathcal{C},\mathcal{D})=a<0$
+for $\mathcal{C}\ne\mathcal{D}$.  This case is available as scoring
+function "ccls" (argument `S="ccls"`) with a default value $a=-2$.
+
+
+For our application, an RNAseq timeseries, the Pearson correlation
+$\text{corr}$ between the cluster centroids (mean values) proofed
+useful: $Q(\mathcal{C},\mathcal{D})= \text{corr}(\bar
+x_{\mathcal{C}},\bar x_{\mathcal{D}})$ is pre-calculated as a
+cluster-cluster correlation matrix by `segmenTier`s interface to
+`kmeans` clustering, and available as scoring function "ccor"
+(`S="ccor"`).
+
+The third option does not rely on a clustering of all positions, and
+would in principle allow to use cluster centroids that are independently
+derived, eg. from only a subset of the data. The scoring function
+
+\begin{equation}
+  s(i,k,\alpha) = \sum_{j=i}^k \tilde\sigma(x_j,\mathcal{C}_{\alpha})
+\end{equation}
+
+measures the similarity of each position $x_j$ to a cluster centroid,
+is again implemented as Pearson correlations,
+$\tilde\sigma(x_j,\mathcal{C}_{\alpha})= \text{corr}(x_j,\bar
+x_{\mathcal{C}_{\alpha}})$, pre-calculated by the clustering
+interface, and available as scoring function "icor" (`S="icor"`).
+
+## Scaling & Nuisance
+
+It proofed useful to further emphasize correlation derived similarities
+by an exponent $\epsilon>1$, which de-emphasizes weakly positive
+or negative correlations, and this is available as argument `E` for
+all scoring functions.
+
+Additionally, one can define a nuisance cluster.
+... TODO: explain why nui has an effect in "icor"??
+
+## User-Defined Scoring Functions
+
+Advanced users can provide similarity measures themselves by
+constructing a "similarity matrix" `csim` where an input cluster
+labeling must be integers that serve as row and column indices of this
+matrix, ie. similarity between a cluster "2" and a cluster "3" is
+stored in `csim[2,3]`. Construction of `csim` is demonstrated
+in the `segment_test` demo, see below.
+
+
 
 # Usage
 
