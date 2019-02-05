@@ -210,7 +210,8 @@ The next development cycle of this package should allow for more
 efficient sweeping of "long" data sets, eg. genome-wide data:
 
 * A function that takes cluster centers and data as inputs and provides
-the setup for segmentation (calculation of `csim`), and
+a "clustering" object with `csim` similarity matrices
+for `segmentClusters`, and
 * A maximal length parameter in the recursion, to sweep across long
 data-sets, removing the pre-segmentation requirement,
 * A subset clustering utility, that samples a reasonable subset
