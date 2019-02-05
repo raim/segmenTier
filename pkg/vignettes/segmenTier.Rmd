@@ -95,8 +95,9 @@ For our application, an RNA-seq time-series, the Pearson correlation
 between the cluster centroids (mean values) proofed useful:
 $Q(\mathcal{C},\mathcal{D})= \text{corr}(\bar x_{\mathcal{C}},\bar
 x_{\mathcal{D}})$ is pre-calculated as a cluster-cluster correlation
-matrix by `segmenTier`'s interface to `kmeans` clustering, and
-available as scoring function "ccor" (`S="ccor"`).
+matrix by `segmenTier`'s interface to `kmeans` clustering
+(`clusterTimeseries`), and available as scoring function "ccor"
+(`S="ccor"`).
 
 The third option does not rely on a clustering of all positions and
 allows to use cluster centroids that are independently derived,
@@ -124,7 +125,7 @@ for $i>1$:
 In summary, the primitive scoring function "ccls" requires only a
 vector of cluster labels as input. Scoring function "ccor" requires
 both a vector of cluster labels and a cluster-cluster similarity
-matrix (see below), and scoring function "icor" requires only a
+matrix, and scoring function "icor" requires only a
 position-cluster similarity matrix.  These matrices, internally called
 `csim`, are provided by `segmenTier`'s clustering function
 `clusterTimeseries` using Pearson correlations to cluster centroids,
@@ -148,19 +149,20 @@ of the nuisance segment, and `-nui` the nuisance similarity to all
 other clusters. The exponent `E` will also be applied to nuisance
 similarity `nui`.
 
-The figure below shows the effects of scaling Pearson correlations
-by `E` and choosing a `nui`>1 on scoring function values.
-
-The effects of these parameters on segmentation are explored in
-@Machne2017 and demonstrated in the R demo "segment_data".
+The figure below shows the effects of `E>1` on Pearson correlations
+and `nui`>1, ie. on the socring function.  Detailed analysis of the
+effects of these parameters and the length penalty `M` on segmentation
+is provided in @Machne2017 and demonstrated in the R demo
+"segment_data".
 
 ```{r, echo=FALSE, fig.width=4, fig.height=3}
 par(mai=c(.5,.5,.05,.05), mgp=c(1.2,.3,0), tcl=-.25)
-plot(seq(-1,1,.01), seq(-1,1,.01)^3, type="l", ylab=expression("Scaled Pearson Correlation"), xlab="Pearson correlation", ylim=c(-2,2),xlim=c(-1.25,1.25))
-points(c(-1.25,1.25), c(-1.25^3,1.25^3),col=2,pch=4)
-legend("bottomright", c("E=3","nui=1.25"), bty="n", col=c(NA,2), pch=c(NA,4))
-arrows(x0=-.3, x1=.3, y0=.25,code=3,lwd=2,lty=2, length=0.1, col="gray")
-text(0,.5, expression(score %->%  0), col="gray")
+plot(seq(-1,1,.01), seq(-1,1,.01)^3, type="l", ylab=expression("scaled Pearson correlation"), xlab="Pearson correlation", ylim=c(-2,2),xlim=c(-1.25,1.25))
+abline(a=0, b=1, col="darkgray", lty=3)
+points(c(-1.25,1.25), c(-1.25^3,1.25^3),col="red",pch=4)
+legend("bottomright", c("E=1","E=3","nui=1.25"), bty="n", col=c("darkgray","black","red"), pch=c(NA,NA,4), lty=c(3,1,NA))
+arrows(x0=-.3, x1=.3, y0=.25,code=3,lwd=2,lty=2, length=0.1, col="blue")
+text(0,.5, expression(score %->%  0), col="blue")
 ```
 
 ## User-Defined Similarities

@@ -7,6 +7,7 @@ devtools::document(pkg) #
 devtools::check(pkg,cran=TRUE) # check if all is OK
 devtools::build(pkg) # generate .tar.gz
 
+## inspect goodpractice results
 g <- goodpractice::gp(pkg)
 
 
