@@ -1,3 +1,10 @@
+* set na2zero=TRUE for all uses of processTimeseries, and set
+default here to FALSE
+
+* allow to use a global clustering, i.e., provide an interface
+that takes cluster centers and calculates icor/ccor matrices
+for local data
+
 * convert varySettings to matrix params; and allow combine=FALSE
 
 * implement Appendix A for cluster-free segmentation
@@ -10,4 +17,3 @@
 that takes cluster centers and calculates icor/ccor matrices
 for local data
 
-* write a proper vignette and re-check all documentation
