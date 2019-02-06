@@ -43,7 +43,7 @@ library(segmenTier)
 data(primseg436) # RNA-seq time-series data
 
 ## cluster timeseries:
-tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+tset <- processTimeseries(ts=tsd, na2zero=TRUE, dft.range=1:7, dc.trafo="ash")
 cset <- clusterTimeseries(tset, K=12)
 ## and segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
