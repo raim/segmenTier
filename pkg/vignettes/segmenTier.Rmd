@@ -204,11 +204,60 @@ position-cluster similarity matrix and cluster labels in argument
 `seq` allow to  define a nuisance cluster.  Construction
 of `csim` is demonstrated in the R demo `segment_test`.
 
+## Time-Series Processing & Clustering
+
+Segmentation by custom similarities is simple, see section
+"User-Defined Similarities". However, `segmenTier` provides a complete
+pipeline of time-series processing and clustering functions that is to
+some extent specific to the data for which the algorithm was
+developed, but should also be generally applicable.
+
+The function `processTimeseries` prepares a time-series, with time
+points in columns, and individual measurements in rows, for
+segmentation. The function produces a list, an S3 object of class
+"timeseries", that serves as input for the clustering function. It is
+generally applicable to provide the input for the clustering wrapper,
+and raw input data will be clustered and segmented when setting
+options `use.fft=FALSE` and `trafo="raw"`, and use `na2zero=TRUE`
+to avoid interpretation of NA values as 0 (which is useful for
+positive valued signals where absence of data means absence of
+signal, eg. sequencing-based data ("read-counts")).
+
+The algorithm had been originally designed for periodic data, and
+`processTimeseries` can also perform a Discrete Fourier Transform
+(DFT, `use.fft=TRUE`) using the `stats` package function `mvfft`,
+including a permutation analysis (`perm>0`) that provides p-values for
+all periodic components for the DFT.  Clustering of the DFT of
+periodic data works well to distinguish time-courses with similar
+temporal profiles. This approach has been applied to microarray-based
+transcriptome data from "metabolic" or "respiratory oscillations" in
+budding yeast [@Machne2012] and "diurnal" or "circadian oscillations"
+of cyanobacteria [@Lehmann2013, @Beck2014].  This approach is
+implemented in the function `clusterTimeseries`, using a simple
+`k-means` clustering of the passed "timeseries" object.
+
+In the original DFT-based clustering approach a better clustering of
+the DFT of periodic data was obtained by using a model-based
+clustering algorithm that allows for tailed distributions, as
+implemented in the BioConductor package `flowClust`. This is available
+in the function `flowclusterTimeseries`.  However, this is much slower
+than `k-means` and not recommended in the context of
+segmentation. Future implementations will fuse different clustering
+methods in one function, but likely be implemented in a distinct R
+package (see `clusterTimeseries2` in github package `segmenTools`).
+
+However, within `segmenTier` the output of `clusterTimeseries`,
+S3 object of class "clustering", serves as input for segmentation
+and provides the similarity matrices required for scoring functions
+"icor" and "ccor". The correct matrix is automatically selected
+by `segmentClusters`.
+
 ## Package Outlook
 
 The next development cycle of this package should allow for more
 efficient sweeping of "long" data sets, eg. genome-wide data:
 
+* More generic function to provide input for segmentation, eg.
 * A function that takes cluster centers and data as inputs and provides
 a "clustering" object with `csim` similarity matrices
 for `segmentClusters`, and
@@ -245,7 +294,7 @@ library(segmenTier)
 data(primseg436) # RNA-seq time-series data
 
 # Fourier-transform and cluster time-series:
-tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+tset <- processTimeseries(ts=tsd, na2zero=TRUE, dft.range=1:7, dc.trafo="ash")
 cset <- clusterTimeseries(tset, K=12)
 # ... segment it:
 segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")

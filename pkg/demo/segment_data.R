@@ -70,7 +70,8 @@ vary <- setVarySettings(
 ## PRE-PROCESS TIME SERIES FOR CLUSTERING
 ## take DFT and scale amplitudes, and
 ## select components of DFT
-tset <- processTimeseries(ts=tsd, trafo=trafo, dc.trafo=dc.trafo,
+tset <- processTimeseries(ts=tsd, na2zero=TRUE,
+                          trafo=trafo, dc.trafo=dc.trafo,
                           use.fft=use.fft, dft.range=dft.range,
                           use.snr=use.snr, low.thresh=low.thresh)
 

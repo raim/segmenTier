@@ -142,7 +142,8 @@ plots.
 data(primseg436)
 
 # 1) Fourier-transform time series:
-tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+tset <- processTimeseries(ts=tsd, na2zero=TRUE,
+                          dft.range=1:7, dc.trafo="ash")
 
 # 2) cluster time-series into K=12 clusters:
 cset <- clusterTimeseries(tset, K=12)

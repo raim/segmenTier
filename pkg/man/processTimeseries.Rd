@@ -2,17 +2,19 @@
 % Please edit documentation in R/cluster.R
 \name{processTimeseries}
 \alias{processTimeseries}
-\title{Process a time-series for \code{\link{segmenTier}}.}
+\title{Process a time-series for clustering and segmentation.}
 \usage{
-processTimeseries(ts, trafo = "raw", use.fft = TRUE,
+processTimeseries(ts, na2zero = TRUE, trafo = "raw", use.fft = FALSE,
   dc.trafo = "ash", dft.range, perm = 0, use.snr = TRUE,
   lambda = 1, low.thresh = -Inf, smooth.space = 1, smooth.time = 1,
   circular.time = FALSE, verb = 0)
 }
 \arguments{
-\item{ts}{the time-series as a matrix, where columns are the
-time points and rows individual measurements (e.g., genomic
-positions for transcriptome data)}
+\item{ts}{a time-series as a matrix, where columns are the
+time points and rows are ordered measurements, e.g., genomic
+positions for transcriptome data}
+
+\item{na2zero}{interpret NA values as 0}
 
 \item{trafo}{prior data transformation, pass any function name,
 e.g., "log", or the package functions "ash" (asinh:
@@ -71,13 +73,17 @@ Returns a list of class "timeseries" which comprises of
     values. Note that NA values are interpreted as 0.
 }
 \description{
-Prepares the time-series for subsequent clustering, and performs
-requested data transformations, including a Discrete
-Fourier Transform (DFT) of the time-series as direct input for 
-the clustering wrapper \code{\link{clusterTimeseries}}. It can also be used
-as a stand-alone function equipped especially for analysis of oscillatory
-time-series, including calculation of phases and p-values for
-all DFT components.
+Prepares a time-series (time points in columns) for subsequent
+clustering, and performs requested data transformations, including
+a Discrete Fourier Transform (DFT) of the time-series, as direct
+input for the clustering wrapper
+\code{\link{clusterTimeseries}}. When used for segmentation
+the row order reflects the order of the data points along which
+segmentation will occur. The function can also be used as a
+stand-alone function equipped especially for analysis of
+oscillatory time-series, including calculation of phases and
+p-values for all DFT components, and can also be used for
+Fourier Analysis and subsequent clustering without segmentation.
 }
 \details{
 This function exemplifies the processing of an oscillatory
@@ -146,7 +152,7 @@ nrow(tsd)
 ## total levels the first component (DC for "direct current") of the
 ## DFT will be separately arcsinh transformed. This peculiar combination
 ## proofed best for our data:
-tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
 ## a plot method exists for the returned time-series class:
 par(mfcol=c(2,1))
