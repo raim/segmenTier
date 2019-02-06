@@ -125,11 +125,12 @@ for $i>1$:
 In summary, the primitive scoring function "ccls" requires only a
 vector of cluster labels as input. Scoring function "ccor" requires
 both a vector of cluster labels and a cluster-cluster similarity
-matrix, and scoring function "icor" requires only a
-position-cluster similarity matrix.  These matrices, internally called
-`csim`, are provided by `segmenTier`'s clustering function
-`clusterTimeseries` using Pearson correlations to cluster centroids,
-but can also be provided by the user, as outlined below.
+matrix, and scoring function "icor" requires only a position-cluster
+similarity matrix.  These matrices, internally called `csim`, are
+provided by `segmenTier`'s clustering function `clusterTimeseries`
+using Pearson correlations to cluster centroids, but can also be
+provided by the user, as outlined in section [User-Defined
+Similarities](#custom).
 
 
 ## Scaling & Nuisance Segments
@@ -165,7 +166,7 @@ arrows(x0=-.3, x1=.3, y0=.25,code=3,lwd=2,lty=2, length=0.1, col="blue")
 text(0,.5, expression(score %->%  0), col="blue")
 ```
 
-## User-Defined Similarities
+## User-Defined Similarities {#custom}
 
 `segmenTier`'s clustering interface (`clusterTimeseries`)
 pre-calculates the cluster-cluster ("ccor") and position-cluster
@@ -207,10 +208,10 @@ of `csim` is demonstrated in the R demo `segment_test`.
 ## Time-Series Processing & Clustering
 
 Segmentation by custom similarities is simple, see section
-"User-Defined Similarities". However, `segmenTier` provides a complete
-pipeline of time-series processing and clustering functions that is to
-some extent specific to the data for which the algorithm was
-developed, but should also be generally applicable.
+[User-Defined Similarities](#custom). However, `segmenTier` provides
+a pipeline of time-series processing and clustering functions
+that is to some extent specific to the data for which the algorithm
+was developed, but should also be generally applicable.
 
 The function `processTimeseries` prepares a time-series, with time
 points in columns, and individual measurements in rows, for
