@@ -73,15 +73,19 @@ color_hue <- function(n) {
 }
 
 
-#' Process a time-series for \code{\link{segmenTier}}.
+#' Process a time-series for clustering and segmentation.
 #' 
-#' Prepares the time-series for subsequent clustering, and performs
-#' requested data transformations, including a Discrete
-#' Fourier Transform (DFT) of the time-series as direct input for 
-#' the clustering wrapper \code{\link{clusterTimeseries}}. It can also be used
-#' as a stand-alone function equipped especially for analysis of oscillatory
-#' time-series, including calculation of phases and p-values for
-#' all DFT components.
+#' Prepares a time-series (time points in columns) for subsequent
+#' clustering, and performs requested data transformations, including
+#' a Discrete Fourier Transform (DFT) of the time-series, as direct
+#' input for the clustering wrapper
+#' \code{\link{clusterTimeseries}}. When used for segmentation
+#' the row order reflects the order of the data points along which
+#' segmentation will occur. The function can also be used as a
+#' stand-alone function equipped especially for analysis of
+#' oscillatory time-series, including calculation of phases and
+#' p-values for all DFT components, and can also be used for
+#' Fourier Analysis and subsequent clustering without segmentation.
 #' 
 #' @details This function exemplifies the processing of an oscillatory
 #' transcriptome time-series data as used in the establishment of this
@@ -133,9 +137,10 @@ color_hue <- function(n) {
 #' amplitude of the randomized time-series.  Phases and amplitudes can
 #' be derived from the complex numbers in matrix "dft" of the result
 #' object.
-#' @param ts the time-series as a matrix, where columns are the
-#'     time points and rows individual measurements (e.g., genomic
-#'     positions for transcriptome data)
+#' @param ts a time-series as a matrix, where columns are the
+#'     time points and rows are ordered measurements, e.g., genomic
+#'     positions for transcriptome data
+#' @param na2zero interpret NA values as 0
 #' @param trafo prior data transformation, pass any function name,
 #'     e.g., "log", or the package functions "ash" (asinh:
 #'     \code{ash(x) = log(x + sqrt(x^2+1))}) or "log_1"
@@ -196,14 +201,14 @@ color_hue <- function(n) {
 #' ## total levels the first component (DC for "direct current") of the
 #' ## DFT will be separately arcsinh transformed. This peculiar combination
 #' ## proofed best for our data:
-#' tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
 #'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
 #' ## a plot method exists for the returned time-series class:
 #' par(mfcol=c(2,1))
 #' plot(tset)
 #'@export
-processTimeseries <- function(ts, trafo="raw", 
-                              use.fft=TRUE, dc.trafo="ash", dft.range,
+processTimeseries <- function(ts, na2zero=TRUE, trafo="raw", 
+                              use.fft=FALSE, dc.trafo="ash", dft.range,
                               perm=0, use.snr=TRUE, lambda=1,
                               low.thresh=-Inf, 
                               smooth.space=1,
@@ -217,8 +222,12 @@ processTimeseries <- function(ts, trafo="raw",
     tsd <-ts
     ## NOTE: replace NA by 0
     ## TODO: make this behavior optional?
-    tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuisance cluster)
-
+    if ( na2zero ) {
+        if ( any(is.na(tsd)) )
+            warning("Setting ", sum(is.na(tsd)) , " NA values to 0.")
+        tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuisance cluster)
+    }
+    
     ## detect rows only consisting of 0, these will not be processed
     ## and later assigned to a nuisance cluster
     zs <- apply(tsd==0,1,sum)==ncol(tsd) # remember all zeros
@@ -676,7 +685,7 @@ logLik.kmeans <- function(object, ...)
 #' data(primseg436)
 #' ## Discrete Fourier Transform of the time-series, 
 #' ## see ?processTimeseries for details
-#' tset <- processTimeseries(ts=tsd, dc.trafo="ash",
+#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
 #'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
 #' ## ... and cluster the transformed time-series
 #' cset <- clusterTimeseries(tset)
@@ -1024,7 +1033,8 @@ setVarySettings <- function(E=c(1,3),
 #' data(primseg436)
 #' 
 #' # 1) Fourier-transform time series:
-#' tset <- processTimeseries(ts=tsd, dft.range=1:7, dc.trafo="ash")
+#' tset <- processTimeseries(ts=tsd, na2zero=TRUE,
+#'                           dft.range=1:7, dc.trafo="ash")
 #'
 #' # 2) cluster time-series several times into K=12 clusters:
 #' cset <- clusterTimeseries(tset, K=c(12,12,12))
