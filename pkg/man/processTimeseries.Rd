@@ -4,10 +4,10 @@
 \alias{processTimeseries}
 \title{Process a time-series for clustering and segmentation.}
 \usage{
-processTimeseries(ts, na2zero = TRUE, trafo = "raw", use.fft = FALSE,
-  dc.trafo = "ash", dft.range, perm = 0, use.snr = TRUE,
-  lambda = 1, low.thresh = -Inf, smooth.space = 1, smooth.time = 1,
-  circular.time = FALSE, verb = 0)
+processTimeseries(ts, na2zero = FALSE, trafo = "raw",
+  use.fft = FALSE, dc.trafo = "raw", dft.range, perm = 0,
+  use.snr = FALSE, lambda = 1, low.thresh = -Inf, smooth.space = 1,
+  smooth.time = 1, circular.time = FALSE, verb = 0)
 }
 \arguments{
 \item{ts}{a time-series as a matrix, where columns are the

@@ -227,6 +227,8 @@ processTimeseries <- function(ts, na2zero=FALSE, trafo="raw",
             warning("Setting ", sum(is.na(tsd)) , " NA values to 0.")
         tsd[is.na(tsd)] <- 0 # set NA to zero (will become nuisance cluster)
     }
+    if ( any(is.na(tsd)) )
+        warning(sum(is.na(tsd)) , " NA values in input data detected.")
     
     ## detect rows only consisting of 0, these will not be processed
     ## and later assigned to a nuisance cluster
