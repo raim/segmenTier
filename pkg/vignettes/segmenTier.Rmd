@@ -34,6 +34,7 @@ measures.  Note, that the functions `processTimeseries` and
 `clusterTimeseries`, can also be used as stand-alone tools for
 periodic time-series analysis and clustering.
 
+![](anadenobolus_arboreus_credit.png)
 
 # Theory & Implementation
 
