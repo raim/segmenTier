@@ -89,3 +89,6 @@ and Supplemental Figures S4a and S4b of [Machne, Murray & Stadler
 demo("segment_data", package = "segmenTier")
 ```
 
+# Karl, the segmenTier
+
+![](anadenobolus_arboreus_credit.png)

@@ -267,7 +267,7 @@ data-sets, removing the pre-segmentation requirement,
 * A subset clustering utility, that samples a reasonable subset
 of the data for clustering, and supplies cluster centers.
 
-# Karl, the segmenTier:
+# Karl, the segmenTier
 
 ![](anadenobolus_arboreus_credit.png)
 
