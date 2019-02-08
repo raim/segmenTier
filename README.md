@@ -1,4 +1,4 @@
-![segmenTier](doc/logo.png) 
+![segmenTier](pkg/vignette/logo.png) 
 
 # Similarity-Based Segmentation of Multi-Dimensional Signals
 
@@ -91,4 +91,4 @@ demo("segment_data", package = "segmenTier")
 
 # Karl, the segmenTier
 
-![](anadenobolus_arboreus_credit.png)
+![](pkg/vignette/anadenobolus_arboreus_credit.png)
