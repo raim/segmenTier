@@ -92,8 +92,8 @@ data from circadian or yeast respiratory oscillation systems.
 data(primseg436)
 ## Discrete Fourier Transform of the time-series, 
 ## see ?processTimeseries for details
-tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
-                          use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+tset <- processTimeseries(ts=tsd, na2zero=TRUE, use.fft=TRUE,
+                          dft.range=1:7,  dc.trafo="ash", use.snr=TRUE)
 ## ... and cluster the transformed time-series
 cset <- clusterTimeseries(tset)
 ## plot methods for both returned objects allow aligned plots

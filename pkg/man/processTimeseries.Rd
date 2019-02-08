@@ -152,8 +152,8 @@ nrow(tsd)
 ## total levels the first component (DC for "direct current") of the
 ## DFT will be separately arcsinh transformed. This peculiar combination
 ## proofed best for our data:
-tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
-                          use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+tset <- processTimeseries(ts=tsd, na2zero=TRUE, use.fft=TRUE,
+                          dft.range=1:7, dc.trafo="ash", use.snr=TRUE)
 ## a plot method exists for the returned time-series class:
 par(mfcol=c(2,1))
 plot(tset)

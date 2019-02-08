@@ -201,15 +201,15 @@ color_hue <- function(n) {
 #' ## total levels the first component (DC for "direct current") of the
 #' ## DFT will be separately arcsinh transformed. This peculiar combination
 #' ## proofed best for our data:
-#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
-#'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, use.fft=TRUE,
+#'                           dft.range=1:7, dc.trafo="ash", use.snr=TRUE)
 #' ## a plot method exists for the returned time-series class:
 #' par(mfcol=c(2,1))
 #' plot(tset)
 #'@export
-processTimeseries <- function(ts, na2zero=TRUE, trafo="raw", 
-                              use.fft=FALSE, dc.trafo="ash", dft.range,
-                              perm=0, use.snr=TRUE, lambda=1,
+processTimeseries <- function(ts, na2zero=FALSE, trafo="raw", 
+                              use.fft=FALSE, dc.trafo="raw", dft.range,
+                              perm=0, use.snr=FALSE, lambda=1,
                               low.thresh=-Inf, 
                               smooth.space=1,
                               smooth.time=1, circular.time=FALSE,
@@ -685,8 +685,8 @@ logLik.kmeans <- function(object, ...)
 #' data(primseg436)
 #' ## Discrete Fourier Transform of the time-series, 
 #' ## see ?processTimeseries for details
-#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, dc.trafo="ash",
-#'                           use.fft=TRUE, dft.range=1:7, use.snr=TRUE)
+#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, use.fft=TRUE,
+#'                           dft.range=1:7,  dc.trafo="ash", use.snr=TRUE)
 #' ## ... and cluster the transformed time-series
 #' cset <- clusterTimeseries(tset)
 #' ## plot methods for both returned objects allow aligned plots
@@ -1033,8 +1033,8 @@ setVarySettings <- function(E=c(1,3),
 #' data(primseg436)
 #' 
 #' # 1) Fourier-transform time series:
-#' tset <- processTimeseries(ts=tsd, na2zero=TRUE,
-#'                           dft.range=1:7, dc.trafo="ash")
+#' tset <- processTimeseries(ts=tsd, na2zero=TRUE, use.fft=TRUE,
+#'                           dft.range=1:7, dc.trafo="ash", use.snr=TRUE)
 #'
 #' # 2) cluster time-series several times into K=12 clusters:
 #' cset <- clusterTimeseries(tset, K=c(12,12,12))
