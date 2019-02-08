@@ -34,7 +34,6 @@ measures.  Note, that the functions `processTimeseries` and
 `clusterTimeseries`, can also be used as stand-alone tools for
 periodic time-series analysis and clustering.
 
-![](anadenobolus_arboreus_credit.png)
 
 # Theory & Implementation
 
@@ -267,6 +266,10 @@ for `segmentClusters`, and
 data-sets, removing the pre-segmentation requirement,
 * A subset clustering utility, that samples a reasonable subset
 of the data for clustering, and supplies cluster centers.
+
+# Karl, the segmenTier:
+
+![](anadenobolus_arboreus_credit.png)
 
 # Usage
 
