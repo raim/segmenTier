@@ -93,6 +93,7 @@ cset <- clusterTimeseries(tset, K=c(12,12,12))
 vary <- setVarySettings(M=100, E=c(1,3), nui=3, S="icor", Mn=20)
 
 # 4) ... segment ALL using the batch function:
+\dontrun{ ## NOTE: takes too long for CRAN example timing restrictions
 segments <- segmentCluster.batch(cset=cset, varySettings=vary)
 
 # 5) inspect results:
@@ -104,5 +105,6 @@ plotSegmentation(tset, cset, segments)
 #    and "color" providing the color of the cluster the segment was
 #    assigned to. This allows to track segments in the inspection plots.
 sgtable <- segments$segments
+}
 
 }

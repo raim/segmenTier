@@ -1045,6 +1045,7 @@ setVarySettings <- function(E=c(1,3),
 #' vary <- setVarySettings(M=100, E=c(1,3), nui=3, S="icor", Mn=20)
 #' 
 #' # 4) ... segment ALL using the batch function:
+#' \dontrun{ ## NOTE: takes too long for CRAN example timing restrictions
 #' segments <- segmentCluster.batch(cset=cset, varySettings=vary)
 #' 
 #' # 5) inspect results:
@@ -1056,6 +1057,7 @@ setVarySettings <- function(E=c(1,3),
 #' #    and "color" providing the color of the cluster the segment was
 #' #    assigned to. This allows to track segments in the inspection plots.
 #' sgtable <- segments$segments
+#' }
 #' 
 #'@export
 segmentCluster.batch <- function(cset, varySettings=setVarySettings(),
