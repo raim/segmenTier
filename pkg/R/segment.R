@@ -205,15 +205,15 @@ clusterSegments <- function() {}
 #' data(primseg436)
 #' 
 #' # 1) Fourier-transform time series:
-#' ## NOTE: reducing official example data set to stay within CRAN timing
-#' ## restrictions
-#' tset <- processTimeseries(ts=tsd[2000:6500,], na2zero=TRUE, use.fft=TRUE,
+#' ## NOTE: reducing official example data set to stay within 
+#' ## CRAN example timing restrictions with segmentation below
+#' tset <- processTimeseries(ts=tsd[2500:6500,], na2zero=TRUE, use.fft=TRUE,
 #'                           dft.range=1:7, dc.trafo="ash", use.snr=TRUE)
 #' 
 #' # 2) cluster time-series into K=12 clusters:
 #' cset <- clusterTimeseries(tset, K=12)
 #' 
-#' # 3) ... segment it:
+#' # 3) ... segment it; this takes a few seconds:
 #' segments <- segmentClusters(seq=cset, M=100, E=2, nui=3, S="icor")
 #' 
 #' # 4) inspect results:
