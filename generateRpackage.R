@@ -7,6 +7,8 @@ devtools::document(pkg) #
 devtools::check(pkg,cran=TRUE) # check if all is OK
 devtools::build(pkg) # generate .tar.gz
 
+## NOTE: `R CMD check --as-cran` gives different notes on timing!
+
 ## inspect goodpractice results
 g <- goodpractice::gp(pkg)
 
