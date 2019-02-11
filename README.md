@@ -17,6 +17,14 @@
  (https://doi.org/10.1371/journal.pone.0037906), and here is used as a
  basis of segment similarity measures.
 
+## News
+
+* Version 0.1.2: 
+    - more general defaults in `processTimeseries` 
+      (`use.fft=FALSE`, `na2zero=FALSE`) allow to set-up time-series 
+      without any transformations for clustering
+    - Doc and vignette have been substantially re-worked
+
 ## Theory
 
 
