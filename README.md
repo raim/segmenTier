@@ -1,3 +1,7 @@
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/segmenTier)](https://cran.r-project.org/package=segmenTier)
+[![Downloads](https://cranlogs.r-pkg.org/badges/segmenTier)](https://cran.r-project.org/package=segmenTier)
+
+
 ![segmenTier](pkg/vignettes/logo.png) 
 
 # Similarity-Based Segmentation of Multi-Dimensional Signals
