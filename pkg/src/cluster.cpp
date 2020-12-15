@@ -23,6 +23,8 @@ double myPearson(NumericVector x, NumericVector y) {
   xsum = ysum = xysum = xsqr_sum = ysqr_sum = 0;
 
   // calculate sums
+  // TODO: y[i] at https://akhikolla.github.io./packages-folders/segmenTier.html
+  // -> make sure that y.length==x.length??
   for ( int i = 0; i < n; i++) {
     xsum += x[i];
     ysum += y[i];

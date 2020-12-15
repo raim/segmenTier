@@ -16,6 +16,8 @@ double icor(int k, int j, int c, NumericVector seq,
   
   // sum of similarities of positions i:j to cluster c
   // where k is the running index from k=i to k<=j
+  // TODO: see https://akhikolla.github.io./packages-folders/segmenTier.html
+  // -> convert k and c to unsigned int?
   double scr = -M;
   for ( ; k <= j; k++ ) 
     scr += csim( k, c ); 
@@ -32,6 +34,8 @@ double ccor(int k, int j, int c, NumericVector seq,
 
   // sum of similarities of clusters at positions i:j to cluster c
   // where k is the running index from k=i to k<=j
+  // TODO: see https://akhikolla.github.io./packages-folders/segmenTier.html
+  // -> convert seq(k)-1 and c to unsigned int?
   double scr = -M;
   for ( ; k <= j; k++ ) 
     scr += csim( seq( k )-1, c );  // TODO: in segmentClusters, don't decrease seqr
