@@ -4,8 +4,7 @@
 \alias{plot.timeseries}
 \title{Plot method for the "timeseries" object.}
 \usage{
-\method{plot}{timeseries}(x, plot = c("total", "timeseries"), xaxis,
-  ylabh = TRUE, ...)
+\method{plot}{timeseries}(x, plot = c("total", "timeseries"), xaxis, ylabh = TRUE, ...)
 }
 \arguments{
 \item{x}{a time-series object as returned by

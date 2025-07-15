@@ -26,8 +26,10 @@
 * Version 0.1.2: 
     - more general defaults in `processTimeseries` 
       (`use.fft=FALSE`, `na2zero=FALSE`) allow to set-up time-series 
-      without any transformations for clustering
-    - Doc and vignette have been substantially re-worked
+      without any transformations for clustering,
+    - Doc and vignette have been substantially re-worked.
+* Version 0.1.3:
+    - faster implementation of SNR calculation processTimeseries.
 
 ## Theory
 

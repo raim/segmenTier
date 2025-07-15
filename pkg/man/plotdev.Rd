@@ -4,8 +4,7 @@
 \alias{plotdev}
 \title{Switch between plot devices.}
 \usage{
-plotdev(file.name = "test", type = "png", width = 5, height = 5,
-  res = 100)
+plotdev(file.name = "test", type = "png", width = 5, height = 5, res = 100)
 }
 \arguments{
 \item{file.name}{file name without suffix (.png, etc)}

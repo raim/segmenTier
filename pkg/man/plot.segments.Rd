@@ -4,8 +4,15 @@
 \alias{plot.segments}
 \title{Plot method for the "segments" object.}
 \usage{
-\method{plot}{segments}(x, plot = c("S", "segments"), types, params,
-  xaxis, show.fused = FALSE, ...)
+\method{plot}{segments}(
+  x,
+  plot = c("S", "segments"),
+  types,
+  params,
+  xaxis,
+  show.fused = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a segmentation object as returned by

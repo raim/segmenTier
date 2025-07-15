@@ -1,7 +1,7 @@
 Package: segmenTier
 Type: Package
 Title: Similarity-Based Segmentation of Multidimensional Signals
-Version: 0.1.2
+Version: 0.1.3
 Author: Rainer Machne, Douglas B. Murray, Peter F. Stadler
 URL: https://github.com/raim/segmenTier
 BugReports: https://github.com/raim/segmenTier/issues
@@ -31,5 +31,5 @@ Suggests:
     rmarkdown
 LinkingTo: Rcpp
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr

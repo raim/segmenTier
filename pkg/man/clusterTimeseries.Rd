@@ -4,8 +4,14 @@
 \alias{clusterTimeseries}
 \title{Cluster a processed time-series with k-means.}
 \usage{
-clusterTimeseries(tset, K = 16, iter.max = 1e+05, nstart = 100,
-  nui.thresh = -Inf, verb = 1)
+clusterTimeseries(
+  tset,
+  K = 16,
+  iter.max = 1e+05,
+  nstart = 100,
+  nui.thresh = -Inf,
+  verb = 1
+)
 }
 \arguments{
 \item{tset}{a "timeseries" object returned by

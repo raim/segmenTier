@@ -11,6 +11,32 @@ get.fft <- function(x) {
         colnames(fft) <- c("DC",as.character(seq_len(n-1)))
     fft
 }
+
+## 20250715: old version, to be replaced by new version
+get_snr_old <- function(fft) {
+    amp <- abs(fft)
+    snr <- fft
+    for ( a in 2:ncol(fft) )
+        snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
+    snr
+}
+
+## 20250715: replacing SNR calculation by faster version by chatGPT!!
+get_snr <- function(fft) {
+    amp <- Mod(fft)
+    amp[, 1] <- NA  # remove DC
+
+    ## Precompute row sums (excluding DC)
+    row_sums <- rowSums(amp, na.rm = TRUE)
+    n <- ncol(amp)
+    snr <- matrix(NA_complex_, nrow = nrow(amp), ncol = ncol(amp))
+
+    ## Vectorized SNR: subtract own value, divide by mean of others
+    snr[] <- fft / ((row_sums - amp) / (n - 2))  # exclude self and DC
+    snr[, 1] <- fft[,1]  # optionally set DC SNR to NA
+    snr
+}
+
 ## Fourier permutation
 do.perm <- function(x, fft=NULL, perm, verb=0) {
 
@@ -254,7 +280,7 @@ processTimeseries <- function(ts, na2zero=FALSE, trafo="raw",
     ## transform raw data?
     ## NOTE that DFT and SNR below (use.fft) are an alternative
     ## data normalization procedure
-    ## default: identity
+    ## default: no trafo (function identity())
     if ( trafo!="raw" )
         tsd <- get(trafo, mode="function")(tsd) # ash, log_1, etc
     
@@ -283,11 +309,7 @@ processTimeseries <- function(ts, na2zero=FALSE, trafo="raw",
         
         ## amplitude-scaling (~SNR), see Machne&Murray 2012
         if ( use.snr ) {
-            amp <- abs(fft)
-          snr <- fft
-          for ( a in 2:ncol(fft) )
-            snr[,a] <- fft[,a]/apply(amp[,-c(1,a)],1,mean)
-          fft <- snr
+            fft[] <- get_snr(fft)
         }
 
         ## experimental: amplitude Box-Cox transformation
@@ -907,7 +929,7 @@ sortClusters <- function(cset, sort=TRUE, verb=0) {
     ## each column in the clustering matrix is one clustering
     cset$sorting <- rep(list(NA), ncol(cset$clusters))
 
-    ## merely generate numerical sorting if sort is FALS
+    ## merely generate numerical sorting if sort is FALSE
     if ( !sort ) {
         sorting <- NULL
         for ( k in seq_len(ncol(cset$clusters)) ) 
