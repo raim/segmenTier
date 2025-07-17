@@ -12,7 +12,7 @@ get.fft <- function(x) {
     fft
 }
 
-## 20250715: old version, to be replaced by new version
+## 20250715: old slow version, to be replaced by new version
 get_snr_old <- function(fft) {
     amp <- abs(fft)
     snr <- fft
@@ -22,8 +22,14 @@ get_snr_old <- function(fft) {
 }
 
 ## 20250715: replacing SNR calculation by faster version by chatGPT!!
-get_snr <- function(fft) {
-    amp <- Mod(fft)
+#' Scale a DFT to a signal-to-noise ratio, where each frequency is divided
+#' by the mean of all other frequencies.
+#' @param x a matrix of discrete fourier transformed (DFT) data, as provided
+#' by \code{\link{get.fft}} or \code{\link[stats:fft]{mvfft}}.
+#' @export
+get_snr <- function(x) {
+    
+    amp <- Mod(x) # amplitudes
     amp[, 1] <- NA  # remove DC
 
     ## Precompute row sums (excluding DC)
@@ -32,8 +38,9 @@ get_snr <- function(fft) {
     snr <- matrix(NA_complex_, nrow = nrow(amp), ncol = ncol(amp))
 
     ## Vectorized SNR: subtract own value, divide by mean of others
-    snr[] <- fft / ((row_sums - amp) / (n - 2))  # exclude self and DC
-    snr[, 1] <- fft[,1]  # optionally set DC SNR to NA
+    snr[] <- x / ((row_sums - amp) / (n - 2))  # exclude self and DC
+    snr[, 1] <- x[,1]  # optionally set DC SNR to NA
+    dimnames(snr) <- dimnames(x)  
     snr
 }
 
@@ -186,6 +193,8 @@ color_hue <- function(n) {
 #'     components (without the first or DC component), a normalization
 #'     that can be interpreted to reflect a signal-to-noise ratio
 #'     (SNR)
+#' @param old.snr use the old slow version to calculate the SNR: kept for a
+#'     while to ensure reproducability.
 #' @param lambda parameter lambda for Box-Cox transformation of DFT
 #'     amplitudes (experimental; not tested)
 #' @param dc.trafo data transformation for the first (DC) component of
@@ -235,7 +244,8 @@ color_hue <- function(n) {
 #'@export
 processTimeseries <- function(ts, na2zero=FALSE, trafo="raw", 
                               use.fft=FALSE, dc.trafo="raw", dft.range,
-                              perm=0, use.snr=FALSE, lambda=1,
+                              perm=0, use.snr=FALSE, old.snr=FALSE,
+                              lambda=1,
                               low.thresh=-Inf, 
                               smooth.space=1,
                               smooth.time=1, circular.time=FALSE,
@@ -309,7 +319,8 @@ processTimeseries <- function(ts, na2zero=FALSE, trafo="raw",
         
         ## amplitude-scaling (~SNR), see Machne&Murray 2012
         if ( use.snr ) {
-            fft[] <- get_snr(fft)
+            if ( old.snr ) fft[] <- get_snr_old(fft) # slow original version
+            else fft[] <- get_snr(fft) # fast
         }
 
         ## experimental: amplitude Box-Cox transformation

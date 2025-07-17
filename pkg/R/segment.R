@@ -2,7 +2,7 @@
 #' from a sequential clustering
 #'@author Rainer Machne \email{raim@tbi.univie.ac.at}, Douglas B. Murray,
 #' Peter F. Stadler \email{studla@bioinf.uni-leipzig.de}
-#'@docType package
+#'@docType _PACKAGE
 #'@name segmenTier
 #'@section Dependencies: The package strictly depends only on
 #' \code{Rcpp}.

@@ -13,6 +13,7 @@ processTimeseries(
   dft.range,
   perm = 0,
   use.snr = FALSE,
+  old.snr = FALSE,
   lambda = 1,
   low.thresh = -Inf,
   smooth.space = 1,
@@ -54,6 +55,9 @@ Discrete Fourier Transform is divided by the mean of all other
 components (without the first or DC component), a normalization
 that can be interpreted to reflect a signal-to-noise ratio
 (SNR)}
+
+\item{old.snr}{use the old slow version to calculate the SNR: kept for a
+while to ensure reproducability.}
 
 \item{lambda}{parameter lambda for Box-Cox transformation of DFT
 amplitudes (experimental; not tested)}
